@@ -17,6 +17,7 @@ func Init() {
 	app := fiber.New()
 
 	routes.UserRoutes(app)
+	routes.TicketRoutes(app)
 
 	log.Fatal(app.Listen(":" + BACKEND_PORT))
 
