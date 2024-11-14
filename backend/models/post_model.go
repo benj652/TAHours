@@ -11,9 +11,8 @@ type Post struct {
 }
 
 type Comment struct {
-	ID      primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	User    string             `json:"user"`
-	Content string             `json:"Content"`
+	User    string `json:"user"`
+	Content string `json:"Content"`
 }
 
 func (p *Post) TableName() string {
