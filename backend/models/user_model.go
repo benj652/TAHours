@@ -16,3 +16,19 @@ type User struct {
 func (u *User) TableName() string {
 	return "users"
 }
+
+type Roles struct {
+	Professor string
+	Ta        string
+	Admin     string
+	Student   string
+}
+
+func RolesConfig() Roles {
+	return Roles{
+		Professor: "professor",
+		Ta:        "ta",
+		Admin:     "admin",
+		Student:   "student",
+	}
+}
