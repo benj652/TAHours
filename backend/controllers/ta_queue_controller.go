@@ -169,3 +169,46 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 		"isActive": taQueue.IsActive,
 	})
 }
+
+// getActiveTickets returns a list of all active tickets within a specific queue. tickets are maked as active when they have no TA assigned
+func GetActiveTickets(c *fiber.Ctx) error {
+	id := c.Params("id")
+	queueID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	var taQueue models.TAQueue
+	filter := bson.M{"_id": queueID}
+	collection := db.GetCollection(taQueue.TableName())
+
+	err = collection.FindOne(context.Background(), filter).Decode(&taQueue)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "queue not found" + err.Error(),
+		})
+	}
+
+	ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
+
+	ticketsFilter := bson.M{"_id": bson.M{"$in": taQueue.Tickets},
+		"taId": bson.M{"$eq": nil}}
+
+	cursor, err := ticketCollection.Find(context.Background(), ticketsFilter)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get active tickets" + err.Error(),
+		})
+	}
+	defer cursor.Close(context.Background())
+
+	var tickets []models.Ticket
+	if err = cursor.All(context.Background(), &tickets); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get active tickets" + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"tickets": tickets,
+	})
+}
