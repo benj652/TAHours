@@ -91,6 +91,17 @@ func CreateTicket(c *fiber.Ctx) error {
 		})
 	}
 
+	queueTickets := db.GetCollection("ta_queues")
+	filter := bson.M{"isActive": true, "tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
+
+	var queue models.TAQueue
+	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue)
+	if err == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "student already has ticket in queue",
+		})
+	}
+
 	insertResult, err := collection.InsertOne(context.Background(), ticket)
 
 	if err != nil {
@@ -102,5 +113,72 @@ func CreateTicket(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Ticket created successfully",
 		"id":      insertResult.InsertedID.(primitive.ObjectID).Hex(),
+	})
+}
+
+// ResolveTicket marks a ticket with the TA id and a note, signifying that the ticket has been resolved
+// the request body should contain a JSON object with the following fields:
+//
+// - TaId: the _id of the TA who is resolving the ticket
+// - TaNote: a string describing the resolution of the ticket
+//
+// The endpoint returns a JSON object with the following fields:
+//
+// - message: a string indicating the result of the request
+func ResolveTicket(c *fiber.Ctx) error {
+	ticketId := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(ticketId)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ticket ID",
+		})
+	}
+
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	filter := bson.M{"_id": objectID}
+	update := bson.M{"$set": bson.M{"taNote": "Resolved"}}
+	_, err = collection.UpdateOne(context.Background(), filter, update)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to resolve ticket" + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Ticket resolved successfully",
+	})
+}
+
+// DeleteTicket deletes a ticket from the database
+//
+// The endpoint returns a JSON object with the following fields:
+//
+// - message: a string indicating the result of the request
+func DeleteTicket(c *fiber.Ctx) error {
+	ticketId := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(ticketId)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ticket ID",
+		})
+	}
+
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	filter := bson.M{"_id": objectID}
+	_, err = collection.DeleteOne(context.Background(), filter)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to delete ticket" + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Ticket deleted successfully",
 	})
 }
