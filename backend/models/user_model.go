@@ -10,7 +10,7 @@ type User struct {
 	Email       string             `json:"email"`
 	ProfilePic  string             `json:"profilePic"`
 	Description string             `json:"description"`
-	Roles       []string           `json:"roles"`
+	Roles       string             `json:"roles"`
 }
 
 func (u *User) TableName() string {
