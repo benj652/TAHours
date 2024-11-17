@@ -10,6 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var roles = models.RolesConfig()
+
 // GetOrCreateUser attempts to retrieve a user by email from the database
 // using the Fiber context. If the user does not exist, it creates a new user.
 // The function expects a user JSON payload in the request body.
@@ -29,7 +31,11 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 			"message": "Email is required",
 		})
 	}
-
+	if user.AccessToken == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Access token is required",
+		})
+	}
 	filter := bson.M{"email": user.Email}
 	// update := bson.M{ "$setOnInsert": user}
 
@@ -37,6 +43,8 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 	var foundUser models.User
 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
 	if err != nil {
+		user.Roles = "student"
+		user.ProfilePic = "https://robohash.org/" + user.Email + "?set=set4"
 		insertResult, err := collection.InsertOne(context.Background(), user)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -97,6 +105,11 @@ func ChangeDescription(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objectID, err := primitive.ObjectIDFromHex(id)
 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid user ID",
+		})
+	}
 	filter := bson.M{"_id": objectID}
 
 	if id == "" {
@@ -114,6 +127,173 @@ func ChangeDescription(c *fiber.Ctx) error {
 		})
 	}
 
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User updated successfully",
+	})
+}
+
+// ChangeProfilePic updates a user's profile picture in the database using the user ID provided in the URL parameters
+// and the profile picture URL in the request body. The function expects the user ID as a parameter and a string
+// representing the new profile picture URL in the request body. Returns a JSON response with a success message.
+// If the ID is missing or invalid, it returns an error. If the update fails, it returns a 500 Internal Server error
+// with a message.
+// This route should be protected with middleware to ensure you can not change other users' profile pictures.
+func ChangeProfilePic(c *fiber.Ctx) error {
+	id := c.Params("id")
+	userID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return err
+	}
+
+	var profileUrl string
+
+	if err := c.BodyParser(&profileUrl); err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": userID}
+
+	update := bson.M{"$set": bson.M{"profilePic": profileUrl}}
+
+	collection := db.GetCollection((&models.User{}).TableName())
+
+	_, err = collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update user",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User updated successfully",
+	})
+}
+
+// UpdateRoleTA updates a user's role in the database using the user ID provided in the URL parameters
+// and the new role in the request body. The function expects the user ID as a parameter and a string
+// representing the new role in the request body. Returns a JSON response with a success message.
+// If the ID is missing or invalid, it returns an error. If the update fails, it returns a 500 Internal Server error
+// with a message.
+// This route should be protected with middleware to ensure that only admin or professor can make TAs roles.
+func UpdateRoleTA(c *fiber.Ctx) error {
+	id := c.Params("id")
+	userID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return err
+	}
+
+	var role = roles.Ta
+
+	filter := bson.M{"_id": userID}
+
+	collection := db.GetCollection((&models.User{}).TableName())
+
+	// gets the targeted user to ensure that that professors can not downgrade other professors
+	var user models.User
+	err = collection.FindOne(context.Background(), filter).Decode(&user)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+
+	// more magic strings
+	// makes sure that professors can not downgrade admins or other professors
+	if user.Roles == roles.Professor || user.Roles == roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update this user",
+		})
+	}
+	update := bson.M{"$set": bson.M{"role": role}}
+
+	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update user",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User updated successfully",
+	})
+}
+
+// UpdateRoleStudent updates a user's role to student in the database.
+// The function expects a user ID as a parameter and a user JSON payload in the request body.
+// Returns a JSON response with a success message.
+// If the ID is missing or invalid, it returns a 400 Bad Request error.
+// If the update fails, it returns a 500 Internal Server error with a message.
+// This route should be protected with middleware to ensure only professors and admins can change other users' role.
+func UpdateRoleStudent(c *fiber.Ctx) error {
+	id := c.Params("id")
+	userID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ID",
+		})
+	}
+
+	filter := bson.M{"_id": userID}
+	update := bson.M{"$set": bson.M{"role": roles}}
+
+	collection := db.GetCollection((&models.User{}).TableName())
+
+	var user models.User
+	err = collection.FindOne(context.Background(), filter).Decode(&user)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+	if user.Roles == roles.Professor || user.Roles == roles.Admin { // makes sure that professors can not downgrade admins or other professors
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update this user",
+		})
+	}
+
+	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update user",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User updated successfully",
+	})
+}
+
+// UpdateRoleProfessor updates a user's role to professor in the database.
+//
+// The function takes an id parameter, which is the ObjectID of the user to be updated.
+//
+// The endpoint returns a JSON response with a success message.
+// If the ID is missing in the request, it returns a 400 Bad Request error.
+// If the user is not found, it returns a 400 Bad Request error with a message.
+// If the update fails, it returns a 500 Internal Server error with a message.
+// Make sure to protect the route so that only admins can use it
+func UpdateRoleProfessor(c *fiber.Ctx) error {
+	id := c.Params("id")
+	userID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return err
+	}
+
+	// magic string, fix later
+	var role = roles.Professor
+
+	filter := bson.M{"_id": userID}
+	update := bson.M{"$set": bson.M{"role": role}}
+
+	collection := db.GetCollection((&models.User{}).TableName())
+
+	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update user",
+		})
+	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})
