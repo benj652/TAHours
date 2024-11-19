@@ -1,8 +1,3 @@
 #!/bin/bash
 
-curl -X GET http://localhost:8000/user -H "Content-Type: application/json" -d '{
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "johndoe@example.com",
-  "roles": ["admin", "user"]
-}'
+curl -X POST http://localhost:8000/api/user/get-or-create -H "Content-Type: application/json" -d '{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb28@colby.edu"}'

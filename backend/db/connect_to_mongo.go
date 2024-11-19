@@ -36,6 +36,10 @@ func GetCollection(collectionName string) *mongo.Collection {
 	return connectedDB.Collection(collectionName)
 }
 
+func SetTestDB(client *mongo.Client) {
+	connectedDB = client.Database("test")
+}
+
 func DisconnectFromMongo() {
 	err := connectedDB.Client().Disconnect(context.Background())
 	if err != nil {

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
@@ -21,9 +22,10 @@ var roles = models.RolesConfig()
 func GetOrCreateUser(c *fiber.Ctx) error {
 	user := new(models.User)
 	collection := db.GetCollection(user.TableName())
-
 	if err := c.BodyParser(user); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Error parsing request body: " + err.Error(),
+		})
 	}
 
 	if user.Email == "" {
@@ -41,11 +43,15 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 
 	// this is bad code. Should use FindOneAndUpdate with setOn insert to avoid double error checking. Fix later.
 	var foundUser models.User
+	// fmt.Println("CHECK 1")
 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
 	if err != nil {
 		user.Roles = "student"
 		user.ProfilePic = "https://robohash.org/" + user.Email + "?set=set4"
+		// fmt.Println(user)
+		// fmt.Println("CHECK 2")
 		insertResult, err := collection.InsertOne(context.Background(), user)
+		fmt.Println(err)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"message": "Failed to create user" + err.Error(),
@@ -54,8 +60,8 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 		user.ID = insertResult.InsertedID.(primitive.ObjectID)
 		foundUser = *user
 	}
-
-	return c.Status(fiber.StatusOK).JSON(foundUser)
+	// fmt.Println(foundUser)
+	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 // GetUser retrieves a user from the database using the email provided in the request body.
