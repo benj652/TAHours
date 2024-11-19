@@ -17,7 +17,9 @@ func GetAllTAQueues(c *fiber.Ctx) error {
 	collection := db.GetCollection((&models.TAQueue{}).TableName())
 	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get queues" + err.Error(),
+		})
 	}
 	defer cursor.Close(context.Background())
 	for cursor.Next(context.Background()) {
@@ -68,7 +70,9 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	id := c.Params("id")
 	queueID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid queue ID",
+		})
 	}
 
 	// Currently, we are storing the TA's ID in the queue model, however, this will result in an extra API call
@@ -131,12 +135,12 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 			"message": "Failed to remove TA from queue" + err.Error(),
 		})
 	}
-	if taQueue.TAs == nil || len(taQueue.TAs) == 0 {
+	if len(taQueue.TAs) == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Queue is empty",
 		})
 	}
-	if taQueue.IsActive == false {
+	if !taQueue.IsActive {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Queue is inactive",
 		})

@@ -64,21 +64,20 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 // If the email is missing in the request, it returns a 400 Bad Request error.
 // If the user is not found, it returns a 400 Bad Request error with a message.
 func GetUser(c *fiber.Ctx) error {
-	user := new(models.User)
+	collection := db.GetCollection((&models.User{}).TableName())
 
-	collection := db.GetCollection(user.TableName())
-
-	if err := c.BodyParser(user); err != nil {
+	var email string
+	if err := c.BodyParser(email); err != nil {
 		return err
 	}
 
-	if user.Email == "" {
+	if email == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Email is required",
 		})
 	}
 
-	filter := bson.M{"email": user.Email}
+	filter := bson.M{"email": email}
 	// update := bson.M{ "$setOnInsert": user}
 	var foundUser models.User
 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
@@ -112,13 +111,20 @@ func ChangeDescription(c *fiber.Ctx) error {
 	}
 	filter := bson.M{"_id": objectID}
 
+	var description string
+	if err := c.BodyParser(description); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Error parsing request body: " + err.Error(),
+		})
+	}
+
 	if id == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "ID is required",
 		})
 	}
 
-	update := bson.M{"$set": bson.M{"description": user.Description}}
+	update := bson.M{"$set": bson.M{"description": description}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {

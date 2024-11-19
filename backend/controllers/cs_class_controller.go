@@ -49,6 +49,7 @@ func GetCSClass(c *fiber.Ctx) error {
 // with the class's details. It returns a JSON response with the newly created
 // class's _id, or a 400 error if there was a problem with the request body, or
 // a 500 error if there was a problem creating the class.
+// Make sure only professors and admis can create classes in middleware
 func CreateCSClass(c *fiber.Ctx) error {
 	class := new(models.CSClass)
 	collection := db.GetCollection(class.TableName())
@@ -110,12 +111,21 @@ func CreateTAQueue(c *fiber.Ctx) error {
 		})
 	}
 
-	if taQueue.TAs == nil || len(taQueue.TAs) == 0 {
+	if len(taQueue.TAs) == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Include TAs",
 		})
 	}
-
+	if taQueue.Class == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Include Class",
+		})
+	}
+	if taQueue.Directions == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Include Directions",
+		})
+	}
 	insertResult, err := collection.InsertOne(context.Background(), taQueue)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -147,26 +157,52 @@ func CreateTAQueue(c *fiber.Ctx) error {
 func GetActiveTAQueue(c *fiber.Ctx) error {
 	class := new(models.CSClass)
 	collection := db.GetCollection(class.TableName())
-	var taQueue models.TAQueue
-	err := collection.FindOne(context.Background(), bson.M{"isActive": true}).Decode(&taQueue)
+	id := c.Params("id")
+	classId, err := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": classId}
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID",
+		})
+	}
+	err = collection.FindOne(context.Background(), filter).Decode(&class)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Class not found",
+		})
+	}
+	ids := class.Queues
+
+	var queue models.TAQueue
+	query := bson.M{"_id": bson.M{"$in": ids}, "isActive": true}
+	queueCollection := db.GetCollection(queue.TableName())
+
+	err = queueCollection.FindOne(context.Background(), query).Decode(&queue)
+
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Queue not found",
 		})
-
 	}
-	return c.Status(fiber.StatusOK).JSON(taQueue)
+	return c.Status(fiber.StatusOK).JSON(queue)
 }
 
 func SetActive(c *fiber.Ctx) error {
 	class := new(models.CSClass)
-	collection := db.GetCollection(class.TableName())
-	if err := c.BodyParser(class); err != nil {
+	id := c.Params("id")
+	classId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Error parsing request body: " + err.Error(),
+			"message": "Invalid class ID",
 		})
 	}
-	_, err := collection.UpdateOne(context.Background(), bson.M{"_id": class.ID}, bson.M{"$set": bson.M{"isActive": true}})
+	collection := db.GetCollection(class.TableName())
+	// make this route able to set a class as not active
+
+	filter := bson.M{"_id": classId}
+
+	update := bson.M{"$set": bson.M{"isActive": bson.M{"$not": "$isActive"}}}
+	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to set active" + err.Error(),
@@ -175,4 +211,29 @@ func SetActive(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Set active",
 	})
+}
+
+// GetActiveClasses retrieves all active classes from the database and returns them
+// as a JSON response. An active class is a class that has at least one TA queue
+// marked as active. If there are no active classes, the function returns an
+// empty array and a 200 status code. If there is an error querying the
+// database, the function returns a 500 error with an error message.
+func GetActiveClasses(c *fiber.Ctx) error {
+	classes := new([]models.CSClass)
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+
+	cursor, err := collection.Find(context.Background(), bson.M{"isActive": true})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get active classes" + err.Error(),
+		})
+	}
+	defer cursor.Close(context.Background())
+	err = cursor.All(context.Background(), classes)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get active classes" + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(classes)
 }

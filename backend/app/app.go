@@ -18,6 +18,9 @@ func Init() {
 
 	routes.UserRoutes(app)
 	routes.TicketRoutes(app)
+	routes.TAQueueRoutes(app)
+	routes.CSClassRoutes(app)
+	routes.PostRoutes(app)
 
 	log.Fatal(app.Listen(":" + BACKEND_PORT))
 
