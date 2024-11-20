@@ -13,6 +13,7 @@ import (
 	"github.com/benj-652/TAHours/routes"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
@@ -99,15 +100,17 @@ func TestGetTicket(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Valid Ticket ID", func(mt *mtest.T) {
-		mockResponse := bson.D{{"_id", "507f191e810c19729de860ea"},
+		mockResponse := bson.D{
+			{"_id", primitive.NewObjectID()},
 			{"problem", "Need help"},
 			{"description", "Stuck on HW"},
-			{"student", "507f191e810c19729de860eb"}}
-		runTicketTest(mt, "GET", "/api/tickets/get/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
+			{"student", primitive.NewObjectID()},
+		}
+		runTicketTest(mt, "GET", "/api/ticket/get/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
 	})
 
 	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
-		runTicketTest(mt, "GET", "/api/ticket/get/507f191e810c19729de860eb", "", fiber.StatusBadRequest)
+		runTicketTest(mt, "GET", "/api/ticket/get/invalid-id", "", fiber.StatusBadRequest)
 	})
 }
 
@@ -115,11 +118,17 @@ func TestResolveTicket(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Valid Resolve", func(mt *mtest.T) {
-		runTicketTest(mt, "PATCH", "/api/tickets/resolve/507f191e810c19729de860eb", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusOK)
+		mockResponse := bson.D{
+			{"_id", primitive.NewObjectID()},
+			{"problem", "Need help"},
+			{"description", "Stuck on HW"},
+			{"studentId", primitive.NewObjectID()},
+			{"taNote", ""},
+		}
+		runTicketTest(mt, "POST", "/api/ticket/resolve/507f191e810c19729de860eb", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusOK, mockResponse)
 	})
-
 	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
-		runTicketTest(mt, "PATCH", "/api/tickets/resolve/badID", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusBadRequest)
+		runTicketTest(mt, "POST", "/api/ticket/resolve/badID", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusBadRequest)
 	})
 }
 
@@ -127,11 +136,12 @@ func TestDeleteTicket(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Valid Delete", func(mt *mtest.T) {
-		runTicketTest(mt, "DELETE", "/api/tickets/delete/:id", "", fiber.StatusOK)
+		mockResponse := bson.D{{"_id", "507f191e810c19729de860eb"}}
+		runTicketTest(mt, "DELETE", "/api/ticket/delete/507f191e810c19729de860eb", "", fiber.StatusOK, mockResponse)
 	})
 
 	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
-		runTicketTest(mt, "DELETE", "/api/tickets/delete/badID", "", fiber.StatusBadRequest)
+		runTicketTest(mt, "DELETE", "/api/ticket/delete/badID", "", fiber.StatusBadRequest)
 	})
 }
 
@@ -139,11 +149,17 @@ func TestGetUserTickets(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Valid User ID", func(mt *mtest.T) {
-		mockResponse := bson.D{{"_id", "507f191e810c19729de860ea"}, {"problem", "Help on HW"}, {"description", "Details here"}, {"student", "507f191e810c19729de860eb"}}
-		runTicketTest(mt, "GET", "/api/tickets/get-user-tickets/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
+		mockResponse := bson.D{
+			{"tickets", bson.A{
+				bson.D{{"_id", primitive.NewObjectID()}, {"problem", "Help on HW"}, {"description", "Details here"}, {"student", "507f191e810c19729de860eb"}},
+				bson.D{{"_id", primitive.NewObjectID()}, {"problem", "Need help"}, {"description", "More details"}, {"student", "507f191e810c19729de860eb"}},
+			}},
+		}
+
+		runTicketTest(mt, "GET", "/api/ticket/get-user-tickets/507f191e810c19729de860eb", "", fiber.StatusOK, mockResponse)
 	})
 
 	mt.Run("Invalid User ID", func(mt *mtest.T) {
-		runTicketTest(mt, "GET", "/api/tickets/get-user-tickets/badID", "", fiber.StatusBadRequest)
+		runTicketTest(mt, "GET", "/api/ticket/get-user-tickets/badID", "", fiber.StatusBadRequest)
 	})
 }
