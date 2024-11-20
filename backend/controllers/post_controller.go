@@ -36,7 +36,12 @@ func GetAllPosts(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(posts)
 }
 
-// make a new post and save it to the database
+// CreatePost handles the creation of a new post in the database.
+// It expects a JSON payload in the request body with the post's details,
+// including "user", "title", and "body".
+// The function returns a JSON response with the newly created post's ID
+// if successful. If any required field is missing, it returns a 400 Bad Request error.
+// If there is an error creating the post, it returns a 500 Internal Server Error.
 func CreatePost(c *fiber.Ctx) error {
 	post := new(models.Post)
 
@@ -77,6 +82,15 @@ func CreatePost(c *fiber.Ctx) error {
 	})
 }
 
+// CreateComment adds a new comment to an existing post in the database.
+// The function expects the post ID as a URL parameter and a JSON payload
+// with the comment's details in the request body. The JSON payload should
+// include the "user" and "content" fields. The function returns a JSON
+// response with a success message if the comment is created successfully.
+// If the post ID is invalid, it returns a 400 Bad Request error.
+// If the user or content is missing in the request body, it returns a
+// 400 Bad Request error. If there is an error updating the post in the
+// database, it returns a 500 Internal Server Error.
 func CreateComment(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objectID, err := primitive.ObjectIDFromHex(id)

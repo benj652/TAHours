@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd backend
-          go mod tidy
+          go mod download
 
       - name: Build
         run: |
