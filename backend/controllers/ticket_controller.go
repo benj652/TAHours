@@ -63,7 +63,6 @@ func GetTicket(c *fiber.Ctx) error {
 // - id: the _id of the newly created ticket, as a hex string
 func CreateTicket(c *fiber.Ctx) error {
 	ticket := new(models.Ticket)
-
 	collection := db.GetCollection(ticket.TableName())
 
 	if err := c.BodyParser(ticket); err != nil {
@@ -96,7 +95,7 @@ func CreateTicket(c *fiber.Ctx) error {
 
 	var queue models.TAQueue
 	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue)
-	if err == nil {
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "student already has ticket in queue",
 		})
@@ -180,5 +179,48 @@ func DeleteTicket(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Ticket deleted successfully",
+	})
+}
+
+// GetUserTickets retrieves all tickets for a given user ID.
+//
+// The endpoint returns a JSON object with the following fields:
+//
+// - message: a string indicating the result of the request
+// - data: an array of Ticket objects, each containing the ticket's details
+func GetUserTickets(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid user ID",
+		})
+	}
+
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	filter := bson.M{"student": objectID}
+
+	var tickets []models.Ticket
+	cursor, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get tickets" + err.Error(),
+		})
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var ticket models.Ticket
+		err = cursor.Decode(&ticket)
+		if err != nil {
+			return err
+		}
+		tickets = append(tickets, ticket)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Tickets retrieved successfully",
+		"data":    tickets,
 	})
 }

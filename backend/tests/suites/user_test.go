@@ -98,3 +98,24 @@ func TestGetOrCreateUser(t *testing.T) {
 		})
 	}
 }
+func TestGetUser(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+
+	tests := []struct {
+		name           string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Get  User", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusOK},
+		{"Get or Create User No Access Token", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusBadRequest},
+		{"Get or Create User No Access Email", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "GET", "/api/user/get", tt.requestBody, tt.expectedStatus, bson.D{{"accessToken", "202020"}, {"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"}}, bson.D{})
+		})
+	}
+}

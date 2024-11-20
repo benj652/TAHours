@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/routes"
@@ -19,7 +20,7 @@ import (
 func setupTestAppTicket(client *mongo.Client) *fiber.App {
 	app := fiber.New()
 	db.SetTestDB(client)
-	routes.CSClassRoutes(app)
+	routes.TicketRoutes(app)
 	return app
 }
 
@@ -36,7 +37,7 @@ func runTicketTest(mt *mtest.T, method, url, requestBody string, expectedStatus 
 	}
 
 	ctx := mongo.NewSessionContext(context.Background(), session)
-	app := setupTestAppPosts(mt.Client)
+	app := setupTestAppTicket(mt.Client)
 
 	for i, response := range mockResponses {
 		if i == 0 {
@@ -73,4 +74,76 @@ func runTicketTest(mt *mtest.T, method, url, requestBody string, expectedStatus 
 	if err := session.AbortTransaction(ctx); err != nil {
 		mt.Fatalf("failed to abort transaction: %v", err)
 	}
+}
+
+func TestCreateTicket(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	tests := []struct {
+		name           string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Valid Ticket", `{"problem": "Need help with HW", "description": "Stuck on problem 2", "studentId": "507f191e810c19729de860ea"}`, fiber.StatusOK},
+		{"Missing Problem", `{"description": "Stuck on problem 2", "studentId": "507f191e810c19729de860ea"}`, fiber.StatusBadRequest},
+		{"Missing Description", `{"problem": "Need help with HW", "studentId": "507f191e810c19729de860ea"}`, fiber.StatusBadRequest},
+		{"Missing Student", `{"problem": "Need help with HW", "description": "Stuck on problem 2"}`, fiber.StatusBadRequest},
+	}
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runTicketTest(mt, "POST", "/api/ticket/create", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{}, bson.D{})
+		})
+	}
+}
+
+func TestGetTicket(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Valid Ticket ID", func(mt *mtest.T) {
+		mockResponse := bson.D{{"_id", "507f191e810c19729de860ea"},
+			{"problem", "Need help"},
+			{"description", "Stuck on HW"},
+			{"student", "507f191e810c19729de860eb"}}
+		runTicketTest(mt, "GET", "/api/tickets/get/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
+	})
+
+	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
+		runTicketTest(mt, "GET", "/api/ticket/get/507f191e810c19729de860eb", "", fiber.StatusBadRequest)
+	})
+}
+
+func TestResolveTicket(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Valid Resolve", func(mt *mtest.T) {
+		runTicketTest(mt, "PATCH", "/api/tickets/resolve/507f191e810c19729de860eb", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusOK)
+	})
+
+	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
+		runTicketTest(mt, "PATCH", "/api/tickets/resolve/badID", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusBadRequest)
+	})
+}
+
+func TestDeleteTicket(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Valid Delete", func(mt *mtest.T) {
+		runTicketTest(mt, "DELETE", "/api/tickets/delete/:id", "", fiber.StatusOK)
+	})
+
+	mt.Run("Invalid Ticket ID", func(mt *mtest.T) {
+		runTicketTest(mt, "DELETE", "/api/tickets/delete/badID", "", fiber.StatusBadRequest)
+	})
+}
+
+func TestGetUserTickets(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Valid User ID", func(mt *mtest.T) {
+		mockResponse := bson.D{{"_id", "507f191e810c19729de860ea"}, {"problem", "Help on HW"}, {"description", "Details here"}, {"student", "507f191e810c19729de860eb"}}
+		runTicketTest(mt, "GET", "/api/tickets/get-user-tickets/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
+	})
+
+	mt.Run("Invalid User ID", func(mt *mtest.T) {
+		runTicketTest(mt, "GET", "/api/tickets/get-user-tickets/badID", "", fiber.StatusBadRequest)
+	})
 }

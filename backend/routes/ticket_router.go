@@ -33,4 +33,10 @@ func TicketRoutes(app *fiber.App) {
 	 * Make sure to protect this route so that the student who made the ticket can delete it
 	**/
 	app.Delete(base+"/delete/:id", controllers.DeleteTicket)
+
+	/**
+	 * Route for a user to get all their tickets they have sent
+	 * Requires a ID entered in the params
+	**/
+	app.Get(base+"/get-user-tickets/:id", controllers.GetUserTickets)
 }
