@@ -119,3 +119,58 @@ func TestGetUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateDescription(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+	mockResponse := bson.D{
+		{"_id", "507f191e810c19729de860ea"},
+		{"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"},
+		{"description", "This is a new description"},
+		{"accessToken", "202020"},
+		{"profilePic", "https://example.com/profile-pic.jpg"},
+		{"roles", "TA"},
+	}
+	tests := []struct {
+		name           string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Update Description", `{"accessToken": "202020", "description": "This is a new description"}`, fiber.StatusOK},
+		{"Update Description No Access Token", `{"accessToken": "", "description": "This is a new description"}`, fiber.StatusOK},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "POST", "/api/user/update-description/507f191e810c19729de860ea", tt.requestBody, tt.expectedStatus, mockResponse)
+		})
+	}
+}
+func TestUpdateProfile(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+	mockResponse := bson.D{
+		{"_id", "507f191e810c19729de860ea"},
+		{"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"},
+		{"description", "This is a new description"},
+		{"accessToken", "202020"},
+		{"profilePic", "https://example.com/profile-pic.jpg"},
+		{"roles", "TA"},
+	}
+	tests := []struct {
+		name           string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Update Profile Pic", `{"accessToken": "202020", "description": "This is a new description"}`, fiber.StatusOK},
+		{"Update Profile Pic No Access Token", `{"accessToken": "", "description": "This is a new description"}`, fiber.StatusOK},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "POST", "/api/user/change-profile-pic/507f191e810c19729de860ea", tt.requestBody, tt.expectedStatus, mockResponse)
+		})
+	}
+}

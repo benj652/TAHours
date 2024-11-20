@@ -65,9 +65,9 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 }
 
 // getUserBody represents the structure of the request body for the GetUser route
-type getUserBody = struct {
-	Email       string
-	AccessToken string
+type GetUserBody = struct {
+	AccessToken string `json:"accessToken"`
+	Email       string `json:"email"`
 }
 
 // GetUser retrieves a user from the database using the email provided in the request body.
@@ -77,10 +77,12 @@ type getUserBody = struct {
 // If the user is not found, it returns a 400 Bad Request error with a message.
 func GetUser(c *fiber.Ctx) error {
 	collection := db.GetCollection((&models.User{}).TableName())
-
-	var curBody getUserBody
-	if err := c.BodyParser(curBody); err != nil {
-		return err
+	var curBody GetUserBody
+	if err := c.BodyParser(&curBody); err != nil {
+		println("here")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Error parsing request body: " + err.Error(),
+		})
 	}
 
 	if curBody.Email == "" {
@@ -108,6 +110,11 @@ func GetUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(foundUser)
 }
 
+// NewDescription represents the structure of the request body for the ChangeDescription route
+type NewDescription struct {
+	Description string `json:"description"`
+}
+
 // ChangeDescription updates a user's description in the database using the user ID and description provided in the request body.
 // The function expects the user ID as a parameter and a user JSON payload in the request body.
 // The description is the only field that gets updated.
@@ -129,8 +136,8 @@ func ChangeDescription(c *fiber.Ctx) error {
 	}
 	filter := bson.M{"_id": objectID}
 
-	var description string
-	if err := c.BodyParser(description); err != nil {
+	var description NewDescription
+	if err := c.BodyParser(&description); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Error parsing request body: " + err.Error(),
 		})
@@ -142,7 +149,7 @@ func ChangeDescription(c *fiber.Ctx) error {
 		})
 	}
 
-	update := bson.M{"$set": bson.M{"description": description}}
+	update := bson.M{"$set": bson.M{"description": description.Description}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
@@ -154,6 +161,11 @@ func ChangeDescription(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})
+}
+
+// ChangeProfilePic represents the structure of the request body for the ChangeProfilePic route
+type ChangeProfilePicBody struct {
+	newProfilePic string `json:"profileUrl"`
 }
 
 // ChangeProfilePic updates a user's profile picture in the database using the user ID provided in the URL parameters
@@ -170,7 +182,7 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 		return err
 	}
 
-	var profileUrl string
+	var profileUrl ChangeProfilePicBody
 
 	if err := c.BodyParser(&profileUrl); err != nil {
 		return err
@@ -178,7 +190,7 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 
 	filter := bson.M{"_id": userID}
 
-	update := bson.M{"$set": bson.M{"profilePic": profileUrl}}
+	update := bson.M{"$set": bson.M{"profilePic": profileUrl.newProfilePic}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
