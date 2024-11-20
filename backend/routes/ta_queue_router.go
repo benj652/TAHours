@@ -16,7 +16,7 @@ func TAQueueRoutes(app *fiber.App) {
 	* - TAId (primitive.ObjectID): The ID of the TA to add
 	* Make sure to protect to block students
 	**/
-	app.Post(base+"/add/:id", controllers.AddTaToQueue)
+	app.Post(base+"/add-ta/:id", controllers.AddTaToQueue)
 
 	/** Route to remove a TA from a TA queue. Requires an the queue ID in the URL
 	* Requeres a JSON body with the following fields:
@@ -24,7 +24,7 @@ func TAQueueRoutes(app *fiber.App) {
 	* - classId (primitive.ObjectID): The ID of the class of the queue
 	* Make sure to protect to block students
 	**/
-	app.Post(base+"/remove/:id", controllers.RemoveTaFromQueue)
+	app.Post(base+"/remove-ta/:id", controllers.RemoveTaFromQueue)
 
 	/** Route to get active tickets from the queue. Requires an the queue ID in the URL
 	*
