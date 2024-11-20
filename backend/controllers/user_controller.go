@@ -64,6 +64,12 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
+// getUserBody represents the structure of the request body for the GetUser route
+type getUserBody = struct {
+	Email       string
+	AccessToken string
+}
+
 // GetUser retrieves a user from the database using the email provided in the request body.
 // The function expects a user JSON payload in the request body.
 // Returns a JSON response with the found user.
@@ -72,18 +78,24 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 func GetUser(c *fiber.Ctx) error {
 	collection := db.GetCollection((&models.User{}).TableName())
 
-	var email string
-	if err := c.BodyParser(email); err != nil {
+	var curBody getUserBody
+	if err := c.BodyParser(curBody); err != nil {
 		return err
 	}
 
-	if email == "" {
+	if curBody.Email == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Email is required",
 		})
 	}
 
-	filter := bson.M{"email": email}
+	if curBody.AccessToken == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Access token is required",
+		})
+	}
+
+	filter := bson.M{"email": curBody.Email}
 	// update := bson.M{ "$setOnInsert": user}
 	var foundUser models.User
 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)

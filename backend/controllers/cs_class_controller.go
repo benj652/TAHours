@@ -66,6 +66,7 @@ func CreateCSClass(c *fiber.Ctx) error {
 		})
 	}
 
+	class.Queues = []primitive.ObjectID{}
 	// Not needed?
 	//if class.IsActive ==  {
 	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
