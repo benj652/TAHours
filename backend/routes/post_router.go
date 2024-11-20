@@ -26,5 +26,5 @@ func PostRoutes(app *fiber.App) {
 	 * - user (string): The user who created the post
 	 * - body (string): The body of the post
 	 */
-	app.Get(base+"/comment/:id", controllers.CreateComment)
+	app.Post(base+"/comment/:id", controllers.CreateComment)
 }

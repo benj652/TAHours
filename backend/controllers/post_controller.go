@@ -61,6 +61,7 @@ func CreatePost(c *fiber.Ctx) error {
 			"message": "Include user",
 		})
 	}
+	post.Comments = make([]models.Comment, 0)
 	collection := db.GetCollection((&models.Post{}).TableName())
 
 	insertResult, err := collection.InsertOne(context.Background(), post)
@@ -80,13 +81,23 @@ func CreateComment(c *fiber.Ctx) error {
 	id := c.Params("id")
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid post ID",
+		})
 	}
 
 	comment := new(models.Comment)
 
 	if err := c.BodyParser(comment); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Error parsing request body: " + err.Error(),
+		})
+	}
+
+	if comment.User == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Include user",
+		})
 	}
 
 	if comment.Content == "" {

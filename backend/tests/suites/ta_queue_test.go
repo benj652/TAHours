@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http/httptest"
-	"testing"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/routes"
@@ -17,15 +16,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
 
-// Setup the app for testing
-func setUpTestUserApp(client *mongo.Client) *fiber.App {
+func setupTestAppTAQueue(client *mongo.Client) *fiber.App {
 	app := fiber.New()
 	db.SetTestDB(client)
-	routes.UserRoutes(app)
+	routes.TAQueueRoutes(app)
 	return app
 }
 
-func runUserTest(mt *mtest.T, method, url, requestBody string, expectedStatus int, mockResponses ...bson.D) {
+func runQueueTest(mt *mtest.T, method, url, requestBody string, expectedStatus int, mockResponses ...bson.D) {
 	session, err := mt.Client.StartSession()
 	if err != nil {
 		mt.Fatalf("failed to start session: %v", err)
@@ -38,7 +36,7 @@ func runUserTest(mt *mtest.T, method, url, requestBody string, expectedStatus in
 	}
 
 	ctx := mongo.NewSessionContext(context.Background(), session)
-	app := setUpTestUserApp(mt.Client)
+	app := setupTestAppPosts(mt.Client)
 
 	for i, response := range mockResponses {
 		if i == 0 {
@@ -74,27 +72,5 @@ func runUserTest(mt *mtest.T, method, url, requestBody string, expectedStatus in
 
 	if err := session.AbortTransaction(ctx); err != nil {
 		mt.Fatalf("failed to abort transaction: %v", err)
-	}
-}
-
-func TestGetOrCreateUser(t *testing.T) {
-	// mtest.Setup()
-	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
-	// defer mtest.Teardown()
-
-	tests := []struct {
-		name           string
-		requestBody    string
-		expectedStatus int
-	}{
-		{"Get or Create User", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusOK},
-		{"Get or Create User No Access Token", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusBadRequest},
-		{"Get or Create User No Access Email", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
-	}
-
-	for _, tt := range tests {
-		mt.Run(tt.name, func(mt *mtest.T) {
-			runUserTest(mt, "POST", "/api/user/get-or-create", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{})
-		})
 	}
 }
