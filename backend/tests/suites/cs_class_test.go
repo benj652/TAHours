@@ -16,6 +16,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
 
+// setupTestAppCSClass initializes a new Fiber app for testing CS class routes.
+// It sets up the test database with the provided MongoDB client and registers
+// the CS class routes to the app.
 func setupTestAppCSClass(client *mongo.Client) *fiber.App {
 	app := fiber.New()
 	db.SetTestDB(client)
