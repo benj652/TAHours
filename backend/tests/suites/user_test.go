@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http/httptest"
 	"testing"
 
@@ -70,7 +70,7 @@ func TestGetOrCreateUser(t *testing.T) {
 		}
 
 		// Read and parse the response body
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			mt.Fatalf("failed to read response body: %v", err)
 		}

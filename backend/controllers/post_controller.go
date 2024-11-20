@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+
 	//"go/doc/comment"
 
 	"github.com/benj-652/TAHours/db"
@@ -20,11 +22,15 @@ func GetAllPosts(c *fiber.Ctx) error {
 
 	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get posts" + err.Error(),
+		})
 	}
-
 	if err = cursor.All(context.Background(), posts); err != nil {
-		return err
+		fmt.Println(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get posts" + err.Error(),
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(posts)
@@ -50,6 +56,11 @@ func CreatePost(c *fiber.Ctx) error {
 		})
 	}
 
+	if post.User == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Include user",
+		})
+	}
 	collection := db.GetCollection((&models.Post{}).TableName())
 
 	insertResult, err := collection.InsertOne(context.Background(), post)
