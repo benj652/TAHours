@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"io"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/routes"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
@@ -36,7 +38,7 @@ func runQueueTest(mt *mtest.T, method, url, requestBody string, expectedStatus i
 	}
 
 	ctx := mongo.NewSessionContext(context.Background(), session)
-	app := setupTestAppPosts(mt.Client)
+	app := setupTestAppTAQueue(mt.Client)
 
 	for i, response := range mockResponses {
 		if i == 0 {
@@ -73,4 +75,44 @@ func runQueueTest(mt *mtest.T, method, url, requestBody string, expectedStatus i
 	if err := session.AbortTransaction(ctx); err != nil {
 		mt.Fatalf("failed to abort transaction: %v", err)
 	}
+}
+
+func TestGetAllTAQueues(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Get All TA Queues", func(mt *mtest.T) {
+		runQueueTest(mt, "GET", "/api/ta-queue/all", "", fiber.StatusOK, bson.D{})
+	})
+}
+
+func TestAddTaToQueue(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Add TA to Queue", func(mt *mtest.T) {
+		runQueueTest(mt, "POST", "/api/ta-queue/add-ta/507f191e810c19729de860eb", `{"TAId": "507f191e810c19729de860ea"}`, fiber.StatusOK, bson.D{})
+	})
+
+	mt.Run("Invalid Queue ID", func(mt *mtest.T) {
+		runQueueTest(mt, "POST", "/api/ta-queue/add-ta/invalid_queue_id", `{"TAId": "507f191e810c19729de860ea"}`, fiber.StatusBadRequest, bson.D{})
+	})
+}
+
+func TestRemoveTaFromQueue(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Remove TA from Queue", func(mt *mtest.T) {
+		mt.AddMockResponses(mtest.CreateCursorResponse(1, "db.collection", mtest.FirstBatch, bson.D{
+			{Key: "_id", Value: primitive.NewObjectID()},
+			{Key: "TAs", Value: []primitive.ObjectID{primitive.NewObjectID()}},
+			{Key: "isActive", Value: true},
+		}))
+
+		runQueueTest(mt, "POST", "/api/ta-queue/remove-ta/507f191e810c19729de860eb", `{"TAId": "507f191e810c19729de860ea", "classId": "507f191e810c19729de860ec"}`, fiber.StatusOK, bson.D{})
+	})
+
+	mt.Run("Invalid Queue ID", func(mt *mtest.T) {
+		runQueueTest(mt, "POST", "/api/ta-queue/remove-ta/invalid_queue_id", `{"TAId": "507f191e810c19729de860ea", "classId": "507f191e810c19729de860ec"}`, fiber.StatusBadRequest, bson.D{
+			{Key: "message", Value: "Invalid queue ID"},
+		})
+	})
 }

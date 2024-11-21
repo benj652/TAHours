@@ -62,6 +62,10 @@ func GetAllTAQueues(c *fiber.Ctx) error {
 // 	})
 // }
 
+type AddTaToQueueRequest struct {
+	TaId primitive.ObjectID `json:"taId"`
+}
+
 // AddTaToQueue adds a TA to an existing TA queue in the database.
 // The function expects the queue's ID as a URL parameter and the TA's ID to add in the request body.
 // It returns a JSON response with the queue's ID if the TA is successfully added,
@@ -78,7 +82,7 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	// Currently, we are storing the TA's ID in the queue model, however, this will result in an extra API call
 	// to get the TA's information to display on the queue. It might be smart to either store the entire TA objects
 	// in the queue model, or maybe just the profile picture and name to display.
-	var taId primitive.ObjectID
+	var taId AddTaToQueueRequest
 	if err := c.BodyParser(&taId); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Error parsing request body: " + err.Error(),
@@ -89,12 +93,13 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	collection := db.GetCollection(taQueue.TableName())
 
 	// Adds the TA to the queue. This means they are now shown as active and TAing
-	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"TAs": taId}})
+	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"TAs": taId.TaId}})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to add TA to queue" + err.Error(),
 		})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id": taQueue.ID,
 	})
