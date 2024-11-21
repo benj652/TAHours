@@ -83,13 +83,8 @@ func TestGetCSClass(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Get a CS Class", func(mt *mtest.T) {
-		runPostTest(mt, "GET", "/api/cs-class/get/:id", "", fiber.StatusOK, bson.D{}, bson.D{})
-	})
-
-	mt.Run("Create and Get a CS Class", func(mt *mtest.T) {
-		runPostTest(mt, "POST", "/api/cs-class/create", `{"name": "CS330", "Semester": "Fall", "Year": 2024}: "This is a new CS Class"}`, fiber.StatusOK, bson.D{})
-		runPostTest(mt, "GET", "/api/cs-class/get/:id", "", fiber.StatusOK, bson.D{{"user", "Slump"}, {"title", "New Post"}, {"body", "This is a new post"}}, bson.D{}) // definitely wrong
-	})
+		runCSClassTest(mt, "GET", "/api/cs-class/get/673e01c0b881d18ea5b68f0a", `{"name": "CS330", "Semester": "Fall", "Year": 2024}: "This is a new CS Class"}`, fiber.StatusOK, bson.D{{"CSClass", bson.D{{"name", "CS330"}, {"Semester", "Fall"}, {"Year", 2024}, {"_id", "673e01c0b881d18ea5b68f0a"}}}})
+	}) //twentyfourcharactersgood
 }
 
 func TestCreateCSClass(t *testing.T) {
@@ -100,15 +95,35 @@ func TestCreateCSClass(t *testing.T) {
 		requestBody    string
 		expectedStatus int
 	}{
-		{"Create CSClass", `{"name": "CS330", "Semester": "Fall", "Year": 2024}`, fiber.StatusOK},
-		{"Create CSClass No Name", `{"name": "", "Semester": "Fall", "Year": 2024}`, fiber.StatusBadRequest},
-		{"Create CSClass No Semester", `{"name": "CS330", "Semester: "", "Year:" 2024}`, fiber.StatusBadRequest},
-		{"Create CSClass No Year", `{"name": "", "Semester": "Fall", "Year": ""}`, fiber.StatusBadRequest},
+		{"Create CS Class", `{"name": "CS330", "Semester": "Fall", "Year": 2024}`, fiber.StatusOK},
+		{"Create CS Class No Name", `{"name": "", "Semester": "Fall", "Year": 2024}`, fiber.StatusBadRequest},
+		{"Create CS Class No Semester", `{"name": "CS330", "Semester: "", "Year:" 2024}`, fiber.StatusBadRequest},
+		{"Create CS Class No Year", `{"name": "", "Semester": "Fall", "Year": ""}`, fiber.StatusBadRequest},
 	}
 
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {
 			runCSClassTest(mt, "POST", "/api/cs-class/create", tt.requestBody, tt.expectedStatus, bson.D{})
+		})
+	}
+}
+
+func TestCreateTAQueue(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	tests := []struct {
+		name           string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Create TAQueue", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "330", "Directions": "Go to classroom RAHHH"}`, fiber.StatusOK},
+		{"Create TAQueue No Queue", `{"TAs": [], "Class": "330", "Directions": "Go to classroom RAHHH"}`, fiber.StatusBadRequest},
+		{"Create TAQueue No Class", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "", "Directions": "Go to classroom RAHHH"}`, fiber.StatusBadRequest},
+		{"Create TAQueue No Directions", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "330", "Directions": ""}`, fiber.StatusBadRequest}}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runCSClassTest(mt, "POST", "/api/cs-class/create-ta-queue", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{}, bson.D{})
 		})
 	}
 }

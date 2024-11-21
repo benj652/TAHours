@@ -37,7 +37,7 @@ func GetCSClass(c *fiber.Ctx) error {
 	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(class)
 
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Class not found",
 		})
 	}
@@ -106,7 +106,7 @@ func CreateCSClass(c *fiber.Ctx) error {
 func CreateTAQueue(c *fiber.Ctx) error {
 	taQueue := new(models.TAQueue)
 	collection := db.GetCollection(taQueue.TableName())
-	if err := c.BodyParser(taQueue); err != nil {
+	if err := c.BodyParser(&taQueue); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Error parsing request body: " + err.Error(),
 		})
@@ -168,7 +168,7 @@ func GetActiveTAQueue(c *fiber.Ctx) error {
 	}
 	err = collection.FindOne(context.Background(), filter).Decode(&class)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Class not found",
 		})
 	}
