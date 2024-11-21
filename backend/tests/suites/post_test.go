@@ -106,7 +106,7 @@ func TestGetAllPosts(t *testing.T) {
 
 	mt.Run("Create and Get All Posts", func(mt *mtest.T) {
 		runPostTest(mt, "POST", "/api/posts/create", `{"user": "Slump", "title": "New Post", "body": "This is a new post"}`, fiber.StatusOK, bson.D{})
-		runPostTest(mt, "GET", "/api/posts/all", "", fiber.StatusOK, bson.D{{"user", "Slump"}, {"title", "New Post"}, {"body", "This is a new post"}}, bson.D{})
+		runPostTest(mt, "GET", "/api/posts/all", "", fiber.StatusOK, bson.D{{Key: "user", Value: "Slump"}, {Key: "title", Value: "New Post"}, {Key: "body", Value: "This is a new post"}}, bson.D{})
 	})
 }
 
@@ -124,7 +124,7 @@ func TestComments(t *testing.T) {
 
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {
-			runPostTest(mt, "POST", "/api/posts/comment/673e01c0b881d18ea5b68f0a", tt.requestBody, tt.expectedStatus, bson.D{{"post", bson.D{{"user", "Slump"}, {"title", "New Post"}, {"body", "This is a new post"}, {"_id", "673e01c0b881d18ea5b68f0a"}}}})
+			runPostTest(mt, "POST", "/api/posts/comment/673e01c0b881d18ea5b68f0a", tt.requestBody, tt.expectedStatus, bson.D{{Key: "post", Value: bson.D{{Key: "user", Value: "Slump"}, {Key: "title", Value: "New Post"}, {Key: "body", Value: "This is a new post"}, {Key: "_id", Value: "673e01c0b881d18ea5b68f0a"}}}})
 		})
 	}
 }

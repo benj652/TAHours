@@ -119,7 +119,9 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	id := c.Params("id")
 	queueID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid queue ID",
+		})
 	}
 	var removeRequest RemoveTaRequest
 	collection := db.GetCollection((&models.TAQueue{}).TableName())
@@ -184,7 +186,9 @@ func GetActiveTickets(c *fiber.Ctx) error {
 	id := c.Params("id")
 	queueID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid queue ID",
+		})
 	}
 	var taQueue models.TAQueue
 	filter := bson.M{"_id": queueID}
@@ -199,6 +203,12 @@ func GetActiveTickets(c *fiber.Ctx) error {
 
 	ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
 
+	if len(taQueue.Tickets) == 0 {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+
 	ticketsFilter := bson.M{"_id": bson.M{"$in": taQueue.Tickets},
 		"taId": bson.M{"$eq": nil}}
 
@@ -210,8 +220,14 @@ func GetActiveTickets(c *fiber.Ctx) error {
 	}
 	defer cursor.Close(context.Background())
 
-	var tickets []models.Ticket
-	if err = cursor.All(context.Background(), &tickets); err != nil {
+	defer func() {
+		if cursor != nil {
+			cursor.Close(context.Background())
+		}
+	}()
+
+	tickets := new([]models.Ticket)
+	if err = cursor.All(context.Background(), tickets); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to get active tickets" + err.Error(),
 		})

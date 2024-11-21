@@ -13,6 +13,7 @@ import (
 	"github.com/benj-652/TAHours/routes"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
@@ -83,7 +84,7 @@ func TestGetCSClass(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Get a CS Class", func(mt *mtest.T) {
-		runCSClassTest(mt, "GET", "/api/cs-class/get/673e01c0b881d18ea5b68f0a", `{"name": "CS330", "Semester": "Fall", "Year": 2024}: "This is a new CS Class"}`, fiber.StatusOK, bson.D{{"CSClass", bson.D{{"name", "CS330"}, {"Semester", "Fall"}, {"Year", 2024}, {"_id", "673e01c0b881d18ea5b68f0a"}}}})
+		runCSClassTest(mt, "GET", "/api/cs-class/get/673e01c0b881d18ea5b68f0a", `{"name": "CS330", "Semester": "Fall", "Year": 2024}: "This is a new CS Class"}`, fiber.StatusOK, bson.D{{Key: "CSClass", Value: bson.D{{Key: "name", Value: "CS330"}, {Key: "Semester", Value: "Fall"}, {Key: "Year", Value: 2024}, {Key: "_id", Value: "673e01c0b881d18ea5b68f0a"}}}})
 	}) //twentyfourcharactersgood
 }
 
@@ -126,4 +127,64 @@ func TestCreateTAQueue(t *testing.T) {
 			runCSClassTest(mt, "POST", "/api/cs-class/create-ta-queue", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{}, bson.D{})
 		})
 	}
+}
+
+// set-active
+func TestSetActive(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	tests := []struct {
+		name           string
+		id             string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Set Active No Name", "53e01c0b881d18ea5b68f0a", `{"name": "", "Semester": "Fall", "Year": 2024}`, fiber.StatusBadRequest},
+		{"Set Active Invalid ID", "bruh", `{"name": "CS330", "Semester": "Fall", "Year": 2024}`, fiber.StatusBadRequest},
+		{"Set Active No Semester", "53e01c0b881d18ea5b68f0a", `{"name": "CS330", "Semester: "", "Year:" 2024}`, fiber.StatusBadRequest},
+		{"Set Active No Year", "53e01c0b881d18ea5b68f0a", `{"name": "", "Semester": "Fall", "Year": ""}`, fiber.StatusBadRequest},
+	}
+	mockResponse := bson.D{
+		{Key: "_id", Value: "53e01c0b881d18ea5b68f0a"},
+		{Key: "name", Value: "CS330"},
+		{Key: "activeQueue", Value: "53e01c0b881d18ea5b68f0a"},
+		{Key: "queues", Value: []primitive.ObjectID{}},
+		{Key: "isActive", Value: true},
+		{Key: "semester", Value: "Fall"},
+		{Key: "year", Value: 2024},
+	}
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runCSClassTest(mt, "POST", "/api/cs-class/set-active/"+tt.id, tt.requestBody, tt.expectedStatus, mockResponse, bson.D{})
+		})
+	}
+}
+
+// get-active-classes
+func TestGetActiveClasses(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mockResponse := bson.D{
+		{Key: "_id", Value: "673e01c0b881d18ea5b68f0a"},
+		{Key: "name", Value: "CS330"},
+		{Key: "activeQueue", Value: "673e01c0b881d18ea5b68f0a"},
+		{Key: "queues", Value: []primitive.ObjectID{}},
+		{Key: "isActive", Value: true},
+		{Key: "semester", Value: "Fall"},
+		{Key: "year", Value: 2024},
+	}
+
+	mockResponse2 := bson.D{
+		{Key: "_id", Value: "673e01c0b881d18ea5b68f0a"},
+		{Key: "name", Value: "CS330"},
+		{Key: "activeQueue", Value: "673e01c0b881d18ea5b68f0a"},
+		{Key: "queues", Value: []primitive.ObjectID{}},
+		{Key: "isActive", Value: false},
+		{Key: "semester", Value: "Fall"},
+		{Key: "year", Value: 2024},
+	}
+
+	mt.Run("Get Active Classes", func(mt *mtest.T) {
+		runCSClassTest(mt, "GET", "/api/cs-class/get-active-classes", "", fiber.StatusOK, mockResponse, mockResponse2, mockResponse2, bson.D{}, bson.D{})
+	})
 }

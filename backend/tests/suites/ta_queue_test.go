@@ -107,12 +107,39 @@ func TestRemoveTaFromQueue(t *testing.T) {
 			{Key: "isActive", Value: true},
 		}))
 
-		runQueueTest(mt, "POST", "/api/ta-queue/remove-ta/507f191e810c19729de860eb", `{"TAId": "507f191e810c19729de860ea", "classId": "507f191e810c19729de860ec"}`, fiber.StatusOK, bson.D{})
+		runQueueTest(mt, "POST", "/api/ta-queue/remove-ta/507f191e810c19729de860eb", `{"TAId": "507f191e810c19729de860ea", "classId": "507f191e810c19729de860ec"}`, fiber.StatusOK, bson.D{}, bson.D{}, bson.D{})
 	})
 
 	mt.Run("Invalid Queue ID", func(mt *mtest.T) {
 		runQueueTest(mt, "POST", "/api/ta-queue/remove-ta/invalid_queue_id", `{"TAId": "507f191e810c19729de860ea", "classId": "507f191e810c19729de860ec"}`, fiber.StatusBadRequest, bson.D{
 			{Key: "message", Value: "Invalid queue ID"},
-		})
+		}, bson.D{}, bson.D{}, bson.D{})
 	})
+}
+
+func TestGetActiveTickets(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	tests := []struct {
+		name           string
+		queueId        string
+		requestBody    string
+		expectedStatus int
+	}{
+		{"Get Active Tickets", "507f191e810c19729de860eb", "", fiber.StatusOK},
+		{"Invalid Queue ID", "invalid_queue_id", "", fiber.StatusBadRequest},
+	}
+
+	mockResponse := bson.D{
+		{Key: "_id", Value: primitive.NewObjectID()},
+		{Key: "problem", Value: "Need help"},
+		{Key: "description", Value: "Stuck on HW"},
+		{Key: "student", Value: primitive.NewObjectID()},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runQueueTest(mt, "GET", "/api/ta-queue/active-tickets/"+tt.queueId, tt.requestBody, tt.expectedStatus, mockResponse, bson.D{}, bson.D{})
+		})
+	}
 }

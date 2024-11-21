@@ -110,12 +110,18 @@ func TestGetUser(t *testing.T) {
 	}{
 		{"Get  User", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusOK},
 		{"Get or Create User No Access Token", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusBadRequest},
-		{"Get or Create User No Access Email", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
+		{"Get or Create User No Access Email", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
 	}
+
+	mockResponse := bson.D{
+		{Key: "accessToken", Value: "202020"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"}}
 
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {
-			runUserTest(mt, "GET", "/api/user/get", tt.requestBody, tt.expectedStatus, bson.D{{"accessToken", "202020"}, {"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"}}, bson.D{})
+			runUserTest(mt, "GET", "/api/user/get", tt.requestBody, tt.expectedStatus, mockResponse, bson.D{})
 		})
 	}
 }
@@ -125,12 +131,14 @@ func TestUpdateDescription(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	// defer mtest.Teardown()
 	mockResponse := bson.D{
-		{"_id", "507f191e810c19729de860ea"},
-		{"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"},
-		{"description", "This is a new description"},
-		{"accessToken", "202020"},
-		{"profilePic", "https://example.com/profile-pic.jpg"},
-		{"roles", "TA"},
+		{Key: "_id", Value: "507f191e810c19729de860ea"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"},
+		{Key: "description", Value: "This is a new description"},
+		{Key: "accessToken", Value: "202020"},
+		{Key: "profilePic", Value: "https://example.com/profile-pic.jpg"},
+		{Key: "roles", Value: "TA"},
 	}
 	tests := []struct {
 		name           string
@@ -152,12 +160,14 @@ func TestUpdateProfile(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	// defer mtest.Teardown()
 	mockResponse := bson.D{
-		{"_id", "507f191e810c19729de860ea"},
-		{"firstName", "Slump"}, {"lastName", "Gorb"}, {"email", "segorb27@colby.edu"},
-		{"description", "This is a new description"},
-		{"accessToken", "202020"},
-		{"profilePic", "https://example.com/profile-pic.jpg"},
-		{"roles", "TA"},
+		{Key: "_id", Value: "507f191e810c19729de860ea"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"},
+		{Key: "description", Value: "This is a new description"},
+		{Key: "accessToken", Value: "202020"},
+		{Key: "profilePic", Value: "https://example.com/profile-pic.jpg"},
+		{Key: "roles", Value: "TA"},
 	}
 	tests := []struct {
 		name           string
@@ -171,6 +181,94 @@ func TestUpdateProfile(t *testing.T) {
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {
 			runUserTest(mt, "POST", "/api/user/change-profile-pic/507f191e810c19729de860ea", tt.requestBody, tt.expectedStatus, mockResponse)
+		})
+	}
+}
+
+func TestUpdateRoleTA(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+	mockResponse := bson.D{
+		{Key: "_id", Value: "507f191e810c19729de860ea"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"},
+		{Key: "description", Value: "This is a new description"},
+		{Key: "accessToken", Value: "202020"},
+		{Key: "profilePic", Value: "https://example.com/profile-pic.jpg"},
+		{Key: "roles", Value: "TA"},
+	}
+	tests := []struct {
+		name           string
+		taID           string
+		expectedStatus int
+	}{
+		{"Update Role", "507f191e810c19729de860ea", fiber.StatusOK},
+		{"Update Role Invalid ID", "ooga", fiber.StatusBadRequest},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "POST", "/api/user/update-role-ta/"+tt.taID, "", tt.expectedStatus, mockResponse, bson.D{}, bson.D{})
+		})
+	}
+}
+func TestUpdateRoleStudent(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+	mockResponse := bson.D{
+		{Key: "_id", Value: "507f191e810c19729de860ea"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"},
+		{Key: "description", Value: "This is a new description"},
+		{Key: "accessToken", Value: "202020"},
+		{Key: "profilePic", Value: "https://example.com/profile-pic.jpg"},
+		{Key: "roles", Value: "TA"},
+	}
+	tests := []struct {
+		name           string
+		taID           string
+		expectedStatus int
+	}{
+		{"Update Role", "507f191e810c19729de860ea", fiber.StatusOK},
+		{"Update Role Invalid ID", "ooga", fiber.StatusBadRequest},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "POST", "/api/user/update-role-student/"+tt.taID, "", tt.expectedStatus, mockResponse, bson.D{}, bson.D{})
+		})
+	}
+}
+func TestUpdateRoleProfessor(t *testing.T) {
+	// mtest.Setup()
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	// defer mtest.Teardown()
+	mockResponse := bson.D{
+		{Key: "_id", Value: "507f191e810c19729de860ea"},
+		{Key: "firstName", Value: "Slump"},
+		{Key: "lastName", Value: "Gorb"},
+		{Key: "email", Value: "segorb27@colby.edu"},
+		{Key: "description", Value: "This is a new description"},
+		{Key: "accessToken", Value: "202020"},
+		{Key: "profilePic", Value: "https://example.com/profile-pic.jpg"},
+		{Key: "roles", Value: "TA"},
+	}
+	tests := []struct {
+		name           string
+		taID           string
+		expectedStatus int
+	}{
+		{"Update Role", "507f191e810c19729de860ea", fiber.StatusOK},
+		{"Update Role Invalid ID", "ooga", fiber.StatusBadRequest},
+	}
+
+	for _, tt := range tests {
+		mt.Run(tt.name, func(mt *mtest.T) {
+			runUserTest(mt, "POST", "/api/user/update-role-professor/"+tt.taID, "", tt.expectedStatus, mockResponse, bson.D{}, bson.D{})
 		})
 	}
 }

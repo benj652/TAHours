@@ -101,10 +101,10 @@ func TestGetTicket(t *testing.T) {
 
 	mt.Run("Valid Ticket ID", func(mt *mtest.T) {
 		mockResponse := bson.D{
-			{"_id", primitive.NewObjectID()},
-			{"problem", "Need help"},
-			{"description", "Stuck on HW"},
-			{"student", primitive.NewObjectID()},
+			{Key: "_id", Value: primitive.NewObjectID()},
+			{Key: "problem", Value: "Need help"},
+			{Key: "description", Value: "Stuck on HW"},
+			{Key: "student", Value: primitive.NewObjectID()},
 		}
 		runTicketTest(mt, "GET", "/api/ticket/get/507f191e810c19729de860ea", "", fiber.StatusOK, mockResponse)
 	})
@@ -119,11 +119,11 @@ func TestResolveTicket(t *testing.T) {
 
 	mt.Run("Valid Resolve", func(mt *mtest.T) {
 		mockResponse := bson.D{
-			{"_id", primitive.NewObjectID()},
-			{"problem", "Need help"},
-			{"description", "Stuck on HW"},
-			{"studentId", primitive.NewObjectID()},
-			{"taNote", ""},
+			{Key: "_id", Value: primitive.NewObjectID()},
+			{Key: "problem", Value: "Need help"},
+			{Key: "description", Value: "Stuck on HW"},
+			{Key: "studentId", Value: primitive.NewObjectID()},
+			{Key: "taNote", Value: ""},
 		}
 		runTicketTest(mt, "POST", "/api/ticket/resolve/507f191e810c19729de860eb", `{"taId": "507f191e810c19729de860eb", "taNote": "Resolved issue"}`, fiber.StatusOK, mockResponse)
 	})
@@ -136,7 +136,7 @@ func TestDeleteTicket(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Valid Delete", func(mt *mtest.T) {
-		mockResponse := bson.D{{"_id", "507f191e810c19729de860eb"}}
+		mockResponse := bson.D{{Key: "_id", Value: "507f191e810c19729de860eb"}}
 		runTicketTest(mt, "DELETE", "/api/ticket/delete/507f191e810c19729de860eb", "", fiber.StatusOK, mockResponse)
 	})
 
@@ -150,9 +150,9 @@ func TestGetUserTickets(t *testing.T) {
 
 	mt.Run("Valid User ID", func(mt *mtest.T) {
 		mockResponse := bson.D{
-			{"tickets", bson.A{
-				bson.D{{"_id", primitive.NewObjectID()}, {"problem", "Help on HW"}, {"description", "Details here"}, {"student", "507f191e810c19729de860eb"}},
-				bson.D{{"_id", primitive.NewObjectID()}, {"problem", "Need help"}, {"description", "More details"}, {"student", "507f191e810c19729de860eb"}},
+			{Key: "tickets", Value: bson.A{
+				bson.D{{Key: "_id", Value: primitive.NewObjectID()}, {Key: "problem", Value: "Help on HW"}, {Key: "description", Value: "Details here"}, {Key: "student", Value: "507f191e810c19729de860eb"}},
+				bson.D{{Key: "_id", Value: primitive.NewObjectID()}, {Key: "problem", Value: "Need help"}, {Key: "description", Value: "More details"}, {Key: "student", Value: "507f191e810c19729de860eb"}},
 			}},
 		}
 

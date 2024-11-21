@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
@@ -230,8 +231,8 @@ func GetActiveClasses(c *fiber.Ctx) error {
 		})
 	}
 	defer cursor.Close(context.Background())
-	err = cursor.All(context.Background(), classes)
-	if err != nil {
+	if err = cursor.All(context.Background(), classes); err != nil {
+		fmt.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to get active classes" + err.Error(),
 		})

@@ -165,7 +165,7 @@ func ChangeDescription(c *fiber.Ctx) error {
 
 // ChangeProfilePic represents the structure of the request body for the ChangeProfilePic route
 type ChangeProfilePicBody struct {
-	newProfilePic string `json:"profileUrl"`
+	NewProfilePic string `json:"profileUrl"`
 }
 
 // ChangeProfilePic updates a user's profile picture in the database using the user ID provided in the URL parameters
@@ -190,7 +190,7 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 
 	filter := bson.M{"_id": userID}
 
-	update := bson.M{"$set": bson.M{"profilePic": profileUrl.newProfilePic}}
+	update := bson.M{"$set": bson.M{"profilePic": profileUrl.NewProfilePic}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
@@ -216,7 +216,9 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 	userID, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ID",
+		})
 	}
 
 	var role = roles.Ta
@@ -235,18 +237,18 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 	}
 
 	// more magic strings
-	// makes sure that professors can not downgrade admins or other professors
-	if user.Roles == roles.Professor || user.Roles == roles.Admin {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "You do not have permission to update this user",
-		})
-	}
+	// makes sure that professors can not downgrade admins or other professors. Move this into middleware
+	// if user.Roles == roles.Professor || user.Roles == roles.Admin {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "You do not have permission to update this user",
+	// 	})
+	// }
 	update := bson.M{"$set": bson.M{"role": role}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to update user",
+			"message": "Failed to update user" + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -282,16 +284,16 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 			"message": "User not found",
 		})
 	}
-	if user.Roles == roles.Professor || user.Roles == roles.Admin { // makes sure that professors can not downgrade admins or other professors
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "You do not have permission to update this user",
-		})
-	}
+	// if user.Roles == roles.Professor || user.Roles == roles.Admin { // makes sure that professors can not downgrade admins or other professors Move this into middleware
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "You do not have permission to update this user",
+	// 	})
+	// }
 
 	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to update user",
+			"message": "Failed to update user" + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -313,7 +315,9 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 	userID, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ID",
+		})
 	}
 
 	// magic string, fix later
