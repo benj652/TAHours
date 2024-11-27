@@ -128,6 +128,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"message": "Include Directions",
 		})
 	}
+	taQueue.Tickets = []primitive.ObjectID{}
 	insertResult, err := collection.InsertOne(context.Background(), taQueue)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -194,6 +195,10 @@ func GetActiveTAQueue(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(queue)
 }
 
+type SetActiveRequest struct {
+	IsActive bool `json:"isActive"`
+}
+
 // SetActive marks a CSClass as active. It takes a class ID as a path parameter.
 // If the class is not found, it returns a 400 error with a message "Invalid class ID".
 // If the class is found, it updates the class to be active and returns a 200 status with a message "Set active".
@@ -209,13 +214,20 @@ func SetActive(c *fiber.Ctx) error {
 			"message": "Invalid class ID" + err.Error(),
 		})
 	}
+
+	body := new(SetActiveRequest)
+	if err := c.BodyParser(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Error parsing request body: " + err.Error(),
+		})
+	}
 	collection := db.GetCollection(class.TableName())
 	// make this route able to set a class as not active
 
 	filter := bson.M{"_id": classId}
 
 	// fix later make it conditional
-	update := bson.M{"$set": bson.M{"isactive": true}}
+	update := bson.M{"$set": bson.M{"isactive": body.IsActive}}
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

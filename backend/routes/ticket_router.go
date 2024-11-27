@@ -18,12 +18,13 @@ func TicketRoutes(app *fiber.App) {
 	 * - description (string): The description of the ticket
 	 * - studentId (primitive.ObjectID): The ID of the student who is having the problem
 	**/
-	app.Post(base+"/create", controllers.CreateTicket)
+	app.Post(base+"/create/:id", controllers.CreateTicket)
 
 	/**
 	 * Route to resolve a ticket
-	 * Requires an ticket ID in the URL
-	 *
+	 * Requires an ticket ID in the URL and a JSON body with the following fields:
+	 * - taId (primitive.ObjectID): The ID of the TA
+	 * - taNote (string): The note from the TA
 	 * Make sure to protect this route so that only TAs, professors and admins can use it
 	**/
 	app.Post(base+"/resolve/:id", controllers.ResolveTicket)

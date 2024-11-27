@@ -62,6 +62,15 @@ func GetTicket(c *fiber.Ctx) error {
 // - message: a string indicating the result of the request
 // - id: the _id of the newly created ticket, as a hex string
 func CreateTicket(c *fiber.Ctx) error {
+	id := c.Params("id")
+	queueId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid queue ID",
+		})
+	}
+
 	ticket := new(models.Ticket)
 	collection := db.GetCollection(ticket.TableName())
 
@@ -90,20 +99,6 @@ func CreateTicket(c *fiber.Ctx) error {
 			"message": "Student is required",
 		})
 	}
-
-	queueTickets := db.GetCollection((&models.TAQueue{}).TableName()) // get queue collection
-
-	// check if student already has ticket in queue
-	filter := bson.M{"tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
-
-	var queue models.TAQueue
-	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue) // find queue
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "student already has ticket in queue",
-		})
-	}
-
 	insertResult, err := collection.InsertOne(context.Background(), ticket) // insert ticket
 
 	if err != nil {
@@ -112,10 +107,39 @@ func CreateTicket(c *fiber.Ctx) error {
 		})
 	}
 
+	queueCollection := db.GetCollection((&models.TAQueue{}).TableName()) // get queue collection
+
+	queueToUpdate := bson.M{"_id": queueId}
+	updateQuery := bson.M{"$push": bson.M{"tickets": insertResult.InsertedID.(primitive.ObjectID)}}
+
+	_, err = queueCollection.UpdateOne(context.Background(), queueToUpdate, updateQuery)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update queue" + err.Error(),
+		})
+	}
+
+	// // check if student already has ticket in queue depricated for now.
+	// filter := bson.M{"isActive": true, "tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
+
+	// var queue models.TAQueue
+	// err := queueTickets.FindOne(context.Background(), filter).Decode(&queue) // find queue
+	// if err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"message": "student already has ticket in queue",
+	// 	})
+	// }
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Ticket created successfully",
 		"id":      insertResult.InsertedID.(primitive.ObjectID).Hex(),
 	})
+}
+
+type ResolveTicketBody struct {
+	TaId   primitive.ObjectID `json:"taId"` //maybe change this in the final product so it is captured through  the JWT
+	TaNote string             `json:"taNote"`
 }
 
 // ResolveTicket marks a ticket with the TA id and a note, signifying that the ticket has been resolved
@@ -137,10 +161,28 @@ func ResolveTicket(c *fiber.Ctx) error {
 		})
 	}
 
+	body := new(ResolveTicketBody)
+	if err := c.BodyParser(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request body",
+		})
+	}
+
+	if body.TaId == primitive.NilObjectID {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "TA ID is required",
+		})
+	}
+
+	if body.TaNote == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "TA note is required",
+		})
+	}
 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
 	filter := bson.M{"_id": objectID}
-	update := bson.M{"$set": bson.M{"taNote": "Resolved"}}
+	update := bson.M{"$set": bson.M{"ta": body.TaId, "taNote": body.TaNote}}
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {

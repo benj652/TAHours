@@ -91,7 +91,7 @@ func TestCreateTicket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {
-			runTicketTest(mt, "POST", "/api/ticket/create", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{}, bson.D{})
+			runTicketTest(mt, "POST", "/api/ticket/create/507f191e810c19729de860ea", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{}, bson.D{})
 		})
 	}
 }

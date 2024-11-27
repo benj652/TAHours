@@ -209,8 +209,7 @@ func GetActiveTickets(c *fiber.Ctx) error {
 		})
 	}
 
-	ticketsFilter := bson.M{"_id": bson.M{"$in": taQueue.Tickets},
-		"taId": bson.M{"$eq": nil}}
+	ticketsFilter := bson.M{"_id": bson.M{"$in": taQueue.Tickets}, "ta": primitive.NilObjectID}
 
 	cursor, err := ticketCollection.Find(context.Background(), ticketsFilter)
 	if err != nil {
