@@ -26,7 +26,7 @@ func CSClassRoutes(app *fiber.App) {
 	 * Create a new TA queue for the class.
 	 * Requires a JSON body with the following fields:
 	 * - TAs ([]primitive.ObjectID) list including the TA who created the queue
-	 * - Class (primitive.ObjectID) of the class of the queue
+	 * - Class (string) of the class of the queue
 	 * - Directions (string) of the directions of the queue
 	 */
 	app.Post(base+"/create-ta-queue", controllers.CreateTAQueue)

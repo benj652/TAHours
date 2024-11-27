@@ -81,7 +81,7 @@ func TestGetAllTAQueues(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
 	mt.Run("Get All TA Queues", func(mt *mtest.T) {
-		runQueueTest(mt, "GET", "/api/ta-queue/all", "", fiber.StatusOK, bson.D{})
+		runQueueTest(mt, "GET", "/api/ta-queue/all", "", fiber.StatusOK, bson.D{}, bson.D{}, bson.D{})
 	})
 }
 

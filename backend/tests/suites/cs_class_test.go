@@ -117,10 +117,10 @@ func TestCreateTAQueue(t *testing.T) {
 		requestBody    string
 		expectedStatus int
 	}{
-		{"Create TAQueue", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "330", "Directions": "Go to classroom RAHHH"}`, fiber.StatusOK},
-		{"Create TAQueue No Queue", `{"TAs": [], "Class": "330", "Directions": "Go to classroom RAHHH"}`, fiber.StatusBadRequest},
+		{"Create TAQueue", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "673e01c0b881d18ea5b68f0a", "Directions": "Go to classroom RAHHH"}`, fiber.StatusOK},
+		{"Create TAQueue No Queue", `{"TAs": [], "Class": "673e01c0b881d18ea5b68f0a", "Directions": "Go to classroom RAHHH"}`, fiber.StatusBadRequest},
 		{"Create TAQueue No Class", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "", "Directions": "Go to classroom RAHHH"}`, fiber.StatusBadRequest},
-		{"Create TAQueue No Directions", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "330", "Directions": ""}`, fiber.StatusBadRequest}}
+		{"Create TAQueue No Directions", `{"TAs": ["673e01c0b881d18ea5b68f0a"], "Class": "673e01c0b881d18ea5b68f0a", "Directions": ""}`, fiber.StatusBadRequest}}
 
 	for _, tt := range tests {
 		mt.Run(tt.name, func(mt *mtest.T) {

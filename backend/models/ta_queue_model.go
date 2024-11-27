@@ -7,7 +7,7 @@ type TAQueue struct {
 	ID         primitive.ObjectID   `json:"_id,omitempty" bson:"_id,omitempty"`
 	TAs        []primitive.ObjectID `json:"TAs"`
 	IsActive   bool                 `json:"isActive"`
-	Class      string               `json:"class"`
+	Class      primitive.ObjectID   `json:"class"`
 	Directions string               `json:"directions"`
 	Tickets    []primitive.ObjectID `json:"tickets"`
 }

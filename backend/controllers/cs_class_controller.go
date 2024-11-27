@@ -25,7 +25,7 @@ func GetCSClass(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid class ID",
+			"message": "Invalid class ID" + err.Error(),
 		})
 	}
 
@@ -39,7 +39,7 @@ func GetCSClass(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Class not found",
+			"message": "Class not found" + err.Error(),
 		})
 	}
 
@@ -55,9 +55,9 @@ func CreateCSClass(c *fiber.Ctx) error {
 	class := new(models.CSClass)
 	collection := db.GetCollection(class.TableName())
 
-	if err := c.BodyParser(class); err != nil {
+	if err := c.BodyParser(&class); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
+			"message": "Invalid request body" + err.Error(),
 		})
 	}
 
@@ -118,7 +118,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"message": "Include TAs",
 		})
 	}
-	if taQueue.Class == "" {
+	if taQueue.Class == primitive.NilObjectID {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Include Class",
 		})
@@ -134,8 +134,8 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"message": "Failed to create queue" + err.Error(),
 		})
 	}
-
-	_, err = collection.UpdateOne(
+	classCollection := db.GetCollection((&models.CSClass{}).TableName())
+	_, err = classCollection.UpdateOne(
 		context.Background(),
 		bson.M{"_id": taQueue.Class},
 		bson.M{"$push": bson.M{"queues": taQueue}},
@@ -164,38 +164,44 @@ func GetActiveTAQueue(c *fiber.Ctx) error {
 	filter := bson.M{"_id": classId}
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid class ID",
+			"message": "Invalid class ID" + err.Error(),
 		})
 	}
 	err = collection.FindOne(context.Background(), filter).Decode(&class)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Class not found",
+			"message": "Class not found" + err.Error(),
 		})
 	}
 	ids := class.Queues
 
 	var queue models.TAQueue
-	query := bson.M{"_id": bson.M{"$in": ids}, "isActive": true}
+	query := bson.M{"_id": bson.M{"$in": ids}, "isactive": true}
 	queueCollection := db.GetCollection(queue.TableName())
 
 	err = queueCollection.FindOne(context.Background(), query).Decode(&queue)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "Queue not found",
+			"message": "Queue not found" + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(queue)
 }
 
+// SetActive marks a CSClass as active. It takes a class ID as a path parameter.
+// If the class is not found, it returns a 400 error with a message "Invalid class ID".
+// If the class is found, it updates the class to be active and returns a 200 status with a message "Set active".
+// If there is a problem updating the class, it returns a 500 error with a message "Failed to set active" and the error.
+//
+// Need to make this method take in a boolean parameter to set to active instead of hardcode
 func SetActive(c *fiber.Ctx) error {
 	class := new(models.CSClass)
 	id := c.Params("id")
 	classId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid class ID",
+			"message": "Invalid class ID" + err.Error(),
 		})
 	}
 	collection := db.GetCollection(class.TableName())
@@ -203,7 +209,8 @@ func SetActive(c *fiber.Ctx) error {
 
 	filter := bson.M{"_id": classId}
 
-	update := bson.M{"$set": bson.M{"isActive": bson.M{"$not": "$isActive"}}}
+	// fix later make it conditional
+	update := bson.M{"$set": bson.M{"isactive": true}}
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -224,7 +231,7 @@ func GetActiveClasses(c *fiber.Ctx) error {
 	classes := new([]models.CSClass)
 	collection := db.GetCollection((&models.CSClass{}).TableName())
 
-	cursor, err := collection.Find(context.Background(), bson.M{"isActive": true})
+	cursor, err := collection.Find(context.Background(), bson.M{"isactive": true})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to get active classes" + err.Error(),
@@ -267,7 +274,7 @@ func GetCSClassCR(id primitive.ObjectID) (models.CSClass, error) {
 func UpdateCSClassCR(id primitive.ObjectID, name string, activeQueue primitive.ObjectID, queues []primitive.ObjectID, isActive bool, semester string, year int) error {
 	collection := db.GetCollection((&models.CSClass{}).TableName())
 	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"name": name, "activeQueue": activeQueue, "queues": queues, "isActive": isActive, "semester": semester, "year": year}}
+	update := bson.M{"$set": bson.M{"name": name, "activeQueue": activeQueue, "queues": queues, "isactive": isActive, "semester": semester, "year": year}}
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	return err
 }

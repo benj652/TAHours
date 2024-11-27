@@ -131,7 +131,7 @@ func ChangeDescription(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid user ID",
+			"message": "Invalid user ID" + err.Error(),
 		})
 	}
 	filter := bson.M{"_id": objectID}
@@ -190,7 +190,7 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 
 	filter := bson.M{"_id": userID}
 
-	update := bson.M{"$set": bson.M{"profilePic": profileUrl.NewProfilePic}}
+	update := bson.M{"$set": bson.M{"profilepic": profileUrl.NewProfilePic}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
@@ -243,7 +243,7 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 	// 		"message": "You do not have permission to update this user",
 	// 	})
 	// }
-	update := bson.M{"$set": bson.M{"role": role}}
+	update := bson.M{"$set": bson.M{"roles": role}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
@@ -273,7 +273,7 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 	}
 
 	filter := bson.M{"_id": userID}
-	update := bson.M{"$set": bson.M{"role": roles}}
+	update := bson.M{"$set": bson.M{"roles": roles.Student}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
@@ -281,7 +281,7 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 	err = collection.FindOne(context.Background(), filter).Decode(&user)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "User not found",
+			"message": "User not found" + err.Error(),
 		})
 	}
 	// if user.Roles == roles.Professor || user.Roles == roles.Admin { // makes sure that professors can not downgrade admins or other professors Move this into middleware
@@ -324,7 +324,7 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 	var role = roles.Professor
 
 	filter := bson.M{"_id": userID}
-	update := bson.M{"$set": bson.M{"role": role}}
+	update := bson.M{"$set": bson.M{"roles": role}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 

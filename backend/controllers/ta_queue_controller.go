@@ -22,13 +22,13 @@ func GetAllTAQueues(c *fiber.Ctx) error {
 		})
 	}
 	defer cursor.Close(context.Background())
-	for cursor.Next(context.Background()) {
-		var queue models.TAQueue
-		err = cursor.Decode(&queue)
-		if err != nil {
-			return err
-		}
+	err = cursor.All(context.Background(), queues)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get queues" + err.Error(),
+		})
 	}
+
 	return c.JSON(queues)
 }
 
@@ -93,7 +93,7 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	collection := db.GetCollection(taQueue.TableName())
 
 	// Adds the TA to the queue. This means they are now shown as active and TAing
-	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"TAs": taId.TaId}})
+	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"tas": taId.TaId}})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to add TA to queue" + err.Error(),
@@ -107,8 +107,8 @@ func AddTaToQueue(c *fiber.Ctx) error {
 
 // RemoveTaRequest is a struct that represents the request body for removing a TA from a TA queue.
 type RemoveTaRequest struct {
-	TAId    primitive.ObjectID
-	classId primitive.ObjectID
+	TAId    primitive.ObjectID `json:"taId"`
+	ClassId primitive.ObjectID `json:"classId"`
 }
 
 // RemoveTaFromQueue removes a TA from an existing TA queue in the database.
@@ -147,18 +147,18 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 			"message": "Queue is empty",
 		})
 	}
-	if !taQueue.IsActive {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Queue is inactive",
-		})
-	}
+	// if !class.IsActive {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "Queue is inactive",
+	// 	})
+	// }
 
 	// If there is only one TA in the queue, then the queue is now inactive
 	if len(taQueue.TAs) == 1 {
 		taQueue.IsActive = false
 
 		// Updates the class to have no active queue if the last TA is leaving
-		classFilter := bson.M{"_id": removeRequest.classId}
+		classFilter := bson.M{"_id": removeRequest.ClassId}
 		classCollection := db.GetCollection((&models.CSClass{}).TableName())
 		_, err = classCollection.UpdateOne(context.Background(), classFilter, bson.M{"$set": bson.M{"activeQueue": primitive.NilObjectID}})
 		if err != nil {
@@ -168,7 +168,7 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 		}
 	}
 
-	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$pull": bson.M{"TAs": TaID}})
+	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$pull": bson.M{"tas": TaID}})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to remove TA from queue" + err.Error(),
@@ -240,7 +240,7 @@ func GetActiveTickets(c *fiber.Ctx) error {
 
 // Aditional CRUD utility methods labeled CR
 
-func CreateTAQueueCR(tas []primitive.ObjectID, isActive bool, class string, directions string, tickets []primitive.ObjectID) error {
+func CreateTAQueueCR(tas []primitive.ObjectID, isActive bool, class primitive.ObjectID, directions string, tickets []primitive.ObjectID) error {
 	collection := db.GetCollection((&models.TAQueue{}).TableName())
 	queue := models.TAQueue{
 		TAs:        tas,
