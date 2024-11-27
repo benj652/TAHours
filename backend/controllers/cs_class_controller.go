@@ -134,11 +134,16 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"message": "Failed to create queue" + err.Error(),
 		})
 	}
+	taQueueId := insertResult.InsertedID.(primitive.ObjectID)
+	// fmt.Println(taQueueId)
 	classCollection := db.GetCollection((&models.CSClass{}).TableName())
 	_, err = classCollection.UpdateOne(
 		context.Background(),
 		bson.M{"_id": taQueue.Class},
-		bson.M{"$push": bson.M{"queues": taQueue}},
+		bson.M{
+			"$set":  bson.M{"activequeue": taQueueId},
+			"$push": bson.M{"queues": taQueueId},
+		},
 	)
 
 	if err != nil {

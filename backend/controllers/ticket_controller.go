@@ -94,7 +94,7 @@ func CreateTicket(c *fiber.Ctx) error {
 	queueTickets := db.GetCollection((&models.TAQueue{}).TableName()) // get queue collection
 
 	// check if student already has ticket in queue
-	filter := bson.M{"isActive": true, "tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
+	filter := bson.M{"tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
 
 	var queue models.TAQueue
 	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue) // find queue
