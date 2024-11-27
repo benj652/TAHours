@@ -338,3 +338,66 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 		"message": "User updated successfully",
 	})
 }
+
+// Aditional CRUD utility methods labeled CR
+
+func CreateUserCR(
+	accessToken string,
+	firstName string,
+	lastName string,
+	email string,
+	profilePic string,
+	description string,
+	roles string) error {
+	collection := db.GetCollection((&models.User{}).TableName())
+
+	insert := bson.M{
+		"accessToken": accessToken,
+		"firstName":   firstName,
+		"lastName":    lastName,
+		"email":       email,
+		"profilePic":  profilePic,
+		"description": description,
+		"roles":       roles}
+
+	_, err := collection.InsertOne(context.Background(), insert)
+	return err
+}
+
+func GetUserCR(id string) (models.User, error) {
+	collection := db.GetCollection((&models.User{}).TableName())
+	filter := bson.M{"_id": id}
+	var foundUser models.User
+	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
+	return foundUser, err
+}
+
+func UpdateUserCR(
+	id string,
+	accessToken string,
+	firstName string,
+	lastName string,
+	email string,
+	profilePic string,
+	description string,
+	roles string) error {
+	collection := db.GetCollection((&models.User{}).TableName())
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{
+		"accessToken": accessToken,
+		"firstName":   firstName,
+		"lastName":    lastName,
+		"email":       email,
+		"profilePic":  profilePic,
+		"description": description,
+		"roles":       roles}}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
+
+func DeleteUserCR(id string) error {
+	collection := db.GetCollection((&models.User{}).TableName())
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.Background(), filter)
+	return err
+}

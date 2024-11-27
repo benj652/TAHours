@@ -239,3 +239,42 @@ func GetActiveClasses(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(classes)
 }
+
+// Aditional CRUD utility methods labeled CR
+
+func CreateCSClassCR(name string, activeQueue primitive.ObjectID, queues []primitive.ObjectID, isActive bool, semester string, year int) error {
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	class := models.CSClass{
+		Name:        name,
+		ActiveQueue: activeQueue,
+		Queues:      queues,
+		IsActive:    isActive,
+		Semester:    semester,
+		Year:        year,
+	}
+	_, err := collection.InsertOne(context.Background(), class)
+	return err
+}
+
+func GetCSClassCR(id primitive.ObjectID) (models.CSClass, error) {
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	var class models.CSClass
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.Background(), filter).Decode(&class)
+	return class, err
+}
+
+func UpdateCSClassCR(id primitive.ObjectID, name string, activeQueue primitive.ObjectID, queues []primitive.ObjectID, isActive bool, semester string, year int) error {
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"name": name, "activeQueue": activeQueue, "queues": queues, "isActive": isActive, "semester": semester, "year": year}}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
+
+func DeleteCSClassCR(id primitive.ObjectID) error {
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.Background(), filter)
+	return err
+}

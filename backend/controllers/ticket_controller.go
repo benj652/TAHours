@@ -65,43 +65,46 @@ func CreateTicket(c *fiber.Ctx) error {
 	ticket := new(models.Ticket)
 	collection := db.GetCollection(ticket.TableName())
 
+	// Parse the request body
 	if err := c.BodyParser(ticket); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
 		})
 	}
 
-	if ticket.Problem == "" {
+	// Validate the ticket
+	if ticket.Problem == "" { // check if problem is empty
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Problem is required",
 		})
 	}
 
-	if ticket.Description == "" {
+	if ticket.Description == "" { // check if description is empty
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Description is required",
 		})
 	}
 
-	// Possibly unnecessary
-	if ticket.Student == primitive.NilObjectID {
+	if ticket.Student == primitive.NilObjectID { // check if student is empty
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Student is required",
 		})
 	}
 
-	queueTickets := db.GetCollection("ta_queues")
+	queueTickets := db.GetCollection((&models.TAQueue{}).TableName()) // get queue collection
+
+	// check if student already has ticket in queue
 	filter := bson.M{"isActive": true, "tickets": bson.M{"$elemMatch": bson.M{"studentId": ticket.Student}}}
 
 	var queue models.TAQueue
-	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue)
+	err := queueTickets.FindOne(context.Background(), filter).Decode(&queue) // find queue
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "student already has ticket in queue",
 		})
 	}
 
-	insertResult, err := collection.InsertOne(context.Background(), ticket)
+	insertResult, err := collection.InsertOne(context.Background(), ticket) // insert ticket
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -223,4 +226,62 @@ func GetUserTickets(c *fiber.Ctx) error {
 		"message": "Tickets retrieved successfully",
 		"data":    tickets,
 	})
+}
+
+// Aditional CRUD utility methods labeled CR
+
+func CreateTicketCR(
+	date primitive.DateTime,
+	student primitive.ObjectID,
+	problem string,
+	description string,
+	ta primitive.ObjectID,
+	taNote string,
+	screenshots []string) error {
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	ticket := models.Ticket{
+		Date:        date,
+		Student:     student,
+		Problem:     problem,
+		Description: description,
+		Ta:          ta,
+		TaNote:      taNote,
+		Screenshots: screenshots,
+	}
+	_, err := collection.InsertOne(context.Background(), ticket)
+	return err
+}
+
+func GetTicketCR(id primitive.ObjectID) (models.Ticket, error) {
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	var ticket models.Ticket
+	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&ticket)
+	return ticket, err
+}
+
+func UpdateTicketCR(
+	id primitive.ObjectID,
+	date primitive.DateTime,
+	student primitive.ObjectID,
+	problem string,
+	description string,
+	ta primitive.ObjectID,
+	taNote string,
+	screenshots []string) error {
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"date": date, "student": student, "problem": problem, "description": description, "ta": ta, "taNote": taNote, "screenshots": screenshots}}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
+
+func DeleteTicketCR(id primitive.ObjectID) error {
+	collection := db.GetCollection((&models.Ticket{}).TableName())
+
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.Background(), filter)
+	return err
 }

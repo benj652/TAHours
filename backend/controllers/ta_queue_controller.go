@@ -237,3 +237,41 @@ func GetActiveTickets(c *fiber.Ctx) error {
 		"tickets": tickets,
 	})
 }
+
+// Aditional CRUD utility methods labeled CR
+
+func CreateTAQueueCR(tas []primitive.ObjectID, isActive bool, class string, directions string, tickets []primitive.ObjectID) error {
+	collection := db.GetCollection((&models.TAQueue{}).TableName())
+	queue := models.TAQueue{
+		TAs:        tas,
+		IsActive:   isActive,
+		Class:      class,
+		Directions: directions,
+		Tickets:    tickets,
+	}
+	_, err := collection.InsertOne(context.Background(), queue)
+	return err
+}
+
+func GetTAQueueCR(id primitive.ObjectID) (models.TAQueue, error) {
+	collection := db.GetCollection((&models.TAQueue{}).TableName())
+	var queue models.TAQueue
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.Background(), filter).Decode(&queue)
+	return queue, err
+}
+
+func UpdateTAQueueCR(id primitive.ObjectID, tas []primitive.ObjectID, isActive bool, class string, directions string, tickets []primitive.ObjectID) error {
+	collection := db.GetCollection((&models.TAQueue{}).TableName())
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"TAs": tas, "isActive": isActive, "class": class, "directions": directions, "tickets": tickets}}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
+
+func DeleteTAQueueCR(id primitive.ObjectID) error {
+	collection := db.GetCollection((&models.TAQueue{}).TableName())
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.Background(), filter)
+	return err
+}
