@@ -1,10 +1,10 @@
 # Backend Server Instructions
 
-1. In the root directory, run `cp .env.example .env` and change the `MONGODB_URI` to your specific connection URI.
+1. In the backend directory, run `cp .env.example .env` and change the `MONGODB_URI` to your specific connection URI.
 
 2. `cd` into the `backend` directory and run `go mod tidy` to install dependencies.
 
-3. Run `go run cmd/main.go` to run the backend server on localhost:8000.
+3. Run `go run cmd/server/main.go` to run the backend server on localhost:8000.
 
 4. There are example `curl` requests in the `singletests` folder that can be used to test routes. There is an example mongo dimp in the `testdata` folder.
 
