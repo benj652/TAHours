@@ -1,7 +1,16 @@
+import Posts from "../../components/feed/Posts";
+import WritePost from "../../components/feed/WritePost";
+
 const FeedPage = () => {
   return (
-    <div>FeedPage</div>
-  )
-}
+    <div className="flex flex-col">
+      {
+        // Skibidi nav bar
+      }
+      <Posts />
+      <WritePost />
+    </div>
+  );
+};
 
-export default FeedPage
+export default FeedPage;
