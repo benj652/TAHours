@@ -4,11 +4,13 @@ import FeedPage from "./pages/feedPage/FeedPage";
 import LoginPage from "./pages/loginPage/LoginPage";
 import MainPage from "./pages/mainPage/MainPage";
 import ProfilePage from "./pages/profilePage/ProfilePage";
+import NavBar from "./components/navbar/NavBar";
 
 function App() {
-
+  const showNavBar = location.pathname !== '/login';
     return (
         <div>
+            {showNavBar && <NavBar />}
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/main" element={<MainPage />} />
