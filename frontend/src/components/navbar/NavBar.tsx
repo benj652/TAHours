@@ -3,10 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
 
-const NavBar = () => {
+export const NavBar = () => {
     const location = useLocation();
     const curPath = location.pathname;
-    console.log(curPath);
     return (
         <div className="navbar bg-base-100 shadow-sm">
             <div className="navbar-start">
@@ -90,4 +89,3 @@ const NavBar = () => {
     );
 };
 
-export default NavBar;

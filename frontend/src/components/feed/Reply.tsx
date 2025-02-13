@@ -1,4 +1,4 @@
-const Reply = () => {
+export const Reply = () => {
   return (
     <div className="chat chat-end">
       <div className="chat-image avatar">
@@ -19,4 +19,3 @@ const Reply = () => {
   );
 };
 
-export default Reply;
