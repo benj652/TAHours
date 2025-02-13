@@ -5,11 +5,12 @@ import LoginPage from "./pages/loginPage/LoginPage";
 import MainPage from "./pages/mainPage/MainPage";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import NavBar from "./components/navbar/NavBar";
+import { cn } from "./utils";
 
 function App() {
   const showNavBar = location.pathname !== '/login';
     return (
-        <div>
+        <div className={cn("font-primary")}>
             {showNavBar && <NavBar />}
             <Routes>
                 <Route path="/login" element={<LoginPage />} />

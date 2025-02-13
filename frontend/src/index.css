@@ -34,4 +34,7 @@
     --depth: 1;
     --noise: 1;
   }
-  
+@theme {
+    --font-primary: "Oswald", sans-serif;
+}  
+
