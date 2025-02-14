@@ -1,6 +1,6 @@
-import Post from "./Post";
+import {Post} from './Post';
 
-const Posts = () => {
+export const Posts = () => {
   return (
     <div>
       <Post />

@@ -6,7 +6,7 @@ interface UserProps {
   resolvedTickets: string[];
 }
 const bruh = {userName: "glasses emoji", userEmail: "glassesemoji@gmail.com", userPic: "https://robohash.org/hriewuhrq2u3iht", currentClasses: ["CS150"], resolvedTickets: ["dumb ticket", "dumb ticket 2"], userOutfit: "shirtless ;)"};
-const ProfilePage: React.FC<UserProps> = () => {
+export const ProfilePage: React.FC = () => {
   return (
     <div className="flex w-full gap-4 p-4">
       {/* User Info Card */}
@@ -78,5 +78,3 @@ const ProfilePage: React.FC<UserProps> = () => {
     </div>
   );
 };
-
-export default ProfilePage;

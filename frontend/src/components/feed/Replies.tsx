@@ -1,7 +1,7 @@
-import Reply from "./Reply";
-import WriteReply from "./WriteReply";
+import { Reply } from "@/components";
+import { WriteReply } from "@/components";
 
-const Replies = () => {
+export const Replies = () => {
   return (
     <div>
       <Reply />
@@ -11,5 +11,3 @@ const Replies = () => {
     </div>
   );
 };
-
-export default Replies;

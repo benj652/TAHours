@@ -1,2 +1,6 @@
-export { default as Posts } from "./Posts";
-export { default as WritePost } from "./WritePost";
+export * from './Posts';
+export * from './Post';
+export * from './Reply';
+export * from './Replies';
+export * from './WriteReply';
+export * from './WritePost';

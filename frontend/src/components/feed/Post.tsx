@@ -1,6 +1,5 @@
-import Replies from "./Replies";
-
-const Post = () => {
+import { Replies } from "@/components"
+export const Post = () => {
   return (
     <div>
       <div className="chat chat-start">
@@ -70,5 +69,3 @@ const Post = () => {
 //     )
 // } */
 }
-
-export default Post;

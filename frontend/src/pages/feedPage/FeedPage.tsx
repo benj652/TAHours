@@ -1,7 +1,5 @@
-import Posts from "../../components/feed/Posts";
-import WritePost from "../../components/feed/WritePost";
-
-const FeedPage = () => {
+import { Posts, WritePost } from "@/components";
+export const FeedPage = () => {
   return (
     <div className="flex flex-col">
       {
@@ -13,4 +11,3 @@ const FeedPage = () => {
   );
 };
 
-export default FeedPage;

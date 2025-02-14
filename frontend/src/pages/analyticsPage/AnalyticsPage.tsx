@@ -1,7 +1,6 @@
-const AnalyticsPage = () => {
+export const AnalyticsPage = () => {
   return (
     <div>AnalyticsPage</div>
   )
 }
 
-export default AnalyticsPage
