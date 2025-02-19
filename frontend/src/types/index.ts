@@ -3,4 +3,4 @@ export * from './posts';
 export * from './users';
 export * from './taQueue';
 export * from './tickets';
-
+export * from './routes';

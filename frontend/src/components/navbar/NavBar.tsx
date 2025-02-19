@@ -2,9 +2,11 @@ import ColbySeal from "../../assets/colbyseal.svg";
 import { Link, useLocation } from "react-router-dom";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
+import { useLogout } from "@/hooks";
 
 export const NavBar = () => {
     const location = useLocation();
+    const { logout } = useLogout();
     const curPath = location.pathname;
     return (
         <div className="navbar bg-base-100 shadow-sm">
@@ -83,7 +85,7 @@ export const NavBar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <button className="btn btn-primary">Logout</button>
+                <button className="btn btn-primary" onClick={logout}>Logout</button>
             </div>
         </div>
     );
