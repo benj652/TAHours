@@ -12,3 +12,13 @@ export const routes: Routes= {
     analytics: "/analytics",
     main: "/main",
 }
+
+const userBase = "/api/user";
+const csClassBase = "/api/cs-class";
+const postBase = "/api/posts";
+const taQueueBase = "/api/ta-queue";
+const ticketBase = "/api/ticket";
+
+export const uriRoutes = {
+    getOrCreateUser: `${userBase}/get-or-create`,
+}

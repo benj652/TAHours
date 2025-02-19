@@ -139,33 +139,33 @@ func CreateComment(c *fiber.Ctx) error {
 
 // Aditional CRUD utility methods labeled CR
 
-func CreatePostCR(user string, title string, body string, comments []models.Comment) error {
-	post := models.Post{User: user, Title: title, Body: body, Comments: comments}
-	collection := db.GetCollection((&models.Post{}).TableName())
+// func CreatePostCR(user string, title string, body string, comments []models.Comment) error {
+// 	post := models.Post{User: user, Title: title, Body: body, Comments: comments}
+// 	collection := db.GetCollection((&models.Post{}).TableName())
 
-	_, err := collection.InsertOne(context.Background(), post)
-	return err
-}
+// 	_, err := collection.InsertOne(context.Background(), post)
+// 	return err
+// }
 
-func GetPostCR(id primitive.ObjectID) (models.Post, error) {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	var post models.Post
-	filter := bson.M{"_id": id}
-	err := collection.FindOne(context.Background(), filter).Decode(&post)
-	return post, err
-}
+// func GetPostCR(id primitive.ObjectID) (models.Post, error) {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	var post models.Post
+// 	filter := bson.M{"_id": id}
+// 	err := collection.FindOne(context.Background(), filter).Decode(&post)
+// 	return post, err
+// }
 
-func UpdatePostCR(id primitive.ObjectID, user string, title string, body string, comments []models.Comment) error {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"user": user, "title": title, "body": body, "comments": comments}}
-	_, err := collection.UpdateOne(context.Background(), filter, update)
-	return err
-}
+// func UpdatePostCR(id primitive.ObjectID, user string, title string, body string, comments []models.Comment) error {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	update := bson.M{"$set": bson.M{"user": user, "title": title, "body": body, "comments": comments}}
+// 	_, err := collection.UpdateOne(context.Background(), filter, update)
+// 	return err
+// }
 
-func DeletePostCR(id primitive.ObjectID) error {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	filter := bson.M{"_id": id}
-	_, err := collection.DeleteOne(context.Background(), filter)
-	return err
-}
+// func DeletePostCR(id primitive.ObjectID) error {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	_, err := collection.DeleteOne(context.Background(), filter)
+// 	return err
+// }

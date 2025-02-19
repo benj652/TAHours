@@ -8,7 +8,7 @@ export const Login = () => {
     return (
         <div className="flex h-screen justify-center items-center">
             <div className="card bg-base-300 rounded-box flex flex-col items-center p-8 space-y-10">
-                <div className="flex flex-row">
+                <div className="flex flex-col lg:flex-row">
                     <img src={ColbySeal} alt="Colby Seal" className="h-100 w-100" />
                     <img src={ColbyText} alt="Colby Seal" className="h-100 w-100" />
                 </div>
@@ -16,7 +16,7 @@ export const Login = () => {
                 <GoogleLogin
                     onSuccess={(credentialResponse) => {
                         console.log(credentialResponse);
-                        login();
+                        login(credentialResponse);
                     }}
                     onError={() => {
                         setError("Error Logging In With Google");
