@@ -10,6 +10,8 @@ export const useLogout = () => {
         try {
             googleLogout();
             localStorage.removeItem("token");
+            localStorage.removeItem("JWTR");
+            localStorage.removeItem("user");
             window.location.reload();
             // Do logout stuff
         } catch (error) {

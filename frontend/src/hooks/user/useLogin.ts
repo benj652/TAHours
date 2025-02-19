@@ -12,15 +12,16 @@ export const useLogin = () => {
         setError(null);
         try {
             // Do login stuff
-            localStorage.setItem("token",Date.now().toString());
             const JWTR = jwtResponse.credential 
             localStorage.setItem("JWTR", JWTR as string);
-            const res = await httpClient.post(uriRoutes.getOrCreateUser, {}, {
-                headers: {
-                   Authorization: `Bearer ${JWTR}`
-                }
-            });
-            // console.log("login Response", res.data);
+            const res = await httpClient.post(uriRoutes.getOrCreateUser)
+            localStorage.setItem("token",Date.now().toString());
+            // const res = await httpClient.post(uriRoutes.getOrCreateUser, {}, {
+            //     headers: {
+            //        Authorization: `Bearer ${JWTR}`
+            //     }
+            // });
+            localStorage.setItem("user", JSON.stringify(res.data));
             window.location.reload();
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");
