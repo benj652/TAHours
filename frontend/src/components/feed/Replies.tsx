@@ -1,9 +1,9 @@
-import { Reply } from "@/components";
-import { WriteReply } from "@/components";
+import { Reply, WriteReply } from "@/components";
+import { cn } from "@/utils";
 
 export const Replies = () => {
   return (
-    <div>
+    <div className={cn("flex flex-col w-full gap-2 ali float-right")}>
       <Reply />
       <Reply />
       <Reply />
