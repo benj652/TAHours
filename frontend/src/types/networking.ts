@@ -44,3 +44,23 @@ export const tokenConfig = {
     userJWTResponseToken: "JWTR",
     userItemsToken: "user",
 };
+
+/**
+ * Config for roles.
+ *
+ * This corresponds with the Go config on the backend. In this, the student has the least privlages, 
+ * and can only access the main and profile page. TAs can access the feed page. Professors and admins can access 
+ * any page. In the future, these roles might also dictate if you can view another user's profile.
+ *
+ * @param student - The student role
+ * @param ta - The teaching assistant role
+ * @param professor - The professor role
+ * @param admin - The admin role
+ * @returns The roles configuration
+ */
+export const rolesConfig = {
+    student: "student",
+    ta: "ta",
+    professor: "professor",
+    admin: "admin",
+};
