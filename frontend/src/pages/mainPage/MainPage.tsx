@@ -1,4 +1,7 @@
+import { ResolvePopup } from "@/components";
 import CuteStar from "../../assets/star.svg";
+import { useState } from "react";
+import { cn } from "@/utils";
 
 interface UserProps {
   classesRunning: string[];
@@ -12,6 +15,7 @@ const bruh = {
 };
 
 export const MainPage = () => {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div className="flex flex-col items-center p-4 w-full">
       <ul className="list-none w-full space-y-4">
@@ -52,7 +56,7 @@ export const MainPage = () => {
                     </div>
 
                     {/* Current Queue */}
-                    <div className="bg-base-100 rounded-lg p-4 w-2/3 shadow-lg">
+<div className={cn(`bg-base-100 rounded-lg p-4 shadow-lg ${isOpen ? "w-1/3" : "w-2/3"}`)}>
                       <h1 className="text-lg font-bold">Current Queue (9)</h1>
                       <ul className="list-none w-full space-y-2">
                         {bruh.currentQueue.length > 0 ? (
@@ -63,7 +67,7 @@ export const MainPage = () => {
                               </div>
                               <div className="font-semibold">{ticketName}</div>
                               <div className="text-xs font-normal opacity-60">Debugging help on project 2</div>
-                              <button className="btn btn-ghost bg-accent ml-auto shadow-lg">
+                              <button className="btn btn-ghost bg-accent ml-auto shadow-lg" onClick={() => setIsOpen(true)}>
                                 <div className="text-xs uppercase font-semibold text-base-100 ">Resolve</div>
                               </button>
                             </li>
@@ -73,6 +77,7 @@ export const MainPage = () => {
                         )}
                       </ul>
                     </div>
+                                        <ResolvePopup isOpen={isOpen} setIsOpen={setIsOpen}/>
 
                   </div>
                 </div>
