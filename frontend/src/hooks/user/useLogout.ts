@@ -1,3 +1,4 @@
+import { tokenConfig } from "@/types";
 import { googleLogout } from "@react-oauth/google";
 import { useState } from "react";
 
@@ -8,12 +9,12 @@ export const useLogout = () => {
         setLoading(true);
         setError(null);
         try {
-            googleLogout();
-            localStorage.removeItem("token");
-            localStorage.removeItem("JWTR");
-            localStorage.removeItem("user");
-            window.location.reload();
             // Do logout stuff
+            googleLogout();
+            localStorage.removeItem(tokenConfig.userJWTResponseToken);
+            localStorage.removeItem(tokenConfig.userItemsToken);
+            localStorage.removeItem(tokenConfig.userTimeoutToken);
+            window.location.reload();
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {

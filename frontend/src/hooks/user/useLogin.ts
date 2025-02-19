@@ -1,4 +1,4 @@
-import { uriRoutes } from "@/types";
+import { tokenConfig, uriRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { CredentialResponse } from "@react-oauth/google";
 import { useState } from "react";
@@ -13,15 +13,15 @@ export const useLogin = () => {
         try {
             // Do login stuff
             const JWTR = jwtResponse.credential 
-            localStorage.setItem("JWTR", JWTR as string);
+            localStorage.setItem(tokenConfig.userJWTResponseToken, JWTR as string);
             const res = await httpClient.post(uriRoutes.getOrCreateUser)
-            localStorage.setItem("token",Date.now().toString());
+            localStorage.setItem(tokenConfig.userTimeoutToken, Date.now().toString());
             // const res = await httpClient.post(uriRoutes.getOrCreateUser, {}, {
             //     headers: {
             //        Authorization: `Bearer ${JWTR}`
             //     }
             // });
-            localStorage.setItem("user", JSON.stringify(res.data));
+            localStorage.setItem(tokenConfig.userItemsToken, JSON.stringify(res.data));
             window.location.reload();
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");

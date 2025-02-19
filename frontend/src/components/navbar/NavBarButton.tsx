@@ -1,8 +1,9 @@
+import { cn } from "@/utils";
 import { Link } from "react-router-dom";
 
 type NavBarButtonProps = {
     buttonPath: string;
-    curLocation: boolean;
+    curLocation: string;
     label: string;
 };
 
@@ -11,11 +12,12 @@ const NavBarButton: React.FC<NavBarButtonProps> = ({
     curLocation,
     label,
 }) => {
-
-    return curLocation ? (
-        <span className="btn btn-primary opacity-50 cursor-auto">{label}</span>
+    return curLocation === buttonPath ? (
+        <span className={cn("btn btn-primary opacity-50 cursor-auto")}>
+            {label}
+        </span>
     ) : (
-        <Link to={buttonPath} className="btn btn-primary">
+        <Link to={buttonPath} className={cn("btn btn-primary")}>
             {label}
         </Link>
     );

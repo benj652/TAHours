@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
 import { useLogout } from "@/hooks";
+import { routes } from "@/types";
 
 export const NavBar = () => {
     const location = useLocation();
@@ -34,16 +35,16 @@ export const NavBar = () => {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
                     >
                         <li>
-                            <Link to="/main">TA Hours</Link>
+                            <Link to={routes.main}>TA Hours</Link>
                         </li>
                         <li>
-                            <Link to="/profile">Profile</Link>
+                            <Link to={routes.profile}>Profile</Link>
                         </li>
                         <li>
-                            <Link to="/feed">Thread</Link>
+                            <Link to={routes.feed}>Thread</Link>
                         </li>
                         <li>
-                            <Link to="/analytics">Professor</Link>
+                            <Link to={routes.analytics}>Professor</Link>
                         </li>
                     </ul>
                 </div>
@@ -56,29 +57,29 @@ export const NavBar = () => {
                 <ul className="menu menu-horizontal px-1 space-x-1">
                     <li>
                         <NavBarButton
-                            curLocation={curPath == "/main"}
-                            buttonPath="/main"
+                            curLocation={curPath}
+                            buttonPath={routes.main}
                             label="TA Hours"
                         />
                     </li>
                     <li>
                         <NavBarButton
-                            curLocation={curPath == "/profile"}
-                            buttonPath="/profile"
+                            curLocation={curPath}
+                            buttonPath={routes.profile}
                             label="Profile"
                         />
                     </li>
                     <li>
                         <NavBarButton
-                            curLocation={curPath == "/feed"}
-                            buttonPath="/feed"
+                            curLocation={curPath}
+                            buttonPath={routes.feed}
                             label="Thread"
                         />
                     </li>
                     <li>
                         <NavBarButton
-                            curLocation={curPath == "/analytics"}
-                            buttonPath="/analytics"
+                            curLocation={curPath}
+                            buttonPath={routes.analytics}
                             label="Professor"
                         />
                     </li>
