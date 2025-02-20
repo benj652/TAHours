@@ -39,11 +39,31 @@ export const uriRoutes = {
         getOrCreateUser: `${userBase}/get-or-create`,
     },
     posts: {
-        createPost:`${postBase}/create`,
-        getAllPosts:`${postBase}/all`,
-        createComment:`${postBase}/comment/`,
-        deletePost:`${postBase}/`,
-    }
+        createPost: `${postBase}/create`,
+        getAllPosts: `${postBase}/all`,
+        createComment: `${postBase}/comment/`,
+        deletePost: `${postBase}/`,
+    },
+    csClass: {
+        getActiveClasses: `${csClassBase}/active-classes`,
+        createCsClass: `${csClassBase}/create`,
+        createTaQueue: `${csClassBase}/create-ta-queue`,
+        setActiveClass: `${csClassBase}/set-active/`,
+        getCsClass: `${csClassBase}/one/`,
+    },
+    taQueue: {
+        getAll: `${taQueueBase}/all`,
+        addTa: `${taQueueBase}/add-ta/`,
+        removeTa: `${taQueueBase}/remove-ta/`,
+        getActiveTickets: `${taQueueBase}/active-tickets`,
+    },
+    ticket: {
+        getTicket: `${ticketBase}/one/`,
+        createTicket: `${ticketBase}/create/`,
+        resoloveTicket: `${ticketBase}/resolve/`,
+        deleteTicket: `${ticketBase}/`,
+        userTickets: `${ticketBase}/user-tickets/`,
+    },
 };
 
 /**

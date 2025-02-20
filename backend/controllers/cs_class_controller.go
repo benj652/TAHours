@@ -245,6 +245,7 @@ func SetActive(c *fiber.Ctx) error {
 // empty array and a 200 status code. If there is an error querying the
 // database, the function returns a 500 error with an error message.
 func GetActiveClasses(c *fiber.Ctx) error {
+	// fmt.Println("GetActiveClasses")
 	classes := new([]models.CSClass)
 	collection := db.GetCollection((&models.CSClass{}).TableName())
 

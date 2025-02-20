@@ -9,7 +9,7 @@ func TicketRoutes(app *fiber.App) {
 	base := "/api/ticket" //base route
 
 	// Route to get a ticket Requires an ID in the URL
-	app.Get(base+"/get/:id", controllers.GetTicket)
+	app.Get(base+"/one/:id", controllers.GetTicket)
 
 	/**
 	 * Route to create a new ticket
@@ -33,11 +33,11 @@ func TicketRoutes(app *fiber.App) {
 	 * Route to delete a ticket
 	 * Make sure to protect this route so that the student who made the ticket can delete it
 	**/
-	app.Delete(base+"/delete/:id", controllers.DeleteTicket)
+	app.Delete(base+"/:id", controllers.DeleteTicket)
 
 	/**
 	 * Route for a user to get all their tickets they have sent
 	 * Requires a ID entered in the params
 	**/
-	app.Get(base+"/get-user-tickets/:id", controllers.GetUserTickets)
+	app.Get(base+"/user-tickets/:id", controllers.GetUserTickets)
 }
