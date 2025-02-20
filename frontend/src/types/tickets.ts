@@ -10,3 +10,8 @@ export interface Ticket {
     taNotes: string;
     screenshots: string[];
 }
+
+export type TicketProps = {
+    isExpanded: boolean;
+    setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+}

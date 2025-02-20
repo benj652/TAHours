@@ -37,6 +37,7 @@ const ticketBase = "/api/ticket";
 export const uriRoutes = {
     user: {
         getOrCreateUser: `${userBase}/get-or-create`,
+        getOneUser: `${userBase}/one/`,
     },
     posts: {
         createPost: `${postBase}/create`,

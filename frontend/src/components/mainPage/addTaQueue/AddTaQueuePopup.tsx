@@ -1,17 +1,27 @@
-import { useCreateTaQueue, useGetActiveClasses } from "@/hooks";
+import {
+    useCreateTaQueue,
+    useGetActiveClasses,
+    useGetAllTaQueues,
+} from "@/hooks";
 import { authStore } from "@/store";
-import { AddPopUpProps } from "@/types";
+import { AddPopUpProps, TaQueue, TaQueueCreateResponse } from "@/types";
 import { ObjectId } from "mongodb";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
-export const AddTaQueuePopup: React.FC<AddPopUpProps> = ({
+type AddTaQueuePopupProps = AddPopUpProps & {
+    curTaQueues: TaQueue[] | null;
+    setTaQueues: (taQueues: TaQueue[]) => void;
+};
+export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
     isOpen,
     setIsOpen,
+    curTaQueues,
+    setTaQueues,
 }) => {
     const { createTaQueue, loading: createLoading } = useCreateTaQueue();
     const { userItems } = authStore();
 
-    const [fetched, setFetched] = useState<boolean>(false); // State for fetching class data
+    // const [fetched, setFetched] = useState<boolean>(false); // State for fetching class data
 
     const {
         getActiveClasses,
@@ -38,6 +48,8 @@ export const AddTaQueuePopup: React.FC<AddPopUpProps> = ({
     const [selectedClass, setSelectedClass] = useState<string>("");
     const [directions, setDirections] = useState<string>("");
 
+    // const { setTaQueues, data: taQueues } = useGetAllTaQueues();
+
     /** Function to handle the form submission */
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -45,8 +57,16 @@ export const AddTaQueuePopup: React.FC<AddPopUpProps> = ({
         // @ts-ignore
         const classObject = selectedClass as ObjectId;
         if (!userItems?._id) return "error";
-        const res = await createTaQueue([userItems._id], classObject, directions);
-        console.log(res);
+        const res = (await createTaQueue(
+            [userItems._id],
+            classObject,
+            directions,
+        )) as TaQueueCreateResponse;
+        //@ts-ignore
+        setTaQueues([...curTaQueues, res.taQueue]);
+        // setTaQueues([...(taQueues || []), res.taQueue]);
+        // console.log("new quesues", taQueues);
+        console.log(res.taQueue);
         setIsOpen(false);
     };
 

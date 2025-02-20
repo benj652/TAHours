@@ -146,7 +146,8 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"$push": bson.M{"queues": taQueueId},
 		},
 	)
-
+	
+	taQueue.ID = taQueueId
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update class" + err.Error(),
@@ -154,7 +155,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"id": insertResult.InsertedID,
+		"taQueue": taQueue,
 	})
 }
 

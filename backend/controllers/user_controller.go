@@ -54,13 +54,13 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 	if err == mongo.ErrNoDocuments {
 		// User does not exist, create a new one
 		newUser := models.User{
-			ID:         primitive.NewObjectID(),
-			Email:      email.(string),
+			ID:          primitive.NewObjectID(),
+			Email:       email.(string),
 			AccessToken: accessToken.(string),
-			FirstName:  firstName.(string),
-			LastName:   lastName.(string),
-			ProfilePic: profilePic.(string),
-			Roles:      "student",
+			FirstName:   firstName.(string),
+			LastName:    lastName.(string),
+			ProfilePic:  profilePic.(string),
+			Roles:       "student",
 		}
 
 		_, err := collection.InsertOne(context.Background(), newUser)
@@ -77,51 +77,76 @@ func GetOrCreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(foundUser)
 }
 
-// getUserBody represents the structure of the request body for the GetUser route
-type GetUserBody = struct {
-	AccessToken string `json:"accessToken"`
-	Email       string `json:"email"`
-}
-
-// GetUser retrieves a user from the database using the email provided in the request body.
-// The function expects a user JSON payload in the request body.
-// Returns a JSON response with the found user.
-// If the email is missing in the request, it returns a 400 Bad Request error.
-// If the user is not found, it returns a 400 Bad Request error with a message.
+// new Get user by ID
 func GetUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	userID, err := primitive.ObjectIDFromHex(id)
+
+	user := models.User{}
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid ID",
+		})
+	}
+
 	collection := db.GetCollection((&models.User{}).TableName())
-	var curBody GetUserBody
-	if err := c.BodyParser(&curBody); err != nil {
-		println("here")
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Error parsing request body: " + err.Error(),
-		})
-	}
 
-	if curBody.Email == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Email is required",
-		})
-	}
+	err = collection.FindOne(context.Background(), bson.M{"_id": userID}).Decode(&user)
 
-	if curBody.AccessToken == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Access token is required",
-		})
-	}
-
-	filter := bson.M{"email": curBody.Email}
-	// update := bson.M{ "$setOnInsert": user}
-	var foundUser models.User
-	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "User not found",
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(foundUser)
+	return c.Status(fiber.StatusOK).JSON(user)
 }
+
+//This method is not needed anymore WE need to get users by their ID. I do not think we will ever need to get them by thier email
+// // getUserBody represents the structure of the request body for the GetUser route
+// type GetUserBody = struct {
+// 	Email       string `json:"email"`
+// }
+
+// // GetUser retrieves a user from the database using the email provided in the request body.
+// // The function expects a user JSON payload in the request body.
+// // Returns a JSON response with the found user.
+// // If the email is missing in the request, it returns a 400 Bad Request error.
+// // If the user is not found, it returns a 400 Bad Request error with a message.
+// func GetUser(c *fiber.Ctx) error {
+// 	collection := db.GetCollection((&models.User{}).TableName())
+// 	var curBody GetUserBody
+// 	if err := c.BodyParser(&curBody); err != nil {
+// 		println("here")
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Error parsing request body: " + err.Error(),
+// 		})
+// 	}
+
+// 	if curBody.Email == "" {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Email is required",
+// 		})
+// 	}
+
+// 	// if curBody.AccessToken == "" {
+// 	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 	// 		"message": "Access token is required",
+// 	// 	})
+// 	// }
+
+// 	filter := bson.M{"email": curBody.Email}
+// 	// update := bson.M{ "$setOnInsert": user}
+// 	var foundUser models.User
+// 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "User not found",
+// 		})
+// 	}
+
+// 	return c.Status(fiber.StatusOK).JSON(foundUser)
+// }
 
 // NewDescription represents the structure of the request body for the ChangeDescription route
 type NewDescription struct {

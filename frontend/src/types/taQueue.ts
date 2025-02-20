@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export interface TaQueue {
     _id?: ObjectId;
-    tas: ObjectId[];
+    TAs: ObjectId[];
     isActive: boolean;
     class: ObjectId;
     directions: string;
@@ -25,3 +25,7 @@ export type AddPopUpProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export type TaQueueCreateResponse = {
+    taQueue: TaQueue;
+};
