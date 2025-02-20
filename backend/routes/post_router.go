@@ -9,6 +9,7 @@ import (
 func PostRoutes(app *fiber.App) {
 	base := "/api/posts" //base route
 	baseMiddleware := middleware.AuthMiddleware()
+	userMiddleware := middleware.UserMiddleware()
 	// apply middleware to all routes
 	postGroup := app.Group(base, baseMiddleware) 
 
@@ -35,5 +36,8 @@ func PostRoutes(app *fiber.App) {
 	// Route to delete a post. Make sure to protect to make sure only 
 	// admins and Professors can delete posts
 	// Requires the ID of the post in the URL
-	postGroup.Delete("/:id", controllers.DeletePost)
+	//
+	// Should make another middleware for this
+	// that querys for the user and adds thier role to local context
+	postGroup.Delete("/:id", userMiddleware, controllers.DeletePost)
 }

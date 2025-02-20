@@ -78,7 +78,7 @@ func CreatePost(c *fiber.Ctx) error {
 
 	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"post":    post,
+		"post": post,
 	})
 }
 
@@ -141,6 +141,14 @@ func CreateComment(c *fiber.Ctx) error {
 // DeletePost deletes a post from the database. It expects the post ID as a URL parameter.
 func DeletePost(c *fiber.Ctx) error {
 	id := c.Params("id")
+	// fmt.Println(c.Locals("UserRole"))
+
+	// lowkey never tested this but unless there is some wierd pass by reference stuff going on it should work fine. When I made a typo and ran it though it worked fine(as it broke how it should have if no pass by reference) so this is unlikely.
+	if c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to delete post",
+		})
+	}
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
