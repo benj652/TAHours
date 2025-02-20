@@ -272,58 +272,58 @@ func GetUserTickets(c *fiber.Ctx) error {
 
 // Aditional CRUD utility methods labeled CR
 
-func CreateTicketCR(
-	date primitive.DateTime,
-	student primitive.ObjectID,
-	problem string,
-	description string,
-	ta primitive.ObjectID,
-	taNote string,
-	screenshots []string) error {
-	collection := db.GetCollection((&models.Ticket{}).TableName())
+// func CreateTicketCR(
+// 	date primitive.DateTime,
+// 	student primitive.ObjectID,
+// 	problem string,
+// 	description string,
+// 	ta primitive.ObjectID,
+// 	taNote string,
+// 	screenshots []string) error {
+// 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
-	ticket := models.Ticket{
-		Date:        date,
-		Student:     student,
-		Problem:     problem,
-		Description: description,
-		Ta:          ta,
-		TaNote:      taNote,
-		Screenshots: screenshots,
-	}
-	_, err := collection.InsertOne(context.Background(), ticket)
-	return err
-}
+// 	ticket := models.Ticket{
+// 		Date:        date,
+// 		Student:     student,
+// 		Problem:     problem,
+// 		Description: description,
+// 		Ta:          ta,
+// 		TaNote:      taNote,
+// 		Screenshots: screenshots,
+// 	}
+// 	_, err := collection.InsertOne(context.Background(), ticket)
+// 	return err
+// }
 
-func GetTicketCR(id primitive.ObjectID) (models.Ticket, error) {
-	collection := db.GetCollection((&models.Ticket{}).TableName())
+// func GetTicketCR(id primitive.ObjectID) (models.Ticket, error) {
+// 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
-	var ticket models.Ticket
-	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&ticket)
-	return ticket, err
-}
+// 	var ticket models.Ticket
+// 	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&ticket)
+// 	return ticket, err
+// }
 
-func UpdateTicketCR(
-	id primitive.ObjectID,
-	date primitive.DateTime,
-	student primitive.ObjectID,
-	problem string,
-	description string,
-	ta primitive.ObjectID,
-	taNote string,
-	screenshots []string) error {
-	collection := db.GetCollection((&models.Ticket{}).TableName())
+// func UpdateTicketCR(
+// 	id primitive.ObjectID,
+// 	date primitive.DateTime,
+// 	student primitive.ObjectID,
+// 	problem string,
+// 	description string,
+// 	ta primitive.ObjectID,
+// 	taNote string,
+// 	screenshots []string) error {
+// 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"date": date, "student": student, "problem": problem, "description": description, "ta": ta, "taNote": taNote, "screenshots": screenshots}}
-	_, err := collection.UpdateOne(context.Background(), filter, update)
-	return err
-}
+// 	filter := bson.M{"_id": id}
+// 	update := bson.M{"$set": bson.M{"date": date, "student": student, "problem": problem, "description": description, "ta": ta, "taNote": taNote, "screenshots": screenshots}}
+// 	_, err := collection.UpdateOne(context.Background(), filter, update)
+// 	return err
+// }
 
-func DeleteTicketCR(id primitive.ObjectID) error {
-	collection := db.GetCollection((&models.Ticket{}).TableName())
+// func DeleteTicketCR(id primitive.ObjectID) error {
+// 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
-	filter := bson.M{"_id": id}
-	_, err := collection.DeleteOne(context.Background(), filter)
-	return err
-}
+// 	filter := bson.M{"_id": id}
+// 	_, err := collection.DeleteOne(context.Background(), filter)
+// 	return err
+// }

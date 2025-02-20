@@ -2,25 +2,29 @@ package routes
 
 import (
 	"github.com/benj-652/TAHours/controllers"
+	"github.com/benj-652/TAHours/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
 func UserRoutes(app *fiber.App) {
 	base := "/api/user" //base route
 
+	baseMiddleware := middleware.AuthMiddleware()
+	// apply middleware to all routes
+	userGroup := app.Group(base, baseMiddleware) 
 	/** Route to get or create a user. It creates a user if it doesn't exist. THis will be used when the user first logs in
 	* Requires a JSON body with the following fields:
 	* - email (string): The email of the user
 	* - accessToken (string): The access token of the user
 	**/
-	app.Post(base+"/get-or-create", controllers.GetOrCreateUser)
+	userGroup.Post("/get-or-create", controllers.GetOrCreateUser)
 
 	/**
 	* Route to Get a user, requires a JSON body with the following fields:
 	* - accessToken (string): The access token of the user
 	* - email (string): The email of the user
 	**/
-	app.Get(base+"/get", controllers.GetUser)
+	userGroup.Get("/get", controllers.GetUser)
 
 	/**
 	* Route to update a user's description, requires the user ID in the URL and a JSON body with the following fields:
@@ -28,7 +32,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that a user can only update thier own description
 	**/
-	app.Post(base+"/update-description/:id", controllers.ChangeDescription)
+	userGroup.Post("/update-description/:id", controllers.ChangeDescription)
 
 	/**
 	* Route to update user's profile pic
@@ -37,7 +41,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that a user can only update thier own profile pic
 	**/
-	app.Post(base+"/change-profile-pic/:id", controllers.ChangeProfilePic)
+	userGroup.Post("/change-profile-pic/:id", controllers.ChangeProfilePic)
 
 	/**
 	* Route to update a user to a TA
@@ -45,7 +49,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that only admins and professors can make students TAs, and make sure Professors can not make admins or other professors TAs
 	**/
-	app.Post(base+"/update-role-ta/:id", controllers.UpdateRoleTA)
+	userGroup.Post("/update-role-ta/:id", controllers.UpdateRoleTA)
 
 	/**
 	* Route to update a user to a student
@@ -53,7 +57,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect the route in a way that only admins and professors can make only TAs students
 	**/
-	app.Post(base+"/update-role-student/:id", controllers.UpdateRoleStudent)
+	userGroup.Post("/update-role-student/:id", controllers.UpdateRoleStudent)
 
 	/**
 	* Route to update a user to a professor
@@ -61,5 +65,5 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect the route in a way that only admins and professors can make people professors
 	**/
-	app.Post(base+"/update-role-professor/:id", controllers.UpdateRoleProfessor)
+	userGroup.Post("/update-role-professor/:id", controllers.UpdateRoleProfessor)
 }

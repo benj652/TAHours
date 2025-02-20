@@ -5,10 +5,18 @@ export interface Post {
     user: string;
     title: string;
     body: string;
-    comments: Comment[];
+    comments?: Comment[];
 }
 
+// The C in content has to be capital i am too braindead to figure out why rn
 export interface Comment {
     user: string;
-    content: string;
+    Content: string;
+    title: string;
+}
+
+
+export type ReplyProps = {
+    comments: Comment[] | undefined;
+    setComments: React.Dispatch<React.SetStateAction<Comment[] | undefined>>;
 }

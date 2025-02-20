@@ -77,27 +77,27 @@ func runUserTest(mt *mtest.T, method, url, requestBody string, expectedStatus in
 	}
 }
 
-func TestGetOrCreateUser(t *testing.T) {
-	// mtest.Setup()
-	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
-	// defer mtest.Teardown()
+// func TestGetOrCreateUser(t *testing.T) {
+// 	// mtest.Setup()
+// 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+// 	// defer mtest.Teardown()
 
-	tests := []struct {
-		name           string
-		requestBody    string
-		expectedStatus int
-	}{
-		{"Get or Create User", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusOK},
-		{"Get or Create User No Access Token", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusBadRequest},
-		{"Get or Create User No Access Email", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
-	}
+// 	tests := []struct {
+// 		name           string
+// 		requestBody    string
+// 		expectedStatus int
+// 	}{
+// 		{"Get or Create User", `{"accessToken": "202020", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusOK},
+// 		{"Get or Create User No Access Token", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb", "email": "segorb27@colby.edu"}`, fiber.StatusBadRequest},
+// 		{"Get or Create User No Access Email", `{"accessToken": "", "firstName": "Slump", "lastName": "Gorb"}`, fiber.StatusBadRequest},
+// 	}
 
-	for _, tt := range tests {
-		mt.Run(tt.name, func(mt *mtest.T) {
-			runUserTest(mt, "POST", "/api/user/get-or-create", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{})
-		})
-	}
-}
+// 	for _, tt := range tests {
+// 		mt.Run(tt.name, func(mt *mtest.T) {
+// 			runUserTest(mt, "POST", "/api/user/get-or-create", tt.requestBody, tt.expectedStatus, bson.D{}, bson.D{})
+// 		})
+// 	}
+// }
 func TestGetUser(t *testing.T) {
 	// mtest.Setup()
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))

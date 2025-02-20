@@ -13,6 +13,7 @@ type Post struct {
 type Comment struct {
 	User    string `json:"user"`
 	Content string `json:"Content"`
+	Title  string `json:"title"`
 }
 
 func (p *Post) TableName() string {

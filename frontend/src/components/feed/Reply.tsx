@@ -1,18 +1,25 @@
-export const Reply = () => {
+import { Comment, ReplyProps } from "@/types";
+
+type ExtendedReplyProps = ReplyProps & {
+  reply: Comment;
+};
+export const Reply: React.FC<ExtendedReplyProps> = ({
+  reply,
+  comments,
+  setComments,
+}) => {
   return (
     <div className="chat chat-end">
       <div className="chat-image avatar">
+        {reply.user}
         <div className="w-10 rounded-full">
-          <img
-            src="https://avatar.iran.liara.run/public?username=$420"
-            alt="avatar"
-          />
+          <img src={reply.title} alt="avatar" />
         </div>
       </div>
       <div className="chat-bubble text-primary bg-base-100">
-        Erm... What the Sigma
+        {reply.Content}
       </div>
-      <div className="chat-footer">5:57</div>
     </div>
   );
 };
+// <div className="chat-footer">5:57</div>

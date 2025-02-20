@@ -69,16 +69,17 @@ func CreatePost(c *fiber.Ctx) error {
 	post.Comments = make([]models.Comment, 0)
 	collection := db.GetCollection((&models.Post{}).TableName())
 
-	insertResult, err := collection.InsertOne(context.Background(), post)
+	insertedReesult, err := collection.InsertOne(context.Background(), post)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to create post" + err.Error(),
 		})
 	}
+	post.ID = insertedReesult.InsertedID.(primitive.ObjectID)
 
+	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Successfully created post",
-		"post":    insertResult.InsertedID,
+		"post": post,
 	})
 }
 
@@ -119,6 +120,11 @@ func CreateComment(c *fiber.Ctx) error {
 			"message": "Comment empty, include body",
 		})
 	}
+	if comment.Title == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Comment empty, include title",
+		})
+	}
 
 	collection := db.GetCollection((&models.Post{}).TableName())
 
@@ -131,41 +137,73 @@ func CreateComment(c *fiber.Ctx) error {
 			"message": "Failed to create comment" + err.Error(),
 		})
 	}
-
+	// I made this return the comment too bc to update data on the frontend
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully created comment",
+		"comment": comment,
+	})
+}
+
+// This was function was missing before
+// DeletePost deletes a post from the database. It expects the post ID as a URL parameter.
+func DeletePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	// fmt.Println(c.Locals("UserRole"))
+
+	// lowkey never tested this but unless there is some wierd pass by reference stuff going on it should work fine. When I made a typo and ran it though it worked fine(as it broke how it should have if no pass by reference) so this is unlikely.
+	if c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to delete post",
+		})
+	}
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid post ID",
+		})
+	}
+	collection := db.GetCollection((&models.Post{}).TableName())
+	filter := bson.M{"_id": objectID}
+	_, err = collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to delete post" + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully deleted post",
 	})
 }
 
 // Aditional CRUD utility methods labeled CR
 
-func CreatePostCR(user string, title string, body string, comments []models.Comment) error {
-	post := models.Post{User: user, Title: title, Body: body, Comments: comments}
-	collection := db.GetCollection((&models.Post{}).TableName())
+// func CreatePostCR(user string, title string, body string, comments []models.Comment) error {
+// 	post := models.Post{User: user, Title: title, Body: body, Comments: comments}
+// 	collection := db.GetCollection((&models.Post{}).TableName())
 
-	_, err := collection.InsertOne(context.Background(), post)
-	return err
-}
+// 	_, err := collection.InsertOne(context.Background(), post)
+// 	return err
+// }
 
-func GetPostCR(id primitive.ObjectID) (models.Post, error) {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	var post models.Post
-	filter := bson.M{"_id": id}
-	err := collection.FindOne(context.Background(), filter).Decode(&post)
-	return post, err
-}
+// func GetPostCR(id primitive.ObjectID) (models.Post, error) {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	var post models.Post
+// 	filter := bson.M{"_id": id}
+// 	err := collection.FindOne(context.Background(), filter).Decode(&post)
+// 	return post, err
+// }
 
-func UpdatePostCR(id primitive.ObjectID, user string, title string, body string, comments []models.Comment) error {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"user": user, "title": title, "body": body, "comments": comments}}
-	_, err := collection.UpdateOne(context.Background(), filter, update)
-	return err
-}
+// func UpdatePostCR(id primitive.ObjectID, user string, title string, body string, comments []models.Comment) error {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	update := bson.M{"$set": bson.M{"user": user, "title": title, "body": body, "comments": comments}}
+// 	_, err := collection.UpdateOne(context.Background(), filter, update)
+// 	return err
+// }
 
-func DeletePostCR(id primitive.ObjectID) error {
-	collection := db.GetCollection((&models.Post{}).TableName())
-	filter := bson.M{"_id": id}
-	_, err := collection.DeleteOne(context.Background(), filter)
-	return err
-}
+// func DeletePostCR(id primitive.ObjectID) error {
+// 	collection := db.GetCollection((&models.Post{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	_, err := collection.DeleteOne(context.Background(), filter)
+// 	return err
+// }

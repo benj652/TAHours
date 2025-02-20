@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var roles = models.RolesConfig()
@@ -20,48 +21,60 @@ var roles = models.RolesConfig()
 // If the email is missing in the request, it returns a 400 Bad Request error.
 // If there's an error creating the user, it returns a 500 Internal Server Error.
 func GetOrCreateUser(c *fiber.Ctx) error {
-	user := new(models.User)
-	collection := db.GetCollection(user.TableName())
-	if err := c.BodyParser(user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Error parsing request body: " + err.Error(),
+	collection := db.GetCollection("users") // Ensure this matches your actual collection name
+
+	// Extract user info from middleware
+	email := c.Locals("Email")
+	accessToken := c.Locals("AccessToken")
+	firstName := c.Locals("FirstName")
+	lastName := c.Locals("LastName")
+	profilePic := c.Locals("profilePic")
+
+	// Debugging: Print extracted data
+	fmt.Println("Extracted from middleware - Email:", email)
+	fmt.Println("Extracted from middleware - AccessToken:", accessToken)
+
+	// Ensure email exists (shouldn't happen since middleware validates it)
+	if email == nil || email == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized: Missing email in token",
+		})
+	}
+	if accessToken == nil || accessToken == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized: Missing access token in token",
 		})
 	}
 
-	if user.Email == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Email is required",
-		})
-	}
-	if user.AccessToken == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Access token is required",
-		})
-	}
-	filter := bson.M{"email": user.Email}
-	// update := bson.M{ "$setOnInsert": user}
-
-	// this is bad code. Should use FindOneAndUpdate with setOn insert to avoid double error checking. Fix later.
+	// Check if user exists in the database
+	filter := bson.M{"email": email}
 	var foundUser models.User
-	// fmt.Println("CHECK 1")
 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
-	if err != nil {
-		user.Roles = "student"
-		user.ProfilePic = "https://robohash.org/" + user.Email + "?set=set4"
-		// fmt.Println(user)
-		// fmt.Println("CHECK 2")
-		insertResult, err := collection.InsertOne(context.Background(), user)
-		fmt.Println(err)
+
+	if err == mongo.ErrNoDocuments {
+		// User does not exist, create a new one
+		newUser := models.User{
+			ID:         primitive.NewObjectID(),
+			Email:      email.(string),
+			AccessToken: accessToken.(string),
+			FirstName:  firstName.(string),
+			LastName:   lastName.(string),
+			ProfilePic: profilePic.(string),
+			Roles:      "student",
+		}
+
+		_, err := collection.InsertOne(context.Background(), newUser)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message": "Failed to create user" + err.Error(),
+				"message": "Failed to create user: " + err.Error(),
 			})
 		}
-		user.ID = insertResult.InsertedID.(primitive.ObjectID)
-		foundUser = *user
+
+		foundUser = newUser
 	}
-	// fmt.Println(foundUser)
-	return c.Status(fiber.StatusOK).JSON(user)
+
+	// Return the user (existing or newly created)
+	return c.Status(fiber.StatusOK).JSON(foundUser)
 }
 
 // getUserBody represents the structure of the request body for the GetUser route
@@ -341,63 +354,63 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 
 // Aditional CRUD utility methods labeled CR
 
-func CreateUserCR(
-	accessToken string,
-	firstName string,
-	lastName string,
-	email string,
-	profilePic string,
-	description string,
-	roles string) error {
-	collection := db.GetCollection((&models.User{}).TableName())
+// func CreateUserCR(
+// 	accessToken string,
+// 	firstName string,
+// 	lastName string,
+// 	email string,
+// 	profilePic string,
+// 	description string,
+// 	roles string) error {
+// 	collection := db.GetCollection((&models.User{}).TableName())
 
-	insert := bson.M{
-		"accessToken": accessToken,
-		"firstName":   firstName,
-		"lastName":    lastName,
-		"email":       email,
-		"profilePic":  profilePic,
-		"description": description,
-		"roles":       roles}
+// 	insert := bson.M{
+// 		"accessToken": accessToken,
+// 		"firstName":   firstName,
+// 		"lastName":    lastName,
+// 		"email":       email,
+// 		"profilePic":  profilePic,
+// 		"description": description,
+// 		"roles":       roles}
 
-	_, err := collection.InsertOne(context.Background(), insert)
-	return err
-}
+// 	_, err := collection.InsertOne(context.Background(), insert)
+// 	return err
+// }
 
-func GetUserCR(id string) (models.User, error) {
-	collection := db.GetCollection((&models.User{}).TableName())
-	filter := bson.M{"_id": id}
-	var foundUser models.User
-	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
-	return foundUser, err
-}
+// func GetUserCR(id string) (models.User, error) {
+// 	collection := db.GetCollection((&models.User{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	var foundUser models.User
+// 	err := collection.FindOne(context.Background(), filter).Decode(&foundUser)
+// 	return foundUser, err
+// }
 
-func UpdateUserCR(
-	id string,
-	accessToken string,
-	firstName string,
-	lastName string,
-	email string,
-	profilePic string,
-	description string,
-	roles string) error {
-	collection := db.GetCollection((&models.User{}).TableName())
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{
-		"accessToken": accessToken,
-		"firstName":   firstName,
-		"lastName":    lastName,
-		"email":       email,
-		"profilePic":  profilePic,
-		"description": description,
-		"roles":       roles}}
-	_, err := collection.UpdateOne(context.Background(), filter, update)
-	return err
-}
+// func UpdateUserCR(
+// 	id string,
+// 	accessToken string,
+// 	firstName string,
+// 	lastName string,
+// 	email string,
+// 	profilePic string,
+// 	description string,
+// 	roles string) error {
+// 	collection := db.GetCollection((&models.User{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	update := bson.M{"$set": bson.M{
+// 		"accessToken": accessToken,
+// 		"firstName":   firstName,
+// 		"lastName":    lastName,
+// 		"email":       email,
+// 		"profilePic":  profilePic,
+// 		"description": description,
+// 		"roles":       roles}}
+// 	_, err := collection.UpdateOne(context.Background(), filter, update)
+// 	return err
+// }
 
-func DeleteUserCR(id string) error {
-	collection := db.GetCollection((&models.User{}).TableName())
-	filter := bson.M{"_id": id}
-	_, err := collection.DeleteOne(context.Background(), filter)
-	return err
-}
+// func DeleteUserCR(id string) error {
+// 	collection := db.GetCollection((&models.User{}).TableName())
+// 	filter := bson.M{"_id": id}
+// 	_, err := collection.DeleteOne(context.Background(), filter)
+// 	return err
+// }
