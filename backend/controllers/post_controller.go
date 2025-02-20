@@ -119,6 +119,11 @@ func CreateComment(c *fiber.Ctx) error {
 			"message": "Comment empty, include body",
 		})
 	}
+	if comment.Title == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Comment empty, include title",
+		})
+	}
 
 	collection := db.GetCollection((&models.Post{}).TableName())
 
@@ -131,9 +136,10 @@ func CreateComment(c *fiber.Ctx) error {
 			"message": "Failed to create comment" + err.Error(),
 		})
 	}
-
+	// I made this return the comment too bc to update data on the frontend
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully created comment",
+		"comment": comment,
 	})
 }
 

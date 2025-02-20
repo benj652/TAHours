@@ -3,6 +3,7 @@ import { Replies } from "./Replies";
 import { authStore } from "@/store";
 import { Post as PostType, rolesConfig } from "@/types";
 import { useDeletePost } from "@/hooks/posts/useDeletePost";
+import { useState } from "react";
 
 type PostProps = {
     post: PostType;
@@ -22,6 +23,7 @@ export const Post: React.FC<PostProps> = ({
         userItems.roles === rolesConfig.admin;
 
     const { loading, error, deletePost } = useDeletePost();
+    const [curComments, setCurComments] = useState(comments);
 
     // this function deletes the post
     const handleDeleteSelf = async () => {
@@ -63,7 +65,7 @@ export const Post: React.FC<PostProps> = ({
                             Replies
                         </div>
                         <div className={cn("collapse-content")}>
-                            <Replies />
+                            <Replies id={_id} comments={curComments} setComments={setCurComments}/>
                         </div>
                     </div>
                 </div>
