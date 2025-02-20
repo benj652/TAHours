@@ -1,4 +1,4 @@
-export const ResolvePopup = ({
+export const QueuePopup= ({
     isOpen,
     setIsOpen,
 }: {
@@ -8,7 +8,7 @@ export const ResolvePopup = ({
     if (!isOpen) return null;
     return (
         <div>
-            <h1>ResolvePopup</h1>
+            <h1>Pop Up</h1>
             <button className="btn btn-error" onClick={() => setIsOpen(false)}>Close my son</button>
         </div>
     );
