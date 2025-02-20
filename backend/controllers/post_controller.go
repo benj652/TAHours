@@ -69,12 +69,13 @@ func CreatePost(c *fiber.Ctx) error {
 	post.Comments = make([]models.Comment, 0)
 	collection := db.GetCollection((&models.Post{}).TableName())
 
-	_, err := collection.InsertOne(context.Background(), post)
+	insertedReesult, err := collection.InsertOne(context.Background(), post)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to create post" + err.Error(),
 		})
 	}
+	post.ID = insertedReesult.InsertedID.(primitive.ObjectID)
 
 	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
