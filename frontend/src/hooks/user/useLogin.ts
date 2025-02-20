@@ -14,7 +14,7 @@ export const useLogin = () => {
             // Do login stuff
             const JWTR = jwtResponse.credential 
             localStorage.setItem(tokenConfig.userJWTResponseToken, JWTR as string);
-            const res = await httpClient.post(uriRoutes.getOrCreateUser)
+            const res = await httpClient.post(uriRoutes.user.getOrCreateUser)
             localStorage.setItem(tokenConfig.userTimeoutToken, Date.now().toString());
             // const res = await httpClient.post(uriRoutes.getOrCreateUser, {}, {
             //     headers: {

@@ -69,16 +69,16 @@ func CreatePost(c *fiber.Ctx) error {
 	post.Comments = make([]models.Comment, 0)
 	collection := db.GetCollection((&models.Post{}).TableName())
 
-	insertResult, err := collection.InsertOne(context.Background(), post)
+	_, err := collection.InsertOne(context.Background(), post)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to create post" + err.Error(),
 		})
 	}
 
+	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Successfully created post",
-		"post":    insertResult.InsertedID,
+		"post":    post,
 	})
 }
 
@@ -134,6 +134,29 @@ func CreateComment(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully created comment",
+	})
+}
+
+// This was function was missing before
+// DeletePost deletes a post from the database. It expects the post ID as a URL parameter.
+func DeletePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid post ID",
+		})
+	}
+	collection := db.GetCollection((&models.Post{}).TableName())
+	filter := bson.M{"_id": objectID}
+	_, err = collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to delete post" + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully deleted post",
 	})
 }
 

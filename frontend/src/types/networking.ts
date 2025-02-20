@@ -1,3 +1,5 @@
+import { create } from "zustand";
+
 interface Routes {
     feed: string;
     profile: string;
@@ -33,7 +35,15 @@ const taQueueBase = "/api/ta-queue";
 const ticketBase = "/api/ticket";
 
 export const uriRoutes = {
-    getOrCreateUser: `${userBase}/get-or-create`,
+    user: {
+        getOrCreateUser: `${userBase}/get-or-create`,
+    },
+    posts: {
+        createPost:`${postBase}/create`,
+        getAllPosts:`${postBase}/all`,
+        createComment:`${postBase}/comment/`,
+        deletePost:`${postBase}/`,
+    }
 };
 
 /**
@@ -48,8 +58,8 @@ export const tokenConfig = {
 /**
  * Config for roles.
  *
- * This corresponds with the Go config on the backend. In this, the student has the least privlages, 
- * and can only access the main and profile page. TAs can access the feed page. Professors and admins can access 
+ * This corresponds with the Go config on the backend. In this, the student has the least privlages,
+ * and can only access the main and profile page. TAs can access the feed page. Professors and admins can access
  * any page. In the future, these roles might also dictate if you can view another user's profile.
  *
  * @param student - The student role

@@ -42,43 +42,26 @@ export const NavBar = () => {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
                     >
-                        {renderButton(userRole, [
-                            rolesConfig.student,
-                            rolesConfig.ta,
-                            rolesConfig.professor,
-                            rolesConfig.admin,
-                        ]) && (
-                                <li>
-                                    <Link to={routes.main}>TA Hours</Link>
-                                </li>
-                            )}
-                        {renderButton(userRole, [
-                            rolesConfig.student,
-                            rolesConfig.ta,
-                            rolesConfig.professor,
-                            rolesConfig.admin,
-                        ]) && (
-                                <li>
-                                    <Link to={routes.profile}>Profile</Link>
-                                </li>
-                            )}
-                        {renderButton(userRole, [
-                            rolesConfig.ta,
-                            rolesConfig.professor,
-                            rolesConfig.admin,
-                        ]) && (
-                                <li>
-                                    <Link to={routes.feed}>Thread</Link>
-                                </li>
-                            )}
-                        {renderButton(userRole, [
-                            rolesConfig.professor,
-                            rolesConfig.admin,
-                        ]) && (
-                                <li>
-                                    <Link to={routes.analytics}>Professor</Link>
-                                </li>
-                            )}
+                        {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                            <li>
+                                <Link to={routes.main}>TA Hours</Link>
+                            </li>
+                        )}
+                        {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                            <li>
+                                <Link to={routes.profile}>Profile</Link>
+                            </li>
+                        )}
+                        {renderButton(userRole, [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                            <li>
+                                <Link to={routes.feed}>Thread</Link>
+                            </li>
+                        )}
+                        {renderButton(userRole, [rolesConfig.professor, rolesConfig.admin]) && (
+                            <li>
+                                <Link to={routes.analytics}>Professor</Link>
+                            </li>
+                        )}
                     </ul>
                 </div>
                 <div className="flex flex-row bg-white p-2 rounded-md space-x-2">
@@ -88,65 +71,46 @@ export const NavBar = () => {
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 space-x-1">
-                    {renderButton(userRole, [
-                        rolesConfig.student,
-                        rolesConfig.ta,
-                        rolesConfig.professor,
-                        rolesConfig.admin,
-                    ]) && (
-                            <li>
-                                <NavBarButton
-                                    curLocation={curPath}
-                                    buttonPath={routes.main}
-                                    label="TA Hours"
-                                />
-                            </li>
-                        )}
-                    {renderButton(userRole, [
-                        rolesConfig.student,
-                        rolesConfig.ta,
-                        rolesConfig.professor,
-                        rolesConfig.admin,
-                    ]) && (
-                            <li>
-                                <NavBarButton
-                                    curLocation={curPath}
-                                    buttonPath={routes.profile}
-                                    label="Profile"
-                                />
-                            </li>
-                        )}
-                    {renderButton(userRole, [
-                        rolesConfig.ta,
-                        rolesConfig.professor,
-                        rolesConfig.admin,
-                    ]) && (
-                            <li>
-                                <NavBarButton
-                                    curLocation={curPath}
-                                    buttonPath={routes.feed}
-                                    label="Thread"
-                                />
-                            </li>
-                        )}
-                    {renderButton(userRole, [
-                        rolesConfig.professor,
-                        rolesConfig.admin,
-                    ]) && (
-                            <li>
-                                <NavBarButton
-                                    curLocation={curPath}
-                                    buttonPath={routes.analytics}
-                                    label="Professor"
-                                />
-                            </li>
-                        )}
+                    {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        <li>
+                            <NavBarButton
+                                curLocation={curPath}
+                                buttonPath={routes.main}
+                                label="TA Hours"
+                            />
+                        </li>
+                    )}
+                    {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        <li>
+                            <NavBarButton
+                                curLocation={curPath}
+                                buttonPath={routes.profile}
+                                label="Profile"
+                            />
+                        </li>
+                    )}
+                    {renderButton(userRole, [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        <li>
+                            <NavBarButton
+                                curLocation={curPath}
+                                buttonPath={routes.feed}
+                                label="Thread"
+                            />
+                        </li>
+                    )}
+                    {renderButton(userRole, [rolesConfig.professor, rolesConfig.admin]) && (
+                        <li>
+                            <NavBarButton
+                                curLocation={curPath}
+                                buttonPath={routes.analytics}
+                                label="Professor"
+                            />
+                        </li>
+                    )}
                 </ul>
             </div>
             <div className="navbar-end">
-                <button className="btn btn-primary" onClick={logout}>
-                    Logout
-                </button>
+                <button className="btn btn-primary" onClick={logout}>Logout</button>
             </div>
         </div>
     );
