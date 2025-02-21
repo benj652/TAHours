@@ -80,6 +80,10 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
         value={curDescription}
         onChange={(e) => setCurDescription(e.target.value)}
       />
+        <label> Attachments </label>
+            <input className="bg-pink-500 hover:bg-green-500" type="file" />
+            <input className="bg-pink-500 hover:bg-green-500" type="file" />
+            <input className="bg-pink-500 hover:bg-green-500" type="file" />
       <button
         type="submit"
         disabled={loading}

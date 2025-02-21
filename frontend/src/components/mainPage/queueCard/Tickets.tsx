@@ -1,8 +1,8 @@
 import { cn } from "@/utils";
 import { Ticket } from "./Ticket";
 import { AddTicketButton } from "./AddTicketButton";
-import { MainPageStoreProps, TicketProps } from "@/types";
-import { ObjectId } from "mongodb";
+import { MainPageStoreProps } from "@/types";
+import { useState } from "react";
 
 // type TicketPropsExpanded = TicketProps & {
 //     curTickets: ObjectId[];
@@ -13,6 +13,10 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
   if (!curTickets) {
     return <div>loading</div>;
   }
+
+  // number of tickets that have already been resolved (ones with taId != NIL_OBJECT_ID)
+  const [inactiveTickets, setActiveTickets] = useState<number>(0);
+  const activeTickets = curTickets.length - inactiveTickets;
   return (
     <div
       className={cn(
@@ -20,13 +24,19 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
       )}
     >
       <h1 className="text-lg font-bold">
-        Current Queue ({curTickets.length}{" "}
-        {curTickets.length === 1 ? "Ticket" : "Tickets"})
+        Current Queue ({activeTickets}{" "}
+        {activeTickets === 1 ? "Ticket" : "Tickets"})
       </h1>
       <ul className="list-none w-full space-y-2">
         {curTickets && curTickets?.length > 0 ? (
           curTickets.map((ticketId, index2) => (
-            <Ticket key={index2} ticketId={ticketId} curStore={curStore} />
+            <Ticket
+              key={index2}
+              ticketId={ticketId}
+              curStore={curStore}
+              inactiveTicekts={inactiveTickets}
+              setInactiveTickets={setActiveTickets}
+            />
           ))
         ) : (
           <p>No Unresolved Tickets</p>

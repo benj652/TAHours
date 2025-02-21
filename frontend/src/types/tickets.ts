@@ -6,7 +6,7 @@ export interface Ticket {
     studentId: ObjectId;
     problem: string;
     description: string;
-    ta: ObjectId;
+    taId: ObjectId;
     taNotes: string;
     screenshots: string[];
 }

@@ -27,9 +27,13 @@ import { ResolveTicketPopup } from "./ResolveTicketPopup";
 export const QueuePopup:React.FC<MainPageStoreProps> = ({
 curStore
 }) => {
-    const {curPopUpType: type, isExpanded: isOpen, setIsExpanded: setIsOpen } = curStore();
+    const {curPopUpType: type, isExpanded: isOpen, setIsExpanded: setIsOpen, setCurTicket } = curStore();
     if (!isOpen) return null;
 
+    const handleClick = async () => {
+        setIsOpen(false);
+        setCurTicket(undefined);
+    };
     return (
         <div>
             {type === PopUpTypes.AddTicket ? (
@@ -38,7 +42,7 @@ curStore
                 />
             ) : null}
             {type === PopUpTypes.ResolveTicket ? <ResolveTicketPopup curStore={curStore} /> : null}
-            <button className="btn btn-error" onClick={() => setIsOpen(false)}>
+            <button className="btn btn-error" onClick={handleClick}>
                 Close my son
             </button>
         </div>
