@@ -19,7 +19,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
   curStore,
 }) => {
   // Gets the currently selected ticket from the local store
-  const { curTicket } = curStore();
+  const { curTicket, setIsExpanded } = curStore();
 
   // unpackers the getUser hook as we would like to disply information
   // about the sender of the ticket
@@ -57,7 +57,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
 
     // Make sure the ta has put in a message
     if (!taMessage || taMessage === "") return;
-    
+
     // Make sure the ticket has an id
     if (!curTicket._id) return;
 
@@ -65,6 +65,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
     const res = await resolveTicket(curTicket._id, taMessage);
 
     console.log(res);
+    setIsExpanded(false);
   };
 
   // Returns a wait thing if the ticket is still loading

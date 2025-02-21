@@ -2,7 +2,6 @@ import { cn } from "@/utils";
 import { Ticket } from "./Ticket";
 import { AddTicketButton } from "./AddTicketButton";
 import { MainPageStoreProps } from "@/types";
-import { useState } from "react";
 
 // type TicketPropsExpanded = TicketProps & {
 //     curTickets: ObjectId[];
@@ -14,9 +13,11 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
     return <div>loading</div>;
   }
 
+    // The count of tickets is way more complicated then it needs to be so for now,
+    // i am depricating it
   // number of tickets that have already been resolved (ones with taId != NIL_OBJECT_ID)
-  const [inactiveTickets, setActiveTickets] = useState<number>(0);
-  const activeTickets = curTickets.length - inactiveTickets;
+  // const [inactiveTickets, setActiveTickets] = useState<number>(0);
+  // const activeTickets = curTickets.length - inactiveTickets;
   return (
     <div
       className={cn(
@@ -24,8 +25,7 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
       )}
     >
       <h1 className="text-lg font-bold">
-        Current Queue ({activeTickets}{" "}
-        {activeTickets === 1 ? "Ticket" : "Tickets"})
+        Current Queue
       </h1>
       <ul className="list-none w-full space-y-2">
         {curTickets && curTickets?.length > 0 ? (
@@ -34,8 +34,6 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
               key={index2}
               ticketId={ticketId}
               curStore={curStore}
-              inactiveTicekts={inactiveTickets}
-              setInactiveTickets={setActiveTickets}
             />
           ))
         ) : (
@@ -46,3 +44,6 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
     </div>
   );
 };
+// inactiveTicekts={inactiveTickets}
+// setInactiveTickets={setActiveTickets}
+// ({activeTickets}{" "} {activeTickets === 1 ? "Ticket" : "Tickets"})

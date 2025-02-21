@@ -19,6 +19,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
     taQueueId,
     setCurTickets: setTickets,
     curTickets: tickets,
+    setIsExpanded,
   } = curStore();
 
   // We unpack a bunch of caching stuff so no reloads are needed
@@ -62,6 +63,9 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
     if (!targetQueue) return;
     targetQueue.tickets.push(res._id);
     console.log(res);
+
+    // Closes the popup
+    setIsExpanded(false);
   };
 
   // Trackers to see what is netered in the form
@@ -80,10 +84,10 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
         value={curDescription}
         onChange={(e) => setCurDescription(e.target.value)}
       />
-        <label> Attachments </label>
-            <input className="bg-pink-500 hover:bg-green-500" type="file" />
-            <input className="bg-pink-500 hover:bg-green-500" type="file" />
-            <input className="bg-pink-500 hover:bg-green-500" type="file" />
+      <label> Attachments </label>
+      <input className="bg-pink-500 hover:bg-green-500" type="file" />
+      <input className="bg-pink-500 hover:bg-green-500" type="file" />
+      <input className="bg-pink-500 hover:bg-green-500" type="file" />
       <button
         type="submit"
         disabled={loading}

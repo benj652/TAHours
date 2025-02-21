@@ -32,6 +32,9 @@ export const TaQueue: React.FC<TaQueueType> = ({
   const curCsClassName = getActiveCSClassesData?.find(
     (csClass) => csClass._id === classId,
   )?.name;
+
+  // If there are no active TAs, the queue is inactive and should not be displayed
+  if (!TAs || TAs.length < 1) return null;
   return (
     <li>
       <div className={cn("collapse bg-gray-300 border border-base-300")}>
@@ -50,7 +53,7 @@ export const TaQueue: React.FC<TaQueueType> = ({
         <div className="collapse-content bg-gray-300">
           <div className="flex w-full gap-4">
             {/* Active TAs Card */}
-            <ActiveTas tas={TAs} />
+            <ActiveTas tas={TAs} queueId={_id} classId={classId} />
             {/* Current Queue */}
             <Tickets curStore={storeRef.current} />
             <QueuePopup curStore={storeRef.current} />

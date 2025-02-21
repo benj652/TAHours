@@ -1,4 +1,6 @@
+import { ticketStore } from "@/store";
 import { uriRoutes } from "@/types";
+import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -7,6 +9,7 @@ export const useResolveTicket = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { getTicketFromCache, addTicketToCache } = ticketStore();
   const resolveTicket = async (ticketId: ObjectId, taNote: string) => {
     setLoading(true);
     setError(null);
@@ -23,6 +26,14 @@ export const useResolveTicket = () => {
 
       const data = await res.data;
       if (!data) throw new Error("No data received");
+
+      const resolved = getTicketFromCache(ticketId);
+      if (resolved) {
+        //@ts-ignore
+        resolved.taId = RANDOM_OBJECT_ID as ObjectId;
+        //@ts-ignore
+        addTicketToCache({ resolved });
+      }
       return "Ticket resolved successfully";
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");

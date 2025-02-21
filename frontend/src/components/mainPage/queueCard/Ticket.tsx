@@ -12,14 +12,14 @@ import { useEffect } from "react";
 // };
 type TicketProps = MainPageStoreProps & {
   ticketId: ObjectId;
-  inactiveTicekts: number;
-  setInactiveTickets: React.Dispatch<React.SetStateAction<number>>;
+  // inactiveTicekts: number;
+  // setInactiveTickets: React.Dispatch<React.SetStateAction<number>>;
 };
 export const Ticket: React.FC<TicketProps> = ({
   ticketId,
   curStore,
-  inactiveTicekts,
-  setInactiveTickets,
+  // inactiveTicekts,
+  // setInactiveTickets,
 }) => {
   // console.log("Yppppppppppppp", ticketId);
   // unpack the ticket and the getTicket function from the useGetTicket hook
@@ -54,6 +54,9 @@ export const Ticket: React.FC<TicketProps> = ({
   // this is cached
   useEffect(() => {
     if (ticket) getUser(ticket.studentId);
+    //if it is inactive, increaase the inactive tickets count
+    //use effect so this only triggers once
+    // if (inactive) setInactiveTickets(inactiveTicekts + 1);
   }, [ticket]);
 
   // if the ticket is loading, return a loading div otherwise, this
@@ -69,11 +72,6 @@ export const Ticket: React.FC<TicketProps> = ({
   // check if hte ticket is active
   const inactive = ticket?.taId && ticket.taId.toString() !== NIL_OBJECT_ID;
 
-  //if it is inactive, increaase the inactive tickets count
-  //use effect so this only triggers once
-  useEffect(() => {
-    if (inactive) setInactiveTickets(inactiveTicekts + 1);
-  }, [ticket]);
   // If there is a TA id present in the ticket, it is resolved
   // and we return no object here
   if (inactive) {

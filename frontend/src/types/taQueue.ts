@@ -50,3 +50,9 @@ export type MainPageStore = {
 export type MainPageStoreProps = { 
     curStore: UseBoundStore<StoreApi<MainPageStore>>;
 }
+
+export type SessionButtonProps = {
+    curTas: ObjectId[];
+    setCurTas: React.Dispatch<React.SetStateAction<ObjectId[]>>;
+    taQueueId: ObjectId | undefined;
+}

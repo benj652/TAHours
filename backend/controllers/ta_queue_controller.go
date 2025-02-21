@@ -62,9 +62,10 @@ func GetAllTAQueues(c *fiber.Ctx) error {
 // 	})
 // }
 
-type AddTaToQueueRequest struct {
-	TaId primitive.ObjectID `json:"taId"`
-}
+// This is insecure we can just get the taId from middleware
+// type AddTaToQueueRequest struct {
+// 	TaId primitive.ObjectID `json:"taId"`
+// }
 
 // AddTaToQueue adds a TA to an existing TA queue in the database.
 // The function expects the queue's ID as a URL parameter and the TA's ID to add in the request body.
@@ -79,21 +80,44 @@ func AddTaToQueue(c *fiber.Ctx) error {
 		})
 	}
 
-	// Currently, we are storing the TA's ID in the queue model, however, this will result in an extra API call
+	// Currently, we are storing the TA's ID in the queue model, however, this will result in an extra API call UPDATE: caching algorithm on the front end makes this fine
 	// to get the TA's information to display on the queue. It might be smart to either store the entire TA objects
 	// in the queue model, or maybe just the profile picture and name to display.
-	var taId AddTaToQueueRequest
-	if err := c.BodyParser(&taId); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Error parsing request body: " + err.Error(),
-		})
-	}
+	// var taId AddTaToQueueRequest
+	// if err := c.BodyParser(&taId); err != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "Error parsing request body: " + err.Error(),
+	// 	})
+	// }
 	var taQueue models.TAQueue
 	filter := bson.M{"_id": queueID}
 	collection := db.GetCollection(taQueue.TableName())
 
+	taId := c.Locals("UserID")
+	if taId == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "taId missing",
+		})
+	}
+
+	userRole := c.Locals("UserRole")
+	if userRole != "ta" && userRole != "professor" && userRole != "admin" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "User not authorized",
+		})
+	}
+	err = collection.FindOne(context.Background(), filter).Decode(&taQueue)
+
+	for i := 0; i < len(taQueue.TAs); i++{
+		if taQueue.TAs[i] == taId{
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "TA already in queue",
+			})
+		}
+	}
+
 	// Adds the TA to the queue. This means they are now shown as active and TAing
-	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"tas": taId.TaId}})
+	_, err = collection.UpdateOne(context.Background(), filter, bson.M{"$push": bson.M{"tas": taId}})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to add TA to queue" + err.Error(),
@@ -107,7 +131,7 @@ func AddTaToQueue(c *fiber.Ctx) error {
 
 // RemoveTaRequest is a struct that represents the request body for removing a TA from a TA queue.
 type RemoveTaRequest struct {
-	TAId    primitive.ObjectID `json:"taId"`
+	// TAId    primitive.ObjectID `json:"taId"`
 	ClassId primitive.ObjectID `json:"classId"`
 }
 
@@ -132,7 +156,8 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 		})
 	}
 
-	TaID := removeRequest.TAId
+	// TaID := removeRequest.TAId
+	TaID := c.Locals("UserID")
 	var taQueue models.TAQueue
 	filter := bson.M{"_id": queueID}
 	// Queries the database to find the queue given from the request body
