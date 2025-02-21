@@ -1,23 +1,26 @@
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
-import { PopUpTypes } from "@/types";
+import { MainPageStoreProps, PopUpTypes } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
 
-type TicketProps = {
+// type TicketProps = {
+//     ticketId: ObjectId;
+//     setTicketOpen: React.Dispatch<React.SetStateAction<boolean>>;
+//     setPopupType: React.Dispatch<React.SetStateAction<string>>;
+// };
+type TicketProps = MainPageStoreProps & {
     ticketId: ObjectId;
-    setTicketOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    setPopupType: React.Dispatch<React.SetStateAction<string>>;
-};
+}
 export const Ticket: React.FC<TicketProps> = ({
     ticketId,
-    setTicketOpen,
-    setPopupType,
+    curStore,
 }) => {
     // console.log("Yppppppppppppp", ticketId);
     // unpack the ticket and the getTicket function from the useGetTicket hook
     const { ticket, getTicket, loading: ticketLoading } = useGetTicket();
     const { user, loading: userLoading, getUser } = useGetUser();
+    const { setIsExpanded: setTicketOpen, setCurrentPopUpType: setPopupType } = curStore();
 
 
     //function to handle the click of the resolve button

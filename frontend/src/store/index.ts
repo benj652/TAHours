@@ -1,5 +1,2 @@
-export * from "./threadStore";
-export * from "./taQueueStore";
-export * from "./userStore";
-export * from "./csClassStore";
-export * from "./ticketStore";
+export * from "./localStores";
+export * from "./globalStores";

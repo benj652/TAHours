@@ -1,4 +1,4 @@
-import { csClassStore } from "@/store/csClassStore";
+import { csClassStore } from "@/store";
 import { CSClass, uriRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
