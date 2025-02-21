@@ -37,7 +37,7 @@ curStore
                     curStore={curStore}
                 />
             ) : null}
-            {type === PopUpTypes.ResolveTicket ? <ResolveTicketPopup ticket={curTicket} /> : null}
+            {type === PopUpTypes.ResolveTicket ? <ResolveTicketPopup curStore={curStore} /> : null}
             <button className="btn btn-error" onClick={() => setIsOpen(false)}>
                 Close my son
             </button>

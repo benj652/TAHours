@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { StoreApi, UseBoundStore } from "zustand";
+import { Ticket } from "./tickets";
 
 export interface TaQueue {
   _id?: ObjectId;
@@ -42,8 +43,8 @@ export type MainPageStore = {
   setClassId: (classId: ObjectId | null) => void;
   curPopUpType: PopUpType | undefined;
   setCurrentPopUpType: (popUpType: PopUpType | undefined) => void;
-  curTicket: ObjectId | undefined;
-  setCurTicket: (ticket: ObjectId | undefined) => void;
+  curTicket: Ticket;
+  setCurTicket: (ticket: Ticket | undefined) => void;
 };
 
 export type MainPageStoreProps = { 

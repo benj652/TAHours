@@ -20,7 +20,7 @@ export const Ticket: React.FC<TicketProps> = ({
     // unpack the ticket and the getTicket function from the useGetTicket hook
     const { ticket, getTicket, loading: ticketLoading } = useGetTicket();
     const { user, loading: userLoading, getUser } = useGetUser();
-    const { setIsExpanded: setTicketOpen, setCurrentPopUpType: setPopupType } = curStore();
+    const { setCurTicket, setIsExpanded: setTicketOpen, setCurrentPopUpType: setPopupType } = curStore();
 
 
     //function to handle the click of the resolve button
@@ -28,6 +28,7 @@ export const Ticket: React.FC<TicketProps> = ({
     //this will open the resolve ticket popup
     const handleClick = async () => {
         setTicketOpen(true);
+        setCurTicket(ticket)
         setPopupType(PopUpTypes.ResolveTicket);
     }; 
 
