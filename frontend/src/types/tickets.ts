@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 export interface Ticket {
     _id?: ObjectId;
     date: Date;
-    student: ObjectId;
+    studentId: ObjectId;
     problem: string;
     description: string;
     ta: ObjectId;

@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { ActiveTa } from "./ActiveTa";
 import { JoinSessionButton } from "./JoinSessionButton";
+import { LeeaveSessionButton } from "./LeaveSessionButton";
 
 type ActiveTasProps = {
     tas: ObjectId[];
@@ -19,6 +20,7 @@ export const ActiveTas:React.FC<ActiveTasProps> = ({ tas }) => {
                 )}
             </ul>
             <JoinSessionButton />
+            <LeeaveSessionButton/>
         </div>
     );
 };

@@ -20,7 +20,11 @@ export const useGetUser = () => {
             
             // Check if the user is in the cache
             const cachedUser = getItemsFromCache(id.toString());
-            if(cachedUser) return cachedUser;
+            if(cachedUser){
+                // console.log("User fetched from cache", cachedUser);
+                setUser(cachedUser);
+                return cachedUser;
+            } 
 
             // If not, fetch the user from the server
             const res = await httpClient.get<User>(`${uriRoutes.user.getOneUser}${id}`);

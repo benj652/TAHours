@@ -6,11 +6,13 @@ import { ObjectId } from "mongodb";
 
 type TicketPropsExpanded = TicketProps & {
     curTickets: ObjectId[];
+    setCurPopUp: React.Dispatch<React.SetStateAction<string>>;
 };
 export const Tickets: React.FC<TicketPropsExpanded> = ({
     curTickets,
     isExpanded,
     setIsExpanded,
+    setCurPopUp,
 }) => {
     return (
         <div
@@ -19,22 +21,28 @@ export const Tickets: React.FC<TicketPropsExpanded> = ({
             )}
         >
             <h1 className="text-lg font-bold">
-                Current Queue ({curTickets.length} {curTickets.length === 1 ? "Ticket" : "Tickets"})
+                Current Queue ({curTickets.length}{" "}
+                {curTickets.length === 1 ? "Ticket" : "Tickets"})
             </h1>
             <ul className="list-none w-full space-y-2">
-                {false && curTickets?.length > 0 ? (
-                    curTickets.map((ticketName, index2) => (
+                {curTickets && curTickets?.length > 0 ? (
+                    curTickets.map((ticketId, index2) => (
                         <Ticket
                             key={index2}
-                            ticketName={ticketName}
+                            ticketId={ticketId}
                             setTicketOpen={setIsExpanded}
+                            setPopupType={setCurPopUp}
                         />
                     ))
                 ) : (
                     <p>No Unresolved Tickets</p>
                 )}
             </ul>
-            <AddTicketButton isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+            <AddTicketButton
+                setPopupType={setCurPopUp}
+                isExpanded={isExpanded}
+                setIsExpanded={setIsExpanded}
+            />
         </div>
     );
 };

@@ -14,7 +14,7 @@ export type QueueProps = {
     setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-type PopUpType = string;
+export type PopUpType = string;
 
 export const PopUpTypes = {
     AddTicket: "AddTicket" as PopUpType,
@@ -29,3 +29,4 @@ export type AddPopUpProps = {
 export type TaQueueCreateResponse = {
     taQueue: TaQueue;
 };
+
