@@ -5,6 +5,7 @@ import { ActiveTas } from "./taCard";
 import { useState } from "react";
 import { PopUpType, TaQueue as TaQueueType } from "@/types";
 import { csClassStore } from "@/store";
+import { ObjectId } from "mongodb";
 
 export const TaQueue: React.FC<TaQueueType> = ({
     _id,
@@ -15,6 +16,9 @@ export const TaQueue: React.FC<TaQueueType> = ({
 }) => {
     const [curPopUpType, SetCurPopUpType] = useState<PopUpType | undefined>();
     const [isExpanded, setIsExpanded] = useState(false);
+
+    const [curTicket, setCurTicket] = useState<ObjectId>();
+    const [curTickets, setCurTickets] = useState(tickets);
     // console.log(getActiveCSClassesData);
     // console.log(tas);
     const { getActiveCSClassesData } = csClassStore();
@@ -42,7 +46,7 @@ export const TaQueue: React.FC<TaQueueType> = ({
                         <ActiveTas tas={TAs} />
                         {/* Current Queue */}
                         <Tickets
-                            curTickets={tickets}
+                            curTickets={curTickets}
                             setCurPopUp={SetCurPopUpType}
                             setIsExpanded={setIsExpanded}
                             isExpanded={isExpanded}
@@ -53,6 +57,10 @@ export const TaQueue: React.FC<TaQueueType> = ({
                             type={curPopUpType}
                             isOpen={isExpanded}
                             setIsOpen={setIsExpanded}
+                            tickets={curTickets}
+                            setTickets={setCurTickets}
+                            curTicket={curTicket}
+                            setCurTicket={setCurTicket}
                         />
                     </div>
                 </div>

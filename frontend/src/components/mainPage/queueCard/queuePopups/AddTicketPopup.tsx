@@ -5,16 +5,21 @@ import { useState } from "react";
 type AddTicketPopupProps = {
     classId: ObjectId;
     taQueueId: ObjectId;
+    tickets: ObjectId[];
+    setTickets: React.Dispatch<React.SetStateAction<ObjectId[]>>;
 };
 
 export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({
     classId,
     taQueueId,
+    tickets,
+    setTickets,
 }) => {
     const { loading, createTicket } = useCreateTicket();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const res = await createTicket(classId, taQueueId.toString(), curDescription, curProblem);
+        setTickets([...tickets, res._id]);
         console.log(res);
     };
     const [curProblem, setCurProblem] = useState<string>("");
