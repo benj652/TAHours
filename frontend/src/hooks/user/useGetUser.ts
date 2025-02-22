@@ -13,7 +13,7 @@ export const useGetUser = () => {
 
     // The id parameter can be changed to a string if need be
     const getUser = async (id: ObjectId) => {
-        console.log("Getting user", id);
+        // console.log("Getting user", id);
         setLoading(true);
         try {
             if(!id) throw new Error("No user id provided");
@@ -28,7 +28,7 @@ export const useGetUser = () => {
 
             // If not, fetch the user from the server
             const res = await httpClient.get<User>(`${uriRoutes.user.getOneUser}${id}`);
-            console.log("User fetched", res.data);
+            // console.log("User fetched", res.data);
             const data = res.data;
             setUser(data);
             // Cache the user

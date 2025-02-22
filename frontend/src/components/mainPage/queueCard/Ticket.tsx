@@ -67,7 +67,7 @@ export const Ticket: React.FC<TicketProps> = ({
 
   // console.log("ticlket", ticket);
   // console.log("user", user);
-  console.log("ticket", ticket);
+  // console.log("ticket", ticket);
 
   // check if hte ticket is active
   const inactive = ticket?.taId && ticket.taId.toString() !== NIL_OBJECT_ID;

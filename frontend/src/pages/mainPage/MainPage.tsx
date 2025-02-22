@@ -14,7 +14,7 @@ export const MainPage = () => {
     useEffect(() => {
         getAllTaQueues();
     }, []);
-    console.log(curTaQueues);
+    // console.log(curTaQueues);
     return (
         <div className={cn("flex flex-col items-center p-4 w-full")}>
             <ul className={cn("list-none w-full space-y-4")}>
@@ -28,6 +28,8 @@ export const MainPage = () => {
                             directions={curTaQueue.directions}
                             tickets={curTaQueue.tickets}
                             isActive={curTaQueue.isActive}
+                            setTaQueues={setTaQueues}
+                            curTaQueues={curTaQueues}
                         />
                     ))
                 ) : (
