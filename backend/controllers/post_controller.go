@@ -14,10 +14,18 @@ import (
 	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Get all posts
+// Gets all posts
+//
+// Does not need any parameters
+// Requries the user to be a TA, Professor, or Admin
 func GetAllPosts(c *fiber.Ctx) error {
 	posts := new([]models.Post)
 
+	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to get posts",
+		})
+	}
 	collection := db.GetCollection((&models.Post{}).TableName())
 
 	cursor, err := collection.Find(context.Background(), bson.M{})
@@ -44,6 +52,11 @@ func GetAllPosts(c *fiber.Ctx) error {
 // If there is an error creating the post, it returns a 500 Internal Server Error.
 func CreatePost(c *fiber.Ctx) error {
 	post := new(models.Post)
+	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to create posts",
+		})
+	}
 
 	if err := c.BodyParser(post); err != nil {
 		return err
@@ -94,6 +107,11 @@ func CreatePost(c *fiber.Ctx) error {
 // database, it returns a 500 Internal Server Error.
 func CreateComment(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to create comments",
+		})
+	}
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

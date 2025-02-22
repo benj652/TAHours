@@ -9,7 +9,7 @@ func CSClassRoutes(app *fiber.App) {
 	base := "/api/cs-class" //base route
 
 	// Route to get a CS class. Requires an ID in the URL
-	app.Get(base+"/get/:id", controllers.GetCSClass)
+	app.Get(base+"/one/:id", controllers.GetCSClass)
 
 	/**
 	 * Route to create a new CS class
@@ -42,5 +42,5 @@ func CSClassRoutes(app *fiber.App) {
 	/**
 	 * Gets all active classes
 	 */
-	app.Get(base+"/get-active-classes", controllers.GetActiveClasses)
+	app.Get(base+"/active-classes", controllers.GetActiveClasses)
 }
