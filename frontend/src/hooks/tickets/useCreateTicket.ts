@@ -15,7 +15,10 @@ export const useCreateTicket = () => {
         taQueueId: string,
         description: string,
         problem: string,
+        curType: string,
+        screenshots: string[],
     ) => {
+        console.log(screenshots);
         setLoading(true);
         try {
             if (!userItems._id) throw new Error("No user id provided");
@@ -30,8 +33,11 @@ export const useCreateTicket = () => {
                     problem: problem,
                     description: description,
                     classId: classId,
+                    problemType: curType,
+                    screenshots: screenshots,
                 },
             );
+            console.log(res);
 
             const data = res.data;
 

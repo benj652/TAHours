@@ -14,7 +14,9 @@ func Init() {
 	BACKEND_PORT := os.Getenv("BACKEND_PORT")
 	db.ConnectToMongo()
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		BodyLimit: 32 * 1024 * 1024,
+	})
 
 	routes.UserRoutes(app)
 	routes.TicketRoutes(app)

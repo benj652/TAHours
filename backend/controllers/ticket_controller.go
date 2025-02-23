@@ -98,6 +98,13 @@ func CreateTicket(c *fiber.Ctx) error {
 			"message": "Student is required",
 		})
 	}
+
+	if ticket.ProblemType == "" { // check if problem type is empty
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Problem type is required",
+		})
+	}
+
 	insertResult, err := collection.InsertOne(context.Background(), ticket) // insert ticket
 
 	if err != nil {
@@ -144,7 +151,8 @@ func CreateTicket(c *fiber.Ctx) error {
 
 type ResolveTicketBody struct {
 	// TaId   primitive.ObjectID `json:"taId"` //maybe change this in the final product so it is captured through  the JWT
-	TaNote string             `json:"taNote"`
+	TaNote         string `json:"taNote"`
+	NewProblemType string `json:"newProblemType"`
 }
 
 // ResolveTicket marks a ticket with the TA id and a note, signifying that the ticket has been resolved
@@ -183,6 +191,12 @@ func ResolveTicket(c *fiber.Ctx) error {
 	if body.TaNote == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "TA note is required",
+		})
+	}
+
+	if body.NewProblemType == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "New problem type is required",
 		})
 	}
 	collection := db.GetCollection((&models.Ticket{}).TableName())

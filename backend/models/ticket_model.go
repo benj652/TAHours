@@ -11,6 +11,7 @@ type Ticket struct {
 	Ta          primitive.ObjectID `json:"taId"`
 	TaNote      string             `json:"taNote"`
 	Screenshots []string           `json:"screenshots"`
+	ProblemType string             `json:"problemtype"`
 }
 
 func (u *Ticket) TableName() string {
