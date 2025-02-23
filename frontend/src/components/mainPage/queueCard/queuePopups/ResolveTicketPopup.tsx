@@ -75,6 +75,9 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
 
     // State to handle the problem type
     const [curType, setCureType] = useState<string>(curTicket?.problemtype);
+    useEffect(() => {
+        setCureType(curTicket?.problemtype);
+    }, [curTicket]);
 
     // Returns a wait thing if the ticket is still loading
     // we will need a seperate waiter if the user is loading down in the main
