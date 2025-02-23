@@ -71,6 +71,9 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
   // Trackers to see what is netered in the form
   const [curProblem, setCurProblem] = useState<string>("");
   const [curDescription, setCurDescription] = useState<string>("");
+
+  // Tracker for uploaded screenshots
+const [curAttachments, setCurAttachments] = useState<string[]>([]);
   return (
     <form className="bg-amber-500" onSubmit={handleSubmit}>
       <label> Problem </label>
@@ -85,9 +88,10 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
         onChange={(e) => setCurDescription(e.target.value)}
       />
       <label> Attachments </label>
+            <div>
+
       <input className="bg-pink-500 hover:bg-green-500" type="file" />
-      <input className="bg-pink-500 hover:bg-green-500" type="file" />
-      <input className="bg-pink-500 hover:bg-green-500" type="file" />
+      </div>
       <button
         type="submit"
         disabled={loading}
