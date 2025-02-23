@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import CuteStar from "../../assets/star.svg";
 import { SearchableDropdown } from "../../components/analytics/SearchableDropdown";
-import { ResolvePopup } from "../../components/mainPage/ResolvePopup";
 
 // Mock Data for the Pie Chart
 const data01 = [
@@ -103,7 +102,6 @@ export const AnalyticsPage = () => {
               )}
             </ul>
           </div>
-          <ResolvePopup isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
       </div>
 
