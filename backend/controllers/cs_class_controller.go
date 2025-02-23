@@ -146,7 +146,8 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"$push": bson.M{"queues": taQueueId},
 		},
 	)
-
+	
+	taQueue.ID = taQueueId
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update class" + err.Error(),
@@ -154,7 +155,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"id": insertResult.InsertedID,
+		"taQueue": taQueue,
 	})
 }
 
@@ -245,6 +246,7 @@ func SetActive(c *fiber.Ctx) error {
 // empty array and a 200 status code. If there is an error querying the
 // database, the function returns a 500 error with an error message.
 func GetActiveClasses(c *fiber.Ctx) error {
+	// fmt.Println("GetActiveClasses")
 	classes := new([]models.CSClass)
 	collection := db.GetCollection((&models.CSClass{}).TableName())
 

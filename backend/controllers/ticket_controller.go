@@ -93,7 +93,6 @@ func CreateTicket(c *fiber.Ctx) error {
 			"message": "Description is required",
 		})
 	}
-
 	if ticket.Student == primitive.NilObjectID { // check if student is empty
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Student is required",
@@ -114,6 +113,12 @@ func CreateTicket(c *fiber.Ctx) error {
 
 	_, err = queueCollection.UpdateOne(context.Background(), queueToUpdate, updateQuery)
 
+	// _, err = queueCollection.UpdateOne(
+	// 	context.Background(),
+	// 	queueToUpdate,
+	// 	updateQuery,
+	// 	options.Update().SetUpsert(true), // Ensures array field is created if missing
+	// )
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update queue" + err.Error(),
@@ -131,14 +136,14 @@ func CreateTicket(c *fiber.Ctx) error {
 	// 	})
 	// }
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Ticket created successfully",
-		"id":      insertResult.InsertedID.(primitive.ObjectID).Hex(),
-	})
+	ticket.ID = insertResult.InsertedID.(primitive.ObjectID)
+	return c.Status(fiber.StatusOK).JSON(
+		ticket,
+	)
 }
 
 type ResolveTicketBody struct {
-	TaId   primitive.ObjectID `json:"taId"` //maybe change this in the final product so it is captured through  the JWT
+	// TaId   primitive.ObjectID `json:"taId"` //maybe change this in the final product so it is captured through  the JWT
 	TaNote string             `json:"taNote"`
 }
 
@@ -168,11 +173,12 @@ func ResolveTicket(c *fiber.Ctx) error {
 		})
 	}
 
-	if body.TaId == primitive.NilObjectID {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "TA ID is required",
-		})
-	}
+	// if body.TaId == primitive.NilObjectID {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "TA ID is required",
+	// 	})
+	// }
+	TaId := c.Locals("UserID")
 
 	if body.TaNote == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -182,7 +188,7 @@ func ResolveTicket(c *fiber.Ctx) error {
 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
 	filter := bson.M{"_id": objectID}
-	update := bson.M{"$set": bson.M{"ta": body.TaId, "taNote": body.TaNote}}
+	update := bson.M{"$set": bson.M{"ta": TaId, "taNote": body.TaNote}}
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {

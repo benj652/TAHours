@@ -21,10 +21,10 @@ func UserRoutes(app *fiber.App) {
 
 	/**
 	* Route to Get a user, requires a JSON body with the following fields:
-	* - accessToken (string): The access token of the user
+	* - NOT NEEDED ANYMORE accessToken (string): The access token of the user
 	* - email (string): The email of the user
 	**/
-	userGroup.Get("/get", controllers.GetUser)
+	userGroup.Get("/one/:id", controllers.GetUser)
 
 	/**
 	* Route to update a user's description, requires the user ID in the URL and a JSON body with the following fields:
