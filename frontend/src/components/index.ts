@@ -1,3 +1,4 @@
+export * from "./analytics";
 export * from "./feed";
-export * from "./navbar";
 export * from "./mainPage";
+export * from "./navbar";
