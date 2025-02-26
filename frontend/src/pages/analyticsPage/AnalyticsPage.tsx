@@ -29,7 +29,6 @@ export const AnalyticsPage = () => {
         <h1 className="text-lg font-semibold mb-2">Assign Roles:</h1>
         <SearchableDropdown
           options={["insert TA name", "other TA name", "ben jaffe"]}
-          onSelect={handleSelect}
         />
         <div className="mt-4">
           <div className="w-full">
