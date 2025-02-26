@@ -1,4 +1,5 @@
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
+import { threadStore } from "@/store";
 import { Post } from "@/types";
 import { useState } from "react";
 
@@ -9,6 +10,7 @@ type WritePostProps = {
 export const WritePost: React.FC<WritePostProps>= ({posts, setPosts}) => {
     const [postBody, setPostBody] = useState<string>("");
     const { createPost, loading} = useCreatePost();
+    const { data, setData } = threadStore();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const newPost = await createPost(postBody);
@@ -18,6 +20,9 @@ export const WritePost: React.FC<WritePostProps>= ({posts, setPosts}) => {
             return;  
         }
         setPosts([...posts, newPost]);
+        //@ts-ignore
+        setData([...data, newPost]);
+        
     };
     return (
         <form className="px-4 my-3" onSubmit={handleSubmit}>
