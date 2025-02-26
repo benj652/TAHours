@@ -165,6 +165,18 @@ func ChangeDescription(c *fiber.Ctx) error {
 	collection := db.GetCollection(user.TableName())
 
 	id := c.Params("id")
+	userId := c.Locals("UserID")
+
+	if userId == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+	if id != userId {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "You do not have permission to update this user",
+		})
+	}
 	objectID, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
@@ -250,6 +262,12 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 // with a message.
 // This route should be protected with middleware to ensure that only admin or professor can make TAs roles.
 func UpdateRoleTA(c *fiber.Ctx) error {
+	curRole := c.Locals("UserRole")
+	if curRole != roles.Admin || curRole != roles.Professor {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update",
+		})
+	} // make sure that only admins can use this route
 	id := c.Params("id")
 	userID, err := primitive.ObjectIDFromHex(id)
 
@@ -259,15 +277,29 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 		})
 	}
 
-	var role = roles.Ta
+	// var role = roles.Ta
 
 	filter := bson.M{"_id": userID}
+	update := bson.M{"$set": bson.M{"roles": roles.Ta}}
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
+	var targetUser models.User
+	err = collection.FindOne(context.Background(), filter).Decode(&targetUser)
+
+	if targetUser.Roles == roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "You do not have permission to update this user",
+		})
+	}
+
+	if targetUser.Roles == roles.Professor && curRole != roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update this user",
+		})
+	}
 	// gets the targeted user to ensure that that professors can not downgrade other professors
-	var user models.User
-	err = collection.FindOne(context.Background(), filter).Decode(&user)
+	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "User not found",
@@ -281,7 +313,7 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 	// 		"message": "You do not have permission to update this user",
 	// 	})
 	// }
-	update := bson.M{"$set": bson.M{"roles": role}}
+	// update := bson.M{"$set": bson.M{"roles": role}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
@@ -301,6 +333,12 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 // If the update fails, it returns a 500 Internal Server error with a message.
 // This route should be protected with middleware to ensure only professors and admins can change other users' role.
 func UpdateRoleStudent(c *fiber.Ctx) error {
+	curRole := c.Locals("UserRole")
+	if curRole != roles.Admin || curRole != roles.Professor {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update",
+		})
+	} // make sure that only admins can use this route
 	id := c.Params("id")
 	userID, err := primitive.ObjectIDFromHex(id)
 
@@ -317,6 +355,19 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 
 	var user models.User
 	err = collection.FindOne(context.Background(), filter).Decode(&user)
+
+	if user.Roles == roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "You do not have permission to update this user",
+		})
+	}
+
+	if user.Roles == roles.Professor && curRole != roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "You do not have permission to update this user",
+		})
+	}
+
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "User not found" + err.Error(),
@@ -349,6 +400,12 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 // If the update fails, it returns a 500 Internal Server error with a message.
 // Make sure to protect the route so that only admins can use it
 func UpdateRoleProfessor(c *fiber.Ctx) error {
+	curRole := c.Locals("UserRole")
+	if curRole != roles.Admin || curRole != roles.Professor {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "You do not have permission to update",
+		})
+	} // make sure that only admins can use this route
 	id := c.Params("id")
 	userID, err := primitive.ObjectIDFromHex(id)
 
@@ -366,6 +423,17 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 
 	collection := db.GetCollection((&models.User{}).TableName())
 
+	// User to update
+	var targetUser models.User
+
+	// Find the user to update
+	err = collection.FindOne(context.Background(), filter).Decode(&targetUser)
+	if targetUser.Roles == roles.Admin {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": "You do not have permission to update this user",
+		})
+	}
+
 	_, err = collection.UpdateOne(context.Background(), filter, update) //update the role
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -375,6 +443,25 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})
+}
+
+// Function to get all users
+func GetAllUsers(c *fiber.Ctx) error {
+	collection := db.GetCollection((&models.User{}).TableName())
+	var users []models.User
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get users",
+		})
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var user models.User
+		cursor.Decode(&user)
+		users = append(users, user)
+	}
+	return c.Status(fiber.StatusOK).JSON(users)
 }
 
 // Aditional CRUD utility methods labeled CR

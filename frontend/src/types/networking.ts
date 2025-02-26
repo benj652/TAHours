@@ -38,6 +38,7 @@ export const uriRoutes = {
     user: {
         getOrCreateUser: `${userBase}/get-or-create`,
         getOneUser: `${userBase}/one/`,
+        getAllUsers: `${userBase}/all`,
     },
     posts: {
         createPost: `${postBase}/create`,
