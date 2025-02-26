@@ -1,4 +1,4 @@
-import { CreateCSClassParams } from "@/types";
+import { CreateCSClassParams, uriRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react"
@@ -19,7 +19,7 @@ export const useCreateCSClass = () => {
             if(!year) {
                 throw new Error("Year is required");
             }
-            const response = await httpClient.post<{ id: ObjectId }>(`/api/cs-class/create`, {name, semester, year});
+            const response = await httpClient.post<{ id: ObjectId }>(uriRoutes.csClass.createCsClass, {name, semester, year});
             setData(response.data.id);
             return data;
         } catch (error) {

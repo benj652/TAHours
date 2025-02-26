@@ -10,8 +10,9 @@ func UserRoutes(app *fiber.App) {
 	base := "/api/user" //base route
 
 	baseMiddleware := middleware.AuthMiddleware()
+	authMiddleware := middleware.AuthMiddleware()
 	// apply middleware to all routes
-	userGroup := app.Group(base, baseMiddleware) 
+	userGroup := app.Group(base, baseMiddleware)
 	/** Route to get or create a user. It creates a user if it doesn't exist. THis will be used when the user first logs in
 	* Requires a JSON body with the following fields:
 	* - email (string): The email of the user
@@ -32,16 +33,18 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that a user can only update thier own description
 	**/
-	userGroup.Post("/update-description/:id", controllers.ChangeDescription)
+	userGroup.Post("/update-description/:id", authMiddleware, controllers.ChangeDescription)
 
 	/**
+	* DEPRECATED AT THE MOMENT: THe user can just change thier google profile pic if they care so much
+	*
 	* Route to update user's profile pic
 	* Requires the user ID in the URL and a JSON body with the following fields:
 	* - profileUrl (string): The profile pic of the user
 	*
 	* Make sure to protect in a way that a user can only update thier own profile pic
 	**/
-	userGroup.Post("/change-profile-pic/:id", controllers.ChangeProfilePic)
+	// userGroup.Post("/change-profile-pic/:id", controllers.ChangeProfilePic)
 
 	/**
 	* Route to update a user to a TA
@@ -49,7 +52,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that only admins and professors can make students TAs, and make sure Professors can not make admins or other professors TAs
 	**/
-	userGroup.Post("/update-role-ta/:id", controllers.UpdateRoleTA)
+	userGroup.Post("/update-role-ta/:id", authMiddleware, controllers.UpdateRoleTA)
 
 	/**
 	* Route to update a user to a student
@@ -57,7 +60,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect the route in a way that only admins and professors can make only TAs students
 	**/
-	userGroup.Post("/update-role-student/:id", controllers.UpdateRoleStudent)
+	userGroup.Post("/update-role-student/:id", authMiddleware, controllers.UpdateRoleStudent)
 
 	/**
 	* Route to update a user to a professor
@@ -65,5 +68,13 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect the route in a way that only admins and professors can make people professors
 	**/
-	userGroup.Post("/update-role-professor/:id", controllers.UpdateRoleProfessor)
+	userGroup.Post("/update-role-professor/:id", authMiddleware, controllers.UpdateRoleProfessor)
+
+	// Route to get all users
+	// Returns all users in the database
+	// We could protect this so that only PROFS and ADMINS can access it
+	// But it really does not matter
+	//
+	// RN it just returns a list of users
+	userGroup.Post("/all", controllers.GetAllUsers)
 }
