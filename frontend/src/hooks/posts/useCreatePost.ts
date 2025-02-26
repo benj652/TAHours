@@ -1,4 +1,4 @@
-import { authStore } from "@/store";
+import { authStore, threadStore } from "@/store";
 import { useState } from "react";
 import { httpClient } from "@/utils";
 import { uriRoutes, Post } from "@/types";
@@ -50,6 +50,7 @@ export const useCreatePost = () => {
                 body: body,
             });
             await res.data;
+            
             return res.data.post as Post;
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");
