@@ -8,6 +8,7 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -90,6 +91,8 @@ func CreatePost(c *fiber.Ctx) error {
 	}
 	post.ID = insertedReesult.InsertedID.(primitive.ObjectID)
 
+	socket.BroadcastJSONToAll("newMessage", post)
+
 	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"post": post,
@@ -155,6 +158,11 @@ func CreateComment(c *fiber.Ctx) error {
 			"message": "Failed to create comment" + err.Error(),
 		})
 	}
+	payload := map[string]interface{}{
+		"comment": comment,
+		"postId":  id,
+	}
+	socket.BroadcastJSONToThread("newComment", payload)
 	// I made this return the comment too bc to update data on the frontend
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully created comment",
@@ -188,6 +196,8 @@ func DeletePost(c *fiber.Ctx) error {
 			"message": "Failed to delete post" + err.Error(),
 		})
 	}
+
+	socket.BroadcastJSONToAll("deleteMessage", objectID)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully deleted post",
 	})
