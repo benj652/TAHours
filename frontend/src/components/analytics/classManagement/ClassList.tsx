@@ -2,7 +2,8 @@ import { useGetActiveClasses } from "@/hooks";
 import { useEffect } from "react";
 import CuteStar from "../../../assets/star.svg";
 import { AddClassForm } from "./AddClassForm";
-import { csClassStore } from "@/store";
+import { analyticsPageStore, csClassStore } from "@/store";
+import { CSClass } from "@/types";
 
 export const ClassList = () => {
   const { getActiveClasses } = useGetActiveClasses();
@@ -16,6 +17,11 @@ export const ClassList = () => {
   //   year: "",
   // });
 
+  const { selectedClass, setSelectedClass } = analyticsPageStore();
+  const handleSelect = (csClass: CSClass) => {
+    setSelectedClass(csClass);
+  };
+
   return (
     <div className="mr-4 w-36 lg:w-56">
       <ul className="list-none w-full space-y-4">
@@ -25,7 +31,11 @@ export const ClassList = () => {
             .reverse()
             .map((csClass, index) => (
               <li key={index}>
-                <div className="collapse bg-gray-300 text-black">
+                <div
+                  className={`collapse text-black ${
+                    csClass === selectedClass ? "bg-blue-200" : "bg-gray-300"
+                  }`}
+                >
                   <input type="checkbox" className="peer" />
                   <div className="collapse-title">
                     <div className="font-semibold flex flex-row">
@@ -44,8 +54,17 @@ export const ClassList = () => {
                       <li> Active: {csClass.isActive ? "Yes" : "No"}</li>
                       <li> Total Sessions: {csClass.queues.length}</li>
                       <li>
-                        <button className="btn btn-primary">select</button>
-                        <button className="btn btn-primary">deactivate</button>
+                        <button
+                          onClick={() => handleSelect(csClass)}
+                          type="button"
+                          className="btn btn-primary"
+                          disabled={selectedClass === csClass}
+                        >
+                          select
+                        </button>
+                        <button type="button" className="btn btn-primary">
+                          deactivate
+                        </button>
                       </li>
                     </ul>
                   </div>
