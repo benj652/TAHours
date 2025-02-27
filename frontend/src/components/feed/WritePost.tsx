@@ -1,13 +1,13 @@
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
 import { threadStore } from "@/store";
-import { Post } from "@/types";
 import { useState } from "react";
 
-type WritePostProps = {
-    posts: Post[] | null;
-    setPosts: React.Dispatch<React.SetStateAction<Post[] | null>>;
-};
-export const WritePost: React.FC<WritePostProps>= ({posts, setPosts}) => {
+// type WritePostProps = {
+//     posts: Post[] | null;
+//     setPosts: React.Dispatch<React.SetStateAction<Post[] | null>>;
+// };
+export const WritePost: React.FC= () => {
+    const { data: posts, setData: setPosts } = threadStore();
     const [postBody, setPostBody] = useState<string>("");
     const { createPost, loading} = useCreatePost();
     const { data, setData } = threadStore();

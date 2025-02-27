@@ -5,6 +5,7 @@ import { cn } from "./utils";
 import { authStore } from "./store";
 import { Navigate } from "react-router-dom";
 import { rolesConfig, routes } from "./types";
+import useListenMessages from "./hooks/posts/listeners/useListenMessages";
 
 function App() {
     const location = useLocation();
@@ -24,6 +25,9 @@ function App() {
             <Navigate to={routes.login} />
         );
     };
+
+    // Websocket listners
+    useListenMessages();
 
     return (
         <div className={cn("font-primary")}>

@@ -1,0 +1,93 @@
+import { authStore } from "@/store";
+import { rolesConfig } from "@/types";
+import {
+    createContext,
+    useState,
+    useEffect,
+    useContext,
+    ReactNode,
+} from "react";
+
+interface OnlineUsersMessage {
+    type: "onlineUsers";
+    users: string[]; // Adjust based on your actual data structure
+}
+
+interface SocketContextType {
+    socket: WebSocket | null;
+    onlineUsers: string[];
+}
+
+const SocketContext = createContext<SocketContextType | undefined>(undefined);
+
+export const useSocketContext = (): SocketContextType => {
+    const context = useContext(SocketContext);
+    if (!context) {
+        throw new Error(
+            "useSocketContext must be used within a SocketContextProvider",
+        );
+    }
+    return context;
+};
+
+interface SocketContextProviderProps {
+    children: ReactNode;
+}
+
+export const SocketContextProvider = ({
+    children,
+}: SocketContextProviderProps) => {
+    const [socket, setSocket] = useState<WebSocket | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+    const { userItems: authUser } = authStore();
+
+    useEffect(() => {
+        if (authUser) {
+            const canSeeThread =
+                authUser.roles === rolesConfig.admin ||
+                authUser.roles === rolesConfig.ta ||
+                authUser.roles === rolesConfig.professor;
+            const ws = new WebSocket(
+                canSeeThread
+                    ? `ws://localhost:8000/ws?userWSId=${authUser._id}&threadAccess=9284091284920149`
+                    : `ws://localhost:8000/ws?userWSId=${authUser._id}`,
+            );
+
+            ws.onopen = () => {
+                console.log("WebSocket connected");
+                setSocket(ws);
+            };
+
+            ws.onmessage = (event: MessageEvent) => {
+                try {
+                    const data: OnlineUsersMessage = JSON.parse(event.data);
+                    if (data.type === "onlineUsers") {
+                        setOnlineUsers(data.users);
+                    }
+                } catch (error) {
+                    console.error("Error parsing WebSocket message:", error);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log("WebSocket disconnected");
+                setSocket(null);
+            };
+
+            return () => {
+                ws.close();
+            };
+        } else {
+            if (socket) {
+                socket.close();
+                setSocket(null);
+            }
+        }
+    }, [authUser]);
+
+    return (
+        <SocketContext.Provider value={{ socket, onlineUsers }}>
+            {children}
+        </SocketContext.Provider>
+    );
+};
