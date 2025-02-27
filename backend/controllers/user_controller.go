@@ -263,7 +263,7 @@ func ChangeProfilePic(c *fiber.Ctx) error {
 // This route should be protected with middleware to ensure that only admin or professor can make TAs roles.
 func UpdateRoleTA(c *fiber.Ctx) error {
 	curRole := c.Locals("UserRole")
-	if curRole != roles.Admin || curRole != roles.Professor {
+	if curRole != roles.Admin && curRole != roles.Professor {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "You do not have permission to update",
 		})
@@ -334,7 +334,7 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 // This route should be protected with middleware to ensure only professors and admins can change other users' role.
 func UpdateRoleStudent(c *fiber.Ctx) error {
 	curRole := c.Locals("UserRole")
-	if curRole != roles.Admin || curRole != roles.Professor {
+	if curRole != roles.Admin && curRole != roles.Professor {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "You do not have permission to update",
 		})
@@ -401,7 +401,7 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 // Make sure to protect the route so that only admins can use it
 func UpdateRoleProfessor(c *fiber.Ctx) error {
 	curRole := c.Locals("UserRole")
-	if curRole != roles.Admin || curRole != roles.Professor {
+	if curRole != roles.Admin && curRole != roles.Professor {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "You do not have permission to update",
 		})

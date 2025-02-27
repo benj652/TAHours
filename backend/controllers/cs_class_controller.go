@@ -94,10 +94,9 @@ func CreateCSClass(c *fiber.Ctx) error {
 			"message": "Failed to create class" + err.Error(),
 		})
 	}
+	class.ID = insertResult.InsertedID.(primitive.ObjectID)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"id": insertResult.InsertedID,
-	})
+	return c.Status(fiber.StatusOK).JSON(class)
 }
 
 // CreateTAQueue creates a new TA queue in the database. It expects a JSON payload
@@ -146,7 +145,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"$push": bson.M{"queues": taQueueId},
 		},
 	)
-	
+
 	taQueue.ID = taQueueId
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
