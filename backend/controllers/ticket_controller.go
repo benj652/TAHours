@@ -5,6 +5,7 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -144,6 +145,7 @@ func CreateTicket(c *fiber.Ctx) error {
 	// }
 
 	ticket.ID = insertResult.InsertedID.(primitive.ObjectID)
+	socket.BroadcastJSONToAll(models.TICKET_CREATE_EVVENT, ticket)
 	return c.Status(fiber.StatusOK).JSON(
 		ticket,
 	)
@@ -211,6 +213,7 @@ func ResolveTicket(c *fiber.Ctx) error {
 		})
 	}
 
+	socket.BroadcastJSONToAll(models.TICKET_RESOLVE_EVENT, ticketId)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Ticket resolved successfully",
 	})

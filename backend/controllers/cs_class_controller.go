@@ -6,10 +6,12 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 
 // GetCSClass retrieves a CS class from the database using the class ID provided
 // as a URL parameter. The function expects the :id parameter to be a valid MongoDB
@@ -153,6 +155,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 		})
 	}
 
+	socket.BroadcastJSONToAll(models.NEW_TA_QUEUE_EVENT, taQueue)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"taQueue": taQueue,
 	})

@@ -5,6 +5,7 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -93,14 +94,14 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	filter := bson.M{"_id": queueID}
 	collection := db.GetCollection(taQueue.TableName())
 
-	taId := c.Locals("UserID")
+	taId := c.Locals(models.USER_ID_POST_PARAM)
 	if taId == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "taId missing",
 		})
 	}
 
-	userRole := c.Locals("UserRole")
+	userRole := c.Locals(models.USER_ROLE_PARAM)
 	if userRole != "ta" && userRole != "professor" && userRole != "admin" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "User not authorized",
@@ -123,6 +124,8 @@ func AddTaToQueue(c *fiber.Ctx) error {
 			"message": "Failed to add TA to queue" + err.Error(),
 		})
 	}
+
+	socket.BroadcastJSONToAll(models.TA_JOIN_QUEUE_EVENT, taId)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id": taQueue,
@@ -200,6 +203,11 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 		})
 	}
 
+	payload := map[string]interface{}{
+		"taId": TaID,
+		"isActive": taQueue.IsActive,
+	}
+	socket.BroadcastJSONToAll(models.TA_LEAVE_QUEUE_EVENT, payload)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id":       taQueue.ID,
 		"isActive": taQueue.IsActive,
