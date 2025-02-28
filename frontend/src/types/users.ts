@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { NIL_OBJECT_ID } from "./misc";
 
 export interface User {
   _id?: ObjectId; // Optional because of `omitempty`
@@ -25,3 +26,15 @@ export const RolesConfig = {
   Admin: Role.Admin,
   Student: Role.Student,
 } as const;
+
+export const PLACEHOLER_USER: User = {
+    //@ts-ignore
+    _id: NIL_OBJECT_ID as ObjectId,
+    accessToken: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    profilePic: "",
+    description: "",
+    roles: Role.Student,
+}

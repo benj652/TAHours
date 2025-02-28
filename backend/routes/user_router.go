@@ -10,7 +10,7 @@ func UserRoutes(app *fiber.App) {
 	base := "/api/user" //base route
 
 	baseMiddleware := middleware.AuthMiddleware()
-	authMiddleware := middleware.AuthMiddleware()
+	authMiddleware := middleware.UserMiddleware()
 	// apply middleware to all routes
 	userGroup := app.Group(base, baseMiddleware)
 	/** Route to get or create a user. It creates a user if it doesn't exist. THis will be used when the user first logs in
@@ -76,5 +76,5 @@ func UserRoutes(app *fiber.App) {
 	// But it really does not matter
 	//
 	// RN it just returns a list of users
-	userGroup.Post("/all", controllers.GetAllUsers)
+	userGroup.Get("/all", controllers.GetAllUsers)
 }

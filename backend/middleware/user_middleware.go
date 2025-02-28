@@ -33,8 +33,8 @@ func UserMiddleware() fiber.Handler {
 			})
 		}
 		// Store user details in context for access in routes
-		c.Locals("UserID", user.ID)
-		c.Locals("UserRole", user.Roles)
+		c.Locals(models.USER_ID_POST_PARAM, user.ID)
+		c.Locals(models.USER_ROLE_PARAM, user.Roles)
 
 		return c.Next()
 	}

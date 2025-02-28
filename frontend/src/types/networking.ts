@@ -39,6 +39,9 @@ export const uriRoutes = {
         getOrCreateUser: `${userBase}/get-or-create`,
         getOneUser: `${userBase}/one/`,
         getAllUsers: `${userBase}/all`,
+        UPDATE_ROLE_TA: `${userBase}/update-role-ta/`,
+        UPDATE_ROLE_PROFESSOR: `${userBase}/update-role-professor/`,
+        UPDATE_ROLE_STUDENT: `${userBase}/update-role-student/`,
     },
     posts: {
         createPost: `${postBase}/create`,
@@ -96,3 +99,10 @@ export const rolesConfig = {
     professor: "professor",
     admin: "admin",
 };
+
+
+// Popup Modals
+export const MODALS = {
+    ROLE_CHANGE: "model_1",
+    CREATE_CLASS: "model_2",
+}

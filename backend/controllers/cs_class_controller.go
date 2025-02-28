@@ -6,10 +6,12 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 
 // GetCSClass retrieves a CS class from the database using the class ID provided
 // as a URL parameter. The function expects the :id parameter to be a valid MongoDB
@@ -94,10 +96,9 @@ func CreateCSClass(c *fiber.Ctx) error {
 			"message": "Failed to create class" + err.Error(),
 		})
 	}
+	class.ID = insertResult.InsertedID.(primitive.ObjectID)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"id": insertResult.InsertedID,
-	})
+	return c.Status(fiber.StatusOK).JSON(class)
 }
 
 // CreateTAQueue creates a new TA queue in the database. It expects a JSON payload
@@ -146,7 +147,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 			"$push": bson.M{"queues": taQueueId},
 		},
 	)
-	
+
 	taQueue.ID = taQueueId
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -154,6 +155,7 @@ func CreateTAQueue(c *fiber.Ctx) error {
 		})
 	}
 
+	socket.BroadcastJSONToAll(models.NEW_TA_QUEUE_EVENT, taQueue)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"taQueue": taQueue,
 	})
