@@ -7,7 +7,13 @@ const(
 	TICKET_CREATE_EVVENT = "ticket_create"
 	TICKET_RESOLVE_EVENT = "ticket_resolve"
 
+	DELETE_POST_EVENT = "deleteMessage"
+	NEW_POST_EVENT = "newMessage"
+	NEW_COMMENT_EVENT = "newComment"
 
 	USER_ROLE_PARAM = "UserRole"
 	USER_ID_POST_PARAM = "UserID"
+
+	WEBSOCKET_ID_PARAM = "userWSId"
+	WEBSOCKET_THREAD_PARAM = "threadAccess"
 )
