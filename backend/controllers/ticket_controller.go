@@ -145,6 +145,12 @@ func CreateTicket(c *fiber.Ctx) error {
 	// }
 
 	ticket.ID = insertResult.InsertedID.(primitive.ObjectID)
+
+
+	payload := map[string]interface{}{
+		"ticket": ticket,
+		"taQueue": queueId,
+	}
 	socket.BroadcastJSONToAll(models.TICKET_CREATE_EVVENT, ticket)
 	return c.Status(fiber.StatusOK).JSON(
 		ticket,

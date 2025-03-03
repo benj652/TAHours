@@ -125,7 +125,12 @@ func AddTaToQueue(c *fiber.Ctx) error {
 		})
 	}
 
-	socket.BroadcastJSONToAll(models.TA_JOIN_QUEUE_EVENT, taId)
+	payload := map[string]interface{}{
+		"taId": taId,
+		"queueId": queueID,
+	}
+
+	socket.BroadcastJSONToAll(models.TA_JOIN_QUEUE_EVENT, payload)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id": taQueue,
@@ -206,6 +211,7 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	payload := map[string]interface{}{
 		"taId": TaID,
 		"isActive": taQueue.IsActive,
+		"queueID" : queueID,
 	}
 	socket.BroadcastJSONToAll(models.TA_LEAVE_QUEUE_EVENT, payload)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
