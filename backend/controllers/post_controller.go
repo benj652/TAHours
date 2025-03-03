@@ -15,6 +15,8 @@ import (
 	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var rOLES = models.RolesConfig()
+
 // Gets all posts
 //
 // Does not need any parameters
@@ -22,7 +24,7 @@ import (
 func GetAllPosts(c *fiber.Ctx) error {
 	posts := new([]models.Post)
 
-	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Ta && c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized to get posts",
 		})
@@ -53,9 +55,9 @@ func GetAllPosts(c *fiber.Ctx) error {
 // If there is an error creating the post, it returns a 500 Internal Server Error.
 func CreatePost(c *fiber.Ctx) error {
 	post := new(models.Post)
-	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Ta && c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized to create posts",
+			"message": "Unauthorized to get posts",
 		})
 	}
 
@@ -91,7 +93,7 @@ func CreatePost(c *fiber.Ctx) error {
 	}
 	post.ID = insertedReesult.InsertedID.(primitive.ObjectID)
 
-	socket.BroadcastJSONToAll("newMessage", post)
+	socket.BroadcastJSONToAll(models.NEW_POST_EVENT, post)
 
 	// changed this so that it just returns the new post. Might mess up some tests
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -110,9 +112,9 @@ func CreatePost(c *fiber.Ctx) error {
 // database, it returns a 500 Internal Server Error.
 func CreateComment(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if c.Locals("UserRole") != "ta" && c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Ta && c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized to create comments",
+			"message": "Unauthorized to get posts",
 		})
 	}
 	objectID, err := primitive.ObjectIDFromHex(id)
@@ -162,7 +164,7 @@ func CreateComment(c *fiber.Ctx) error {
 		"comment": comment,
 		"postId":  id,
 	}
-	socket.BroadcastJSONToThread("newComment", payload)
+	socket.BroadcastJSONToThread(models.NEW_COMMENT_EVENT, payload)
 	// I made this return the comment too bc to update data on the frontend
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully created comment",
@@ -177,7 +179,7 @@ func DeletePost(c *fiber.Ctx) error {
 	// fmt.Println(c.Locals("UserRole"))
 
 	// lowkey never tested this but unless there is some wierd pass by reference stuff going on it should work fine. When I made a typo and ran it though it worked fine(as it broke how it should have if no pass by reference) so this is unlikely.
-	if c.Locals("UserRole") != "admin" && c.Locals("UserRole") != "professor" {
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized to delete post",
 		})
@@ -197,7 +199,7 @@ func DeletePost(c *fiber.Ctx) error {
 		})
 	}
 
-	socket.BroadcastJSONToAll("deleteMessage", objectID)
+	socket.BroadcastJSONToAll(models.DELETE_POST_EVENT, objectID)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Successfully deleted post",
 	})

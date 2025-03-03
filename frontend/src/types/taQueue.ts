@@ -47,12 +47,41 @@ export type MainPageStore = {
   setCurTicket: (ticket: Ticket | undefined) => void;
 };
 
-export type MainPageStoreProps = { 
-    curStore: UseBoundStore<StoreApi<MainPageStore>>;
-}
+export type MainPageStoreProps = {
+  curStore: UseBoundStore<StoreApi<MainPageStore>>;
+};
 
 export type SessionButtonProps = {
-    curTas: ObjectId[];
-    setCurTas: React.Dispatch<React.SetStateAction<ObjectId[]>>;
-    taQueueId: ObjectId | undefined;
-}
+  curTas: ObjectId[];
+  setCurTas: React.Dispatch<React.SetStateAction<ObjectId[]>>;
+  taQueueId: ObjectId | undefined;
+};
+
+// return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 	"id":       taQueue.ID,
+// 	"isActive": taQueue.IsActive,
+// })
+
+export type TaQueueLeaveResponse = {
+  queueId: ObjectId;
+  isActive: boolean;
+};
+
+export type TaQueueJoinEvent = {
+  type: string;
+  data: {
+    taQueue: ObjectId;
+    taId: ObjectId;
+  };
+};
+
+// payload := map[string]interface{}{
+// 	"taId":     TaID,
+// 	"isActive": taQueue.IsActive,
+// 	"queueID":  queueID,
+// }
+export type TaQueueLeaveEvent = {
+  taId: ObjectId;
+  isActive: boolean;
+  queueID: ObjectId;
+};

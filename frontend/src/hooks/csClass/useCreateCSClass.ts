@@ -1,7 +1,6 @@
 import { csClassStore } from "@/store";
 import { CreateCSClassParams, CSClass, uriRoutes } from "@/types";
 import { httpClient } from "@/utils";
-import { ObjectId } from "mongodb";
 import { useState } from "react";
 
 export const useCreateCSClass = () => {
