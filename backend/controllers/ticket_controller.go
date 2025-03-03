@@ -151,7 +151,7 @@ func CreateTicket(c *fiber.Ctx) error {
 		"ticket": ticket,
 		"taQueue": queueId,
 	}
-	socket.BroadcastJSONToAll(models.TICKET_CREATE_EVVENT, ticket)
+	socket.BroadcastJSONToAll(models.TICKET_CREATE_EVVENT, payload)
 	return c.Status(fiber.StatusOK).JSON(
 		ticket,
 	)
