@@ -70,7 +70,7 @@ export type TaQueueLeaveResponse = {
 export type TaQueueJoinEvent = {
   type: string;
   data: {
-    taQueue: ObjectId;
+    queueId: ObjectId;
     taId: ObjectId;
   };
 };

@@ -1,6 +1,6 @@
 import { useResolveTicket } from "@/hooks/tickets/useResolveTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
-import { MainPageStoreProps, PROBLEM_TYPES } from "@/types";
+import { MainPageStoreProps, Modals, PROBLEM_TYPES } from "@/types";
 import { useEffect, useState } from "react";
 
 // type ResolveTicketPopupProps = {
@@ -61,6 +61,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
 
     console.log(res);
     setIsExpanded(false);
+    document.getElementById(Modals.QueuePopup)?.close();
   };
 
   // Const for whether or not the ticket has screenshots

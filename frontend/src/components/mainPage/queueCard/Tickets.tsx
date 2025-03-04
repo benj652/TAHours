@@ -21,7 +21,7 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
   return (
     <div
       className={cn(
-        `bg-base-100 rounded-lg p-4 shadow-lg ${isExpanded ? "w-1/3" : "w-2/3"}`
+        `bg-base-100 rounded-lg p-4 shadow-lg w-2/3`
       )}
     >
       <h1 className="text-lg font-bold">Current Queue</h1>

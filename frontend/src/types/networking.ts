@@ -82,4 +82,5 @@ export enum Roles {
 export enum Modals {
     RoleChange = "model_1",
     CreateClass = "model_2",
+    QueuePopup = "model_3",
 }

@@ -41,5 +41,8 @@ export type TicketCreateEvent = {
   };
 };
 
-
+export type TicketResolveEvent = {
+    type: string;
+    data: ObjectId
+}
 

@@ -6,6 +6,7 @@ import { authStore } from "./store";
 import { Navigate } from "react-router-dom";
 import { RolesConfig, Routes as routes } from "./types";
 import useListenMessages from "./hooks/posts/listeners/useListenMessages";
+import { useListenMainPage } from "./hooks";
 
 function App() {
     const location = useLocation();
@@ -28,6 +29,7 @@ function App() {
 
     // Websocket listners
     useListenMessages();
+    useListenMainPage();
 
     return (
         <div className={cn("font-primary")}>

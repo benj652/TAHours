@@ -187,8 +187,9 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	// }
 
 	// If there is only one TA in the queue, then the queue is now inactive
+	isActive := true
 	if len(taQueue.TAs) == 1 {
-		taQueue.IsActive = false
+		isActive = false
 
 		// Updates the class to have no active queue if the last TA is leaving
 		classFilter := bson.M{"_id": removeRequest.ClassId}
@@ -210,13 +211,13 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 
 	payload := map[string]interface{}{
 		"taId":     TaID,
-		"isActive": taQueue.IsActive,
+		"isActive": isActive,
 		"queueID":  queueID,
 	}
 	socket.BroadcastJSONToAll(models.TA_LEAVE_QUEUE_EVENT, payload)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id":       taQueue.ID,
-		"isActive": taQueue.IsActive,
+		"isActive": isActive,
 	})
 }
 

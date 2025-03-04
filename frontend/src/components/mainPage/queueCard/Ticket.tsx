@@ -1,6 +1,6 @@
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
-import { MainPageStoreProps, PopUpTypes } from "@/types";
+import { MainPageStoreProps, Modals, PopUpTypes } from "@/types";
 import { NIL_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
@@ -39,7 +39,10 @@ export const Ticket: React.FC<TicketProps> = ({
     setTicketOpen(true);
     setCurTicket(ticket);
     setPopupType(PopUpTypes.ResolveTicket);
+    document.getElementById(Modals.QueuePopup).showModal();
+    // <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
   };
+
 
   // useEffect to get the ticket and the user
   // this will get the ticket and the user when the component mounts
@@ -80,7 +83,7 @@ export const Ticket: React.FC<TicketProps> = ({
   // if the ticket is loading, return a loading div otherwise, this is the ticket component
   if (ticketLoading) return <div>Loading...</div>;
   return (
-    <li className="p-4 flex items-center gap-4 bg-gray-300 rounded-lg mb-2">
+    <li className={"p-4 flex items-center gap-4 bg-gray-300 rounded-lg mb-2 hover:cursor-pointer"} onClick={handleClick}>
       <div className="size-10 rounded-full overflow-hidden">
         <img
           src={user ? user.profilePic : "https://robohash.org/dsfaasdf.jpeg"}
@@ -91,15 +94,6 @@ export const Ticket: React.FC<TicketProps> = ({
       <div className="text-xs font-normal opacity-60">
         {shortendDescription}
       </div>
-      <button
-        className="btn btn-ghost bg-accent ml-auto shadow-lg"
-        onClick={handleClick}
-        disabled={curTicket && curTicket?._id && curTicket?._id === ticketId}
-      >
-        <div className="text-xs uppercase font-semibold text-base-100 ">
-          Resolve
-        </div>
-      </button>
     </li>
   );
 };
