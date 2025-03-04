@@ -1,171 +1,106 @@
-import { useCreateTicket } from "@/hooks";
-import { taQueueStore, ticketStore } from "@/store";
-import { MainPageStoreProps, PROBLEM_TYPES, Ticket } from "@/types";
-import { useState } from "react";
+import { useCreateTaQueue, useGetActiveClasses } from "@/hooks";
+import { authStore } from "@/store";
+import { AddPopUpProps, TaQueue, TaQueueCreateResponse } from "@/types";
+import { ObjectId } from "mongodb";
+import { useEffect, useState } from "react";
 
-// type AddTicketPopupProps = {
-//     classId: ObjectId;
-//     taQueueId: ObjectId;
-//     tickets: ObjectId[];
-//     setTickets: React.Dispatch<React.SetStateAction<ObjectId[]>>;
-// };
-/**
- * This is the popup used when you want to add a ticket
- * It looks ugly atm and will need to be looking bussin
- */
-export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
-    const {
-        classId,
-        taQueueId,
-        setCurTickets: setTickets,
-        curTickets: tickets,
-        setIsExpanded,
-    } = curStore();
+type AddTaQueuePopupProps = AddPopUpProps & {
+  curTaQueues: TaQueue[] | null;
+  setTaQueues: (taQueues: TaQueue[]) => void;
+};
+export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
+  isOpen,
+  setIsOpen,
+  curTaQueues,
+  setTaQueues,
+}) => {
+  const { createTaQueue, loading: createLoading } = useCreateTaQueue();
+  const { userItems } = authStore();
 
-    // We unpack a bunch of caching stuff so no reloads are needed
-    const { loading, createTicket, error } = useCreateTicket();
-    const { addTicketToCache } = ticketStore();
-    const { allTaQueues } = taQueueStore();
+  // const [fetched, setFetched] = useState<boolean>(false); // State for fetching class data
 
-    /**
-     * Function to handle adding a new ticket
-     * It updates all caches associated with the process
-     * Web sockets will need to be implemented with this maybe
-     *
-     * @returns nothing bruh
-     */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const {
+    getActiveClasses,
+    loading: activeClassesLoading,
+    data: activeClasses,
+  } = useGetActiveClasses();
 
-        // TODO: work out a way to display errors.
-        if (!taQueueId) return;
-        if (!classId) return;
-        const res = (await createTicket(
-            classId,
-            taQueueId.toString(),
-            curDescription,
-            curProblem,
-            curType,
-            curAttachments,
-        )) as Ticket;
-        //need to toast this or something
-        if (!res) return;
-        if (!res._id) return;
+  // Fetches the classsses if they have not been fetched
+  // const fetchClasses = useCallback(() => {
+  //     if (!fetched) {
+  //         getActiveClasses();
+  //         setFetched(true);
+  //     }
+  // }, [fetched]);
 
-        // the following lines up to line #44 will/should likely reside in thier own function at somepoint
-        addTicketToCache(res);
+  // useEffect(() => {
+  //     fetchClasses();
+  // }, [fetchClasses]);
 
-        // It is saying that tickets needs some object tytpe iterator or whatever but I always just ignore that error and it all works out
-        //@ts-ignore
-        setTickets([...tickets, res._id]);
+  useEffect(() => {
+    getActiveClasses();
+  }, []);
+  // Form state variables and values
+  const [selectedClass, setSelectedClass] = useState<string>("");
+  const [directions, setDirections] = useState<string>("");
 
-        // Updates the cached queue to have the new id
-        const targetQueue = allTaQueues.find((queue) => queue._id === taQueueId);
+  // const { setTaQueues, data: taQueues } = useGetAllTaQueues();
 
-        if (!targetQueue) return;
-        targetQueue.tickets.push(res._id);
-        console.log(res);
+  /** Function to handle the form submission */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-        // Closes the popup
-        setIsExpanded(false);
-    };
+    // @ts-expect-error noitems
+    const classObject = selectedClass as ObjectId;
+    if (!userItems?._id) return "error";
+    const res = (await createTaQueue(
+      [userItems._id],
+      classObject,
+      directions
+    )) as TaQueueCreateResponse;
+    //@ts-expect-error setqueues
+    setTaQueues([...curTaQueues, res.taQueue]);
+    // setTaQueues([...(taQueues || []), res.taQueue]);
+    // console.log("new quesues", taQueues);
+    console.log(res.taQueue);
+    setIsOpen(false);
+  };
 
-    // Trackers to see what is netered in the form
-    const [curProblem, setCurProblem] = useState<string>("");
-    const [curDescription, setCurDescription] = useState<string>("");
-    const [curType, setCureType] = useState<string>(PROBLEM_TYPES.DEBUGGING);
-
-    // Tracker for uploaded screenshots
-    const [curAttachments, setCurAttachments] = useState<string[]>([]);
-    const [curAttatchment, setCurAttatchment] = useState<string>("");
-
-    // Function to handle file uploads
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return;
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if (!e.target) return;
-            setCurAttatchment(e.target.result as string);
-            console.log(curAttatchment);
-        };
-        reader.readAsDataURL(file);
-    };
-
-    // function to add the screenshot to the list of attachments
-    const handleFileUpload = async () => {
-        const newAttatchment = curAttatchment;
-        if (!newAttatchment || newAttatchment === "") return;
-        setCurAttachments([...curAttachments, newAttatchment]);
-        setCurAttatchment("");
-    };
-
-    const handleDeleteAttachment = async (index: number) => {
-        const newAttachments = curAttachments.filter((_, i) => i !== index);
-        console.log(newAttachments.length);
-        setCurAttachments(newAttachments);
-    };
-
-    return (
-        <form className="bg-amber-500" onSubmit={handleSubmit}>
-            <label> Problem </label>
-            <input
-                type="text"
-                value={curProblem}
-                onChange={(e) => setCurProblem(e.target.value)}
-            />
-            <label> Description </label>
-            <textarea
-                value={curDescription}
-                onChange={(e) => setCurDescription(e.target.value)}
-            />
-            <label>Problem Type</label>
-            <select onChange={(e) => setCureType(e.target.value)}>
-                <option value={PROBLEM_TYPES.DEBUGGING}>Debugging</option>
-                <option value={PROBLEM_TYPES.SYNTAX}>Syntax</option>
-                <option value={PROBLEM_TYPES.LOGIC}>Logic</option>
-                <option value={PROBLEM_TYPES.RUNTIME}>Runtime</option>
-                <option value={PROBLEM_TYPES.INSTALLATION}>Installation</option>
-                <option value={PROBLEM_TYPES.OTHER}>Other</option>
-                </select>
-            <label> Attachments </label>
-            <div>
-                {curAttachments.map((attatchment, index) => (
-                    <div key={index} className="flex flex-row">
-                        <img className="w-96 h-auto" src={attatchment} />
-                        <button
-                            type="button"
-                            onClick={() => handleDeleteAttachment(index)}
-                            className="bg-pink-500 hover:bg-green-500"
-                        >
-                            {" "}
-                            remove{" "}
-                        </button>
-                    </div>
-                ))}
-                <input
-                    className="bg-pink-500 hover:bg-green-500"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                />
-                <button
-                    onClick={handleFileUpload}
-                    className="bg-pink-500 hover:bg-green-500"
-                    type="button"
-                >
-                    {" "}
-                    upload{" "}
-                </button>
-            </div>
-            <button
-                type="submit"
-                disabled={loading}
-                className="bg-pink-500 hover:bg-green-500"
-            >
-                submit
-            </button>
-            {error}
-        </form>
-    );
+  // If the popup is not open, do nothing
+  if (!isOpen) return null;
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>Class </label>
+        <select
+          value={selectedClass}
+          onChange={(e) => setSelectedClass(e.target.value)}
+          className="rounded-md border mt-1"
+        >
+          <option value="" disabled>
+            Select a class
+          </option>
+          {activeClasses?.map((csClass, index) => (
+            <option key={index} value={csClass._id?.toString()}>
+              {csClass.name}
+            </option>
+          ))}
+        </select>
+        <label> Class Room </label>
+        <input
+          type="text"
+          value={directions}
+          onChange={(e) => setDirections(e.target.value)}
+          className="rounded-md border mt-1 mr-2"
+        />
+        <button
+          type="submit"
+          className=" border bg-gray-300 hover:bg-accent hover:text-base-100"
+          disabled={activeClassesLoading || createLoading}
+        >
+          Confirm
+        </button>
+      </form>
+    </div>
+  );
 };

@@ -16,115 +16,136 @@ import { useEffect, useState } from "react";
  * can not see this by mistake
  */
 export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
-    curStore,
+  curStore,
 }) => {
-    // Gets the currently selected ticket from the local store
-    const { curTicket, setIsExpanded } = curStore();
+  // Gets the currently selected ticket from the local store
+  const { curTicket, setIsExpanded } = curStore();
 
-    // unpackers the getUser hook as we would like to disply information
-    // about the sender of the ticket
-    //
-    // NOTE: This is NOT inefficeint/WILL NOT overload the backend
-    // as this hook indefinently caches user info.
-    const { getUser, user } = useGetUser();
+  // Unpacks the getUser hook as we would like to display information
+  // about the sender of the ticket
+  const { getUser, user } = useGetUser();
 
-    // Use the hook to get the user info
-    useEffect(() => {
-        // Need a better way to display errors
-        if (!curTicket || !curTicket._id) return;
-        getUser(curTicket.studentId);
-    }, []);
+  // Use the hook to get the user info
+  useEffect(() => {
+    if (!curTicket || !curTicket._id) return;
+    getUser(curTicket.studentId);
+  }, []);
 
-    // State to handle what the ta puts in as their resolution message
-    const [taMessage, setTaMessage] = useState<string>("");
+  // State to handle what the TA puts in as their resolution message
+  const [taMessage, setTaMessage] = useState<string>("");
 
-    // unpack use resolve ticket hook
-    const { resolveTicket, loading } = useResolveTicket();
+  // Unpacks use resolve ticket hook
+  const { resolveTicket, loading } = useResolveTicket();
 
-    /**
-     * Function to handle resolving the ticket
-     * This will update all instances of the cached ticket
-     * to mark it as having a TA which should mark it as resolved
-     * in the queue
-     */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        // prevent the default form submission
-        e.preventDefault();
+  /**
+   * Function to handle resolving the ticket
+   * This will update all instances of the cached ticket
+   * to mark it as having a TA which should mark it as resolved
+   * in the queue
+   */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Prevent the default form submission
+    e.preventDefault();
 
-        // Validate that there is a ticket. Will need a better error thing like a toast
-        // or maybe a message
-        if (!curTicket) return;
+    // Validate that there is a ticket
+    if (!curTicket) return;
 
-        // Make sure the ta has put in a message
-        if (!taMessage || taMessage === "") return;
+    // Make sure the TA has put in a message
+    if (!taMessage || taMessage === "") return;
 
-        // Make sure the ticket has an id
-        if (!curTicket._id) return;
+    // Make sure the ticket has an id
+    if (!curTicket._id) return;
 
-        // Call the resolve ticket function from the hook
-        const res = await resolveTicket(curTicket._id, taMessage, curType);
+    // Call the resolve ticket function from the hook
+    const res = await resolveTicket(curTicket._id, taMessage, curType);
 
-        console.log(res);
-        setIsExpanded(false);
-    };
+    console.log(res);
+    setIsExpanded(false);
+  };
 
-    // Const for weather or not he ticket has screenshots
-    const screenShotsShow =
-        curTicket?.screenshots && curTicket.screenshots.length > 0;
+  // Const for whether or not the ticket has screenshots
+  const screenShotsShow =
+    curTicket?.screenshots && curTicket.screenshots.length > 0;
 
+  // State to handle the problem type
+  const [curType, setCureType] = useState<string>(curTicket?.problemtype);
+  useEffect(() => {
+    setCureType(curTicket?.problemtype);
+  }, [curTicket]);
 
-    // State to handle the problem type
-    const [curType, setCureType] = useState<string>(curTicket?.problemtype);
-    useEffect(() => {
-        setCureType(curTicket?.problemtype);
-    }, [curTicket]);
+  // Returns a loading message if the ticket is still loading
+  if (!curTicket) return <div>WAIIIIITTTTT</div>;
 
-    // Returns a wait thing if the ticket is still loading
-    // we will need a seperate waiter if the user is loading down in the main
-    // return statement
-    if (!curTicket) return <div>WAIIIIITTTTT</div>;
-    return (
-        <div className="bg-amber-500">
-            <h1>Resolve Ticket</h1>
-            <h2>{user?.email}</h2>
-            <h2>{user?.firstName}</h2>
-            <h2>{user?.lastName}</h2>
-            <img src={user?.profilePic} />
-            The issue:
-            <h2>{curTicket.problem}</h2>
-            <p>{curTicket.description}</p>
-            <h2> problem type</h2>
-            <label>Problem Type</label>
-            <select onChange={(e) => setCureType(e.target.value)} value={curType}>
-                <option value={PROBLEM_TYPES.DEBUGGING}>Debugging</option>
-                <option value={PROBLEM_TYPES.SYNTAX}>Syntax</option>
-                <option value={PROBLEM_TYPES.LOGIC}>Logic</option>
-                <option value={PROBLEM_TYPES.RUNTIME}>Runtime</option>
-                <option value={PROBLEM_TYPES.INSTALLATION}>Installation</option>
-                <option value={PROBLEM_TYPES.OTHER}>Other</option>
-                </select>
-            {screenShotsShow ? (
-                <div>
-                    <h2>Screenshots</h2>
-                    {curTicket.screenshots.map((screenshot, index) => (
-                        <img key={index} src={screenshot} className="max-w-96 h-auto" />
-                    ))}
-                </div>
-            ) : null}
-            <form onSubmit={handleSubmit}>
-                <label>What do you think we should do about it mr ta?</label>
-                <textarea
-                    value={taMessage}
-                    onChange={(e) => setTaMessage(e.target.value)}
-                />
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-pink-500 hover:bg-green-500"
-                >
-                    Resolve
-                </button>
-            </form>
+  return (
+    <div className="bg-base-100 rounded-field px-2 py-2">
+      <h1 className="font-bold">Resolve Ticket</h1>
+
+      {/* TA Details Card */}
+      <div className="bg-base-300 p-4 rounded-md mt-4 mb-6 flex items-center space-x-4">
+        {/* TA Information Text */}
+        <div>
+          <h2 className="">{user?.email}</h2>
+          <h3 className="text-lg">
+            {user?.firstName} <span>{user?.lastName}</span>
+          </h3>
         </div>
-    );
+
+        {/* Profile Image on the Right */}
+        <img
+          src={user?.profilePic}
+          alt="TA Profile"
+          className="rounded-full w-16 h-16 ml-auto" // 'ml-auto' pushes the image to the right
+        />
+      </div>
+
+      {/* Issue Details */}
+      <p className="font-semibold">The issue:</p>
+      <h2 className="">{curTicket.problem}</h2>
+      <p>{curTicket.description}</p>
+
+      {/* Problem Type Dropdown */}
+      <h2 className="mt-2 font-semibold">Problem Type</h2>
+      <select onChange={(e) => setCureType(e.target.value)} value={curType}>
+        <option value={PROBLEM_TYPES.DEBUGGING}>Debugging</option>
+        <option value={PROBLEM_TYPES.SYNTAX}>Syntax</option>
+        <option value={PROBLEM_TYPES.LOGIC}>Logic</option>
+        <option value={PROBLEM_TYPES.RUNTIME}>Runtime</option>
+        <option value={PROBLEM_TYPES.INSTALLATION}>Installation</option>
+        <option value={PROBLEM_TYPES.OTHER}>Other</option>
+      </select>
+
+      {/* Screenshots (if any) */}
+      {screenShotsShow && (
+        <div>
+          <h2 className="mt-2 font-semibold">Screenshots:</h2>
+          {curTicket.screenshots.map((screenshot, index) => (
+            <img key={index} src={screenshot} className="max-w-96 h-auto" />
+          ))}
+        </div>
+      )}
+
+      {/* Form to resolve ticket */}
+      <form onSubmit={handleSubmit}>
+        {/* Notes On Resolution Label */}
+        <label className="mt-2 font-semibold mb-2 block">
+          Notes On Resolution:
+        </label>
+
+        {/* Textarea for TA message */}
+        <textarea
+          value={taMessage}
+          onChange={(e) => setTaMessage(e.target.value)}
+          className="w-full h-32 p-2 border rounded-md"
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-gray-300 hover:bg-accent px-2 rounded-box hover:text-white mt-4"
+        >
+          Resolve
+        </button>
+      </form>
+    </div>
+  );
 };

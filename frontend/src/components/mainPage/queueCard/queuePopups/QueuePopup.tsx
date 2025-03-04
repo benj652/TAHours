@@ -1,6 +1,5 @@
 import { MainPageStoreProps, PopUpTypes } from "@/types";
 import { AddTicketPopup } from "./AddTicketPopup";
-import { ObjectId } from "mongodb";
 import { ResolveTicketPopup } from "./ResolveTicketPopup";
 
 // export const QueuePopup = ({
@@ -24,27 +23,30 @@ import { ResolveTicketPopup } from "./ResolveTicketPopup";
 //     curTicket: ObjectId;
 //     setCurrentTicket: React.Dispatch<React.SetStateAction<ObjectId>>;
 // }) => {
-export const QueuePopup:React.FC<MainPageStoreProps> = ({
-curStore
-}) => {
-    const {curPopUpType: type, isExpanded: isOpen, setIsExpanded: setIsOpen, setCurTicket } = curStore();
-    if (!isOpen) return null;
+export const QueuePopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
+  const {
+    curPopUpType: type,
+    isExpanded: isOpen,
+    setIsExpanded: setIsOpen,
+    setCurTicket,
+  } = curStore();
+  if (!isOpen) return null;
 
-    const handleClick = async () => {
-        setIsOpen(false);
-        setCurTicket(undefined);
-    };
-    return (
-        <div>
-            {type === PopUpTypes.AddTicket ? (
-                <AddTicketPopup
-                    curStore={curStore}
-                />
-            ) : null}
-            {type === PopUpTypes.ResolveTicket ? <ResolveTicketPopup curStore={curStore} /> : null}
-            <button className="btn btn-error" onClick={handleClick}>
-                Close my son
-            </button>
-        </div>
-    );
+  const handleClick = async () => {
+    setIsOpen(false);
+    setCurTicket(undefined);
+  };
+  return (
+    <div>
+      {type === PopUpTypes.AddTicket ? (
+        <AddTicketPopup curStore={curStore} />
+      ) : null}
+      {type === PopUpTypes.ResolveTicket ? (
+        <ResolveTicketPopup curStore={curStore} />
+      ) : null}
+      <button className="btn btn-error mt-2" onClick={handleClick}>
+        Close
+      </button>
+    </div>
+  );
 };

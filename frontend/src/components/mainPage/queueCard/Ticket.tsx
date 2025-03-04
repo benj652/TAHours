@@ -80,7 +80,7 @@ export const Ticket: React.FC<TicketProps> = ({
   // if the ticket is loading, return a loading div otherwise, this is the ticket component
   if (ticketLoading) return <div>Loading...</div>;
   return (
-    <li className="p-4 flex items-center gap-4 bg-gray-200 rounded-lg">
+    <li className="p-4 flex items-center gap-4 bg-gray-300 rounded-lg mb-2">
       <div className="size-10 rounded-full overflow-hidden">
         <img
           src={user ? user.profilePic : "https://robohash.org/dsfaasdf.jpeg"}
