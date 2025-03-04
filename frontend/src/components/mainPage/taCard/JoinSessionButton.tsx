@@ -17,10 +17,10 @@ export const JoinSessionButton: React.FC<SessionButtonProps> = ({
     if (error) return;
     setCurTas([...curTas, userItems._id]);
     const curTaQueue = allTaQueues.filter(
-      (taQueue) => taQueue._id === taQueueId,
+      (taQueue) => taQueue._id === taQueueId
     );
     const curUserInTaQueue = curTaQueue[0].TAs.filter(
-      (user) => user === userItems._id,
+      (user) => user === userItems._id
     );
     if (curUserInTaQueue.length > 0) return;
     curTaQueue[0].TAs.push(userItems._id);
@@ -29,7 +29,7 @@ export const JoinSessionButton: React.FC<SessionButtonProps> = ({
     <button
       onClick={handleJoinSession}
       disabled={loading}
-      className="bg-pink-500 hover:bg-green-500"
+      className="bg-gray-300 px-2 rounded-box hover:bg-accent hover:text-white"
     >
       Join Session
     </button>
