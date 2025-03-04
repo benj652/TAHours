@@ -1,29 +1,11 @@
-import { create } from "zustand";
-
-interface Routes {
-    feed: string;
-    profile: string;
-    login: string;
-    analytics: string;
-    main: string;
+// Define routes as an enum
+export enum Routes {
+    Feed = "/feed",
+    Profile = "/profile",
+    Login = "/login",
+    Analytics = "/analytics",
+    Main = "/main",
 }
-
-/**
- * Define the routes for the application
- * @param feed - The feed route
- * @param profile - The profile route
- * @param login - The login route
- * @param analytics - The analytics route
- * @param main - The main route
- * @returns The routes for the application
- */
-export const routes: Routes = {
-    feed: "/feed",
-    profile: "/profile",
-    login: "/login",
-    analytics: "/analytics",
-    main: "/main",
-};
 
 /**
  * Matches the REST API route endpoints from the backend server to the frontend
@@ -34,75 +16,70 @@ const postBase = "/api/posts";
 const taQueueBase = "/api/ta-queue";
 const ticketBase = "/api/ticket";
 
-export const uriRoutes = {
-    user: {
-        getOrCreateUser: `${userBase}/get-or-create`,
-        getOneUser: `${userBase}/one/`,
-        getAllUsers: `${userBase}/all`,
-        UPDATE_ROLE_TA: `${userBase}/update-role-ta/`,
-        UPDATE_ROLE_PROFESSOR: `${userBase}/update-role-professor/`,
-        UPDATE_ROLE_STUDENT: `${userBase}/update-role-student/`,
-    },
-    posts: {
-        createPost: `${postBase}/create`,
-        getAllPosts: `${postBase}/all`,
-        createComment: `${postBase}/comment/`,
-        deletePost: `${postBase}/`,
-    },
-    csClass: {
-        getActiveClasses: `${csClassBase}/active-classes`,
-        createCsClass: `${csClassBase}/create`,
-        createTaQueue: `${csClassBase}/create-ta-queue`,
-        setActiveClass: `${csClassBase}/set-active/`,
-        getCsClass: `${csClassBase}/one/`,
-    },
-    taQueue: {
-        getAll: `${taQueueBase}/all`,
-        addTa: `${taQueueBase}/add-ta/`,
-        removeTa: `${taQueueBase}/remove-ta/`,
-        getActiveTickets: `${taQueueBase}/active-tickets`,
-    },
-    ticket: {
-        getTicket: `${ticketBase}/one/`,
-        createTicket: `${ticketBase}/create/`,
-        resoloveTicket: `${ticketBase}/resolve/`,
-        deleteTicket: `${ticketBase}/`,
-        userTickets: `${ticketBase}/user-tickets/`,
-    },
-};
+export enum UserRoutes {
+    GetOrCreateUser = `${userBase}/get-or-create`,
+    GetOneUser = `${userBase}/one/`,
+    GetAllUsers = `${userBase}/all`,
+    UpdateRoleTA = `${userBase}/update-role-ta/`,
+    UpdateRoleProfessor = `${userBase}/update-role-professor/`,
+    UpdateRoleStudent = `${userBase}/update-role-student/`,
+}
+
+export enum PostRoutes {
+    CreatePost = `${postBase}/create`,
+    GetAllPosts = `${postBase}/all`,
+    CreateComment = `${postBase}/comment/`,
+    DeletePost = `${postBase}/`,
+}
+
+export enum CsClassRoutes {
+    GetActiveClasses = `${csClassBase}/active-classes`,
+    CreateCsClass = `${csClassBase}/create`,
+    CreateTaQueue = `${csClassBase}/create-ta-queue`,
+    SetActiveClass = `${csClassBase}/set-active/`,
+    GetCsClass = `${csClassBase}/one/`,
+}
+
+export enum TaQueueRoutes {
+    GetAll = `${taQueueBase}/all`,
+    AddTa = `${taQueueBase}/add-ta/`,
+    RemoveTa = `${taQueueBase}/remove-ta/`,
+    GetActiveTickets = `${taQueueBase}/active-tickets`,
+}
+
+export enum TicketRoutes {
+    GetTicket = `${ticketBase}/one/`,
+    CreateTicket = `${ticketBase}/create/`,
+    ResolveTicket = `${ticketBase}/resolve/`,
+    DeleteTicket = `${ticketBase}/`,
+    UserTickets = `${ticketBase}/user-tickets/`,
+}
 
 /**
  * Config for the tokens in the application
  */
-export const tokenConfig = {
-    userTimeoutToken: "token",
-    userJWTResponseToken: "JWTR",
-    userItemsToken: "user",
-};
+export enum TokenConfig {
+    UserTimeoutToken = "token",
+    UserJWTResponseToken = "JWTR",
+    UserItemsToken = "user",
+}
 
 /**
  * Config for roles.
  *
- * This corresponds with the Go config on the backend. In this, the student has the least privlages,
+ * This corresponds with the Go config on the backend. In this, the student has the least privileges,
  * and can only access the main and profile page. TAs can access the feed page. Professors and admins can access
  * any page. In the future, these roles might also dictate if you can view another user's profile.
- *
- * @param student - The student role
- * @param ta - The teaching assistant role
- * @param professor - The professor role
- * @param admin - The admin role
- * @returns The roles configuration
  */
-export const rolesConfig = {
-    student: "student",
-    ta: "ta",
-    professor: "professor",
-    admin: "admin",
-};
-
+export enum Roles {
+    Student = "student",
+    TA = "ta",
+    Professor = "professor",
+    Admin = "admin",
+}
 
 // Popup Modals
-export const MODALS = {
-    ROLE_CHANGE: "model_1",
-    CREATE_CLASS: "model_2",
+export enum Modals {
+    RoleChange = "model_1",
+    CreateClass = "model_2",
 }

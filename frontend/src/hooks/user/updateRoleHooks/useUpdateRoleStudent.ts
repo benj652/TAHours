@@ -1,5 +1,5 @@
 import { authStore, userStore } from "@/store";
-import { RolesConfig, rolesConfig, uriRoutes } from "@/types";
+import { RolesConfig, UserRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -19,8 +19,8 @@ export const useUpdateRoleStudent = () => {
         throw new Error("User not found");
       }
       if (
-        userItems.roles != rolesConfig.admin &&
-        userItems.roles != rolesConfig.professor
+        userItems.roles != RolesConfig.Admin &&
+        userItems.roles != RolesConfig.Professor
       ) {
         throw new Error("User is not an allowed to update this user");
       }
@@ -29,7 +29,7 @@ export const useUpdateRoleStudent = () => {
       }
 
       const res = await httpClient.post(
-        `${uriRoutes.user.UPDATE_ROLE_STUDENT}${userId}`,
+        `${UserRoutes.UpdateRoleStudent}${userId}`,
       );
 
       const rdata = res.data;

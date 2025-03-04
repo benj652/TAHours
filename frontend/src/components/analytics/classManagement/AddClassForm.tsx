@@ -1,5 +1,5 @@
 import { useCreateCSClass } from "@/hooks";
-import { CSClass, MODALS, SEMESTER_NAMES } from "@/types";
+import { Modals, SEMESTER_NAMES } from "@/types";
 import { useState } from "react";
 
 export const AddClassForm = () => {
@@ -11,7 +11,7 @@ export const AddClassForm = () => {
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await createCSClass({ name, semester, year });
-    document.getElementById(MODALS.CREATE_CLASS)?.close();
+    document.getElementById(Modals.CreateClass)?.close();
   };
 
   return (
@@ -44,11 +44,11 @@ export const AddClassForm = () => {
       <button
         type="button"
         className="mt-3 w-full btn btn-primary hover:bg-secondary"
-        onClick={() => document.getElementById(MODALS.CREATE_CLASS).showModal()}
+        onClick={() => document.getElementById(Modals.CreateClass).showModal()}
       >
         Add Class
       </button>
-      <dialog id={MODALS.CREATE_CLASS} className="modal">
+      <dialog id={Modals.CreateClass} className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Create Class?</h3>
           <p className="py-4">Name: {name}</p>

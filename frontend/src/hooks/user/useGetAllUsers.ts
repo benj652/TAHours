@@ -1,5 +1,5 @@
 import { userStore } from "@/store";
-import { uriRoutes, User } from "@/types";
+import {  User, UserRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
 
@@ -12,7 +12,7 @@ export const useGetAllUsers = () => {
   const getAllUsers = async () => {
     setLoading(true);
     try {
-      const res = await httpClient.get<User[]>(uriRoutes.user.getAllUsers);
+      const res = await httpClient.get<User[]>(UserRoutes.GetAllUsers);
       const rdata = res.data;
       if (!rdata) {
         throw new Error("No users found");

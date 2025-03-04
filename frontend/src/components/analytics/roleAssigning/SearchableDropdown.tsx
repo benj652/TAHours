@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetAllUsers } from "@/hooks";
-import { MODALS, PLACEHOLER_USER, User } from "@/types";
+import { Modals, PLACEHOLER_USER, User } from "@/types";
 import { RoleChangePopup } from "./RoleChangePopup";
 
 interface SearchableDropdownProps {
@@ -40,7 +40,7 @@ export const SearchableDropdown = ({
     setSelected(option);
     setSearch(option.firstName + " " + option.lastName);
     setIsOpen(false);
-    document.getElementById(MODALS.ROLE_CHANGE).showModal();
+    document.getElementById(Modals.RoleChange).showModal();
   };
 
   if (!options) {
