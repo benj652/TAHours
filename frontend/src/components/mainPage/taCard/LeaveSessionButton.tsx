@@ -57,7 +57,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     <button
       disabled={loading}
       onClick={handleLeaveSession}
-      className="bg-gray-300 hover:bg-accent hover:text-white px-2 rounded-box"
+      className="bg-gray-300 hover:bg-accent hover:text-white px-2 rounded-box transition-colors duration-300 cursor-pointer"
     >
       Leave Session
     </button>

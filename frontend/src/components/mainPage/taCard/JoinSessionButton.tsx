@@ -29,7 +29,7 @@ export const JoinSessionButton: React.FC<SessionButtonProps> = ({
     <button
       onClick={handleJoinSession}
       disabled={loading}
-      className="bg-gray-300 px-2 rounded-box hover:bg-accent hover:text-white"
+      className="bg-gray-300 px-2 rounded-box hover:bg-accent hover:text-white transition-colors duration-300 cursor-pointer"
     >
       Join Session
     </button>

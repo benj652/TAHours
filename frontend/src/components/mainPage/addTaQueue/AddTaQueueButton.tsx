@@ -1,6 +1,7 @@
 import { authStore } from "@/store";
 import { AddPopUpProps, RolesConfig} from "@/types";
 
+
 export const AddTaQueueButton: React.FC<AddPopUpProps> = ({
   isOpen,
   setIsOpen,
@@ -21,7 +22,7 @@ export const AddTaQueueButton: React.FC<AddPopUpProps> = ({
     return null;
   return (
     <button
-      className="rounded-box w-full bg-gray-300 hover:bg-accent hover:text-base-100 mt-4"
+      className="rounded-box w-1/4 align-center bg-gray-300 hover:bg-accent hover:text-base-100 mt-4 transition-colors duration-300 cursor-pointer"
       onClick={handleClick}
     >
       {isOpen ? <h1>Cancel</h1> : <h1>Add Ta Queue</h1>}

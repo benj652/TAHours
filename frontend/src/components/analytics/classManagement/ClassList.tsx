@@ -1,9 +1,9 @@
 import { useGetActiveClasses } from "@/hooks";
+import { analyticsPageStore, csClassStore } from "@/store";
+import { CSClass } from "@/types";
 import { useEffect } from "react";
 import CuteStar from "../../../assets/star.svg";
 import { AddClassForm } from "./AddClassForm";
-import { analyticsPageStore, csClassStore } from "@/store";
-import { CSClass } from "@/types";
 
 export const ClassList = () => {
   const { getActiveClasses } = useGetActiveClasses();
