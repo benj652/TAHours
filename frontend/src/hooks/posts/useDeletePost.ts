@@ -1,4 +1,4 @@
-import { uriRoutes } from "@/types";
+import { DeletePostResponse, PostRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -19,11 +19,13 @@ export const useDeletePost = () => {
     ) => {
         setLoading(true);
         try {
+            // Check if the id is provided
             if (!id) {
                 throw new Error("No id provided");
             }
-            const res = await httpClient.delete(`${uriRoutes.posts.deletePost}${id}`);
-            await res.data;
+            // Send a delete request to the server to delete the post
+            const res = await httpClient.delete<DeletePostResponse>(`${PostRoutes.DeletePost}${id}`);
+            res.data;
         } catch (error) {
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {

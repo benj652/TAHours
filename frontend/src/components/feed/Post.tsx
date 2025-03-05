@@ -1,7 +1,7 @@
 import { cn } from "@/utils/classNames";
 import { Replies } from "./Replies";
 import { authStore } from "@/store";
-import { Post as PostType, rolesConfig } from "@/types";
+import { Post as PostType, RolesConfig} from "@/types";
 import { useDeletePost } from "@/hooks/posts/useDeletePost";
 import { useState } from "react";
 
@@ -19,8 +19,8 @@ export const Post: React.FC<PostProps> = ({
 }) => {
     const { userItems } = authStore();
     const isAdmin =
-        userItems.roles === rolesConfig.professor ||
-        userItems.roles === rolesConfig.admin;
+        userItems.roles === RolesConfig.Professor ||
+        userItems.roles === RolesConfig.Admin;
 
     const { loading, error, deletePost } = useDeletePost();
     const [curComments, setCurComments] = useState(comments);

@@ -40,7 +40,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     if (!curTaQueues || curTaQueues.length === 0) return;
     if (curTaQueue[0].TAs.length === 0) return;
 
-    if (curTaQueue[0].TAs.length === 1) {
+    if (!res.isActive) {
       console.log("curTaQueue[0].TAs.length === 1");
       const newTaQueues = curTaQueues.filter(
         (taQueue) => taQueue._id !== taQueueId
@@ -59,8 +59,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
       onClick={handleLeaveSession}
       className="bg-gray-300 hover:bg-accent hover:text-white px-2 rounded-box transition-colors duration-300 cursor-pointer"
     >
-      {" "}
-      Leave Session Button{" "}
+      Leave Session
     </button>
   );
 };

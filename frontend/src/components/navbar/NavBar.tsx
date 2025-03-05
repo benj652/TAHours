@@ -5,6 +5,10 @@ import { Link, useLocation } from "react-router-dom";
 import ColbySeal from "../../assets/colbyseal.svg";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
+import { useLogout } from "@/hooks";
+import { Routes } from "@/types";
+import { authStore } from "@/store";
+import { RolesConfig } from "@/types"; // Assuming the rolesConfig is imported
 
 export const NavBar = () => {
   const location = useLocation();
@@ -83,6 +87,7 @@ export const NavBar = () => {
         <div className="flex flex-row bg-base-100 p-2 rounded-md space-x-2">
           <img src={ColbySeal} alt="Colby Seal" className="h-10 w-10" />
           <img src={ColbyText} alt="Colby Seal" className="h-10 w-10" />
+
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">

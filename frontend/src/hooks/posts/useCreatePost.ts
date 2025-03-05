@@ -1,7 +1,7 @@
 import { authStore, threadStore } from "@/store";
 import { useState } from "react";
 import { httpClient } from "@/utils";
-import { uriRoutes, Post } from "@/types";
+import { Post, PostRoutes } from "@/types";
 
 /*
  * Hook to create posts. Because of how the DB is set up, there is no space for profile pictures but there is a space for titles.
@@ -44,7 +44,7 @@ export const useCreatePost = () => {
             const fullName = userItems?.firstName + " " + userItems?.lastName
             +"------" + formattedDate;
             const title = userItems?.profilePic;
-            const res = await httpClient.post(uriRoutes.posts.createPost, {
+            const res = await httpClient.post(PostRoutes.CreatePost, {
                 user: fullName,
                 title: title,
                 body: body,

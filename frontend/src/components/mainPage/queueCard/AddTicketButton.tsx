@@ -1,4 +1,4 @@
-import { MainPageStoreProps, PopUpTypes } from "@/types";
+import { MainPageStoreProps, Modals, PopUpTypes } from "@/types";
 
 // type ExpandQueueProps = QueueProps & {
 //     setPopupType: React.Dispatch<React.SetStateAction<string>>;
@@ -8,6 +8,7 @@ export const AddTicketButton: React.FC<MainPageStoreProps> = ({ curStore }) => {
   const handleClick = async () => {
     setIsExpanded(true);
     setPopupType(PopUpTypes.AddTicket);
+    document.getElementById(Modals.QueuePopup).showModal();
   };
 
   return (

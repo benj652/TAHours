@@ -4,8 +4,9 @@ import { NavBar } from "@/components";
 import { cn } from "./utils";
 import { authStore } from "./store";
 import { Navigate } from "react-router-dom";
-import { rolesConfig, routes } from "./types";
+import { RolesConfig, Routes as routes } from "./types";
 import useListenMessages from "./hooks/posts/listeners/useListenMessages";
+import { useListenMainPage } from "./hooks";
 
 function App() {
     const location = useLocation();
@@ -22,84 +23,85 @@ function App() {
         return allowedRoles.includes(role) ? (
             element
         ) : (
-            <Navigate to={routes.login} />
+            <Navigate to={routes.Login} />
         );
     };
 
     // Websocket listners
     useListenMessages();
+    useListenMainPage();
 
     return (
         <div className={cn("font-primary")}>
             {showNavBar && <NavBar />}
             <Routes>
                 <Route
-                    path={routes.login}
-                    element={user ? <Navigate to={routes.main} /> : <Login />}
+                    path={routes.Login}
+                    element={user ? <Navigate to={routes.Main} /> : <Login />}
                 />
                 <Route
-                    path={routes.main}
+                    path={routes.Main}
                     element={
                         user ? (
                             renderRoute(
                                 userRole,
                                 [
-                                    rolesConfig.student,
-                                    rolesConfig.ta,
-                                    rolesConfig.professor,
-                                    rolesConfig.admin,
+                                    RolesConfig.Student,
+                                    RolesConfig.Ta,
+                                    RolesConfig.Professor,
+                                    RolesConfig.Admin,
                                 ],
                                 <MainPage />,
                             )
                         ) : (
-                            <Navigate to={routes.login} />
+                            <Navigate to={routes.Login} />
                         )
                     }
                 />
                 <Route
-                    path={routes.profile}
+                    path={routes.Profile}
                     element={
                         user ? (
                             renderRoute(
                                 userRole,
                                 [
-                                    rolesConfig.student,
-                                    rolesConfig.ta,
-                                    rolesConfig.professor,
-                                    rolesConfig.admin,
+                                    RolesConfig.Student,
+                                    RolesConfig.Ta,
+                                    RolesConfig.Professor,
+                                    RolesConfig.Admin,
                                 ],
                                 <ProfilePage />,
                             )
                         ) : (
-                            <Navigate to={routes.login} />
+                            <Navigate to={routes.Login} />
                         )
                     }
                 />
                 <Route
-                    path={routes.feed}
+                    path={routes.Feed}
                     element={
                         user ? (
                             renderRoute(
                                 userRole,
-                                [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin],
+                                [RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin],
                                 <FeedPage />,
                             )
                         ) : (
-                            <Navigate to={routes.login} />
+                            <Navigate to={routes.Login} />
                         )
                     }
                 />
                 <Route
-                    path={routes.analytics}
+                    path={routes.Analytics}
                     element={
                         user ? (
                             renderRoute(
                                 userRole,
-                                [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin],
+                                [RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin],
                                 <AnalyticsPage />,
                             )
                         ) : (
-                            <Navigate to={routes.login} />
+                            <Navigate to={routes.Login} />
                         )
                     }
                 />
@@ -107,9 +109,9 @@ function App() {
                     path="*"
                     element={
                         user ? (
-                            <Navigate to={routes.analytics} />
+                            <Navigate to={routes.Analytics} />
                         ) : (
-                            <Navigate to={routes.login} />
+                            <Navigate to={routes.Login} />
                         )
                     }
                 />

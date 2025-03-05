@@ -1,6 +1,6 @@
 import { useCreateTicket } from "@/hooks";
 import { taQueueStore, ticketStore } from "@/store";
-import { MainPageStoreProps, PROBLEM_TYPES, Ticket } from "@/types";
+import { MainPageStoreProps, Modals, PROBLEM_TYPES, Ticket } from "@/types";
 import { useState } from "react";
 
 // type AddTicketPopupProps = {
@@ -46,7 +46,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
       curDescription,
       curProblem,
       curType,
-      curAttachments
+      curAttachments,
     )) as Ticket;
     //need to toast this or something
     if (!res) return;
@@ -68,6 +68,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
 
     // Closes the popup
     setIsExpanded(false);
+    document.getElementById(Modals.QueuePopup)?.close();
   };
 
   // Trackers to see what is netered in the form

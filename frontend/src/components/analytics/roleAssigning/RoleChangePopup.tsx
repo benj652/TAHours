@@ -2,7 +2,7 @@ import { useUpdateRoleTA } from "@/hooks";
 import { useUpdateRoleProfessor } from "@/hooks/user/updateRoleHooks/useUpdateRoleProfessor";
 import { useUpdateRoleStudent } from "@/hooks/user/updateRoleHooks/useUpdateRoleStudent";
 import { authStore } from "@/store";
-import { MODALS, rolesConfig, User } from "@/types";
+import {  Modals, RolesConfig, User } from "@/types";
 import { useEffect, useState } from "react";
 
 type RoleChangePopupProps = {
@@ -43,9 +43,9 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
    *   - No one can change the role of an admin
    */
   const roleChangeNotAllowed =
-    selected.roles === rolesConfig.admin ||
-    (userItems.roles === rolesConfig.professor &&
-      selected.roles === rolesConfig.professor);
+    selected.roles === RolesConfig.Admin ||
+    (userItems.roles === RolesConfig.Professor &&
+      selected.roles === RolesConfig.Professor);
 
   // Unpack hooks to update roles
   const { updateRoleTA, taLoading, taError } = useUpdateRoleTA();
@@ -66,7 +66,7 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
 
     // close the modal
     // @ts-ignore
-    document.getElementById(MODALS.ROLE_CHANGE)?.close();
+    document.getElementById(Modals.RoleChange)?.close();
 
     // If the user does not change the users role, do nothing on submit
     if (selectedRole === selected.roles) {
@@ -86,18 +86,18 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
     if (!selected._id) return;
 
     /// If the selected role is a TA, call the hook to update the role
-    if (selectedRole === rolesConfig.ta) {
+    if (selectedRole === RolesConfig.Ta) {
       await updateRoleTA(selected._id); // This hook also updates the role in the user cache
-    } else if (selectedRole === rolesConfig.student) {
+    } else if (selectedRole === RolesConfig.Student) {
       await updateRoleStudent(selected._id); // This hook also updates the role in the user cache
-    } else if (selectedRole === rolesConfig.professor) {
+    } else if (selectedRole === RolesConfig.Professor) {
       await updateRoleProfessor(selected._id); // This hook also updates the role in the user cache
     }
   };
 
   // HTML for the popup
   return (
-    <dialog id={MODALS.ROLE_CHANGE} className="modal">
+    <dialog id={Modals.RoleChange} className="modal">
       <div className="modal-box">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
@@ -125,8 +125,8 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
                 <input
                   type="radio"
                   name="role"
-                  value={rolesConfig.student}
-                  checked={selectedRole === rolesConfig.student}
+                  value={RolesConfig.Student}
+                  checked={selectedRole === RolesConfig.Student}
                   onChange={handleChange}
                   className="size-5 text-primary"
                 />
@@ -136,8 +136,8 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
                 <input
                   type="radio"
                   name="role"
-                  value={rolesConfig.ta}
-                  checked={selectedRole === rolesConfig.ta}
+                  value={RolesConfig.Ta}
+                  checked={selectedRole === RolesConfig.Ta}
                   onChange={handleChange}
                   className="size-5 text-primary"
                 />
@@ -147,8 +147,8 @@ export const RoleChangePopup: React.FC<RoleChangePopupProps> = ({
                 <input
                   type="radio"
                   name="role"
-                  value={rolesConfig.professor}
-                  checked={selectedRole === rolesConfig.professor}
+                  value={RolesConfig.Professor}
+                  checked={selectedRole === RolesConfig.Professor}
                   onChange={handleChange}
                   className="size-5 text-primary"
                 />

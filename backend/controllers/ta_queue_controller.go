@@ -109,8 +109,8 @@ func AddTaToQueue(c *fiber.Ctx) error {
 	}
 	err = collection.FindOne(context.Background(), filter).Decode(&taQueue)
 
-	for i := 0; i < len(taQueue.TAs); i++{
-		if taQueue.TAs[i] == taId{
+	for i := 0; i < len(taQueue.TAs); i++ {
+		if taQueue.TAs[i] == taId {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"message": "TA already in queue",
 			})
@@ -125,7 +125,12 @@ func AddTaToQueue(c *fiber.Ctx) error {
 		})
 	}
 
-	socket.BroadcastJSONToAll(models.TA_JOIN_QUEUE_EVENT, taId)
+	payload := map[string]interface{}{
+		"taId":    taId,
+		"queueId": queueID,
+	}
+
+	socket.BroadcastJSONToAll(models.TA_JOIN_QUEUE_EVENT, payload)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id": taQueue,
@@ -182,8 +187,9 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	// }
 
 	// If there is only one TA in the queue, then the queue is now inactive
+	isActive := true
 	if len(taQueue.TAs) == 1 {
-		taQueue.IsActive = false
+		isActive = false
 
 		// Updates the class to have no active queue if the last TA is leaving
 		classFilter := bson.M{"_id": removeRequest.ClassId}
@@ -204,13 +210,14 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	}
 
 	payload := map[string]interface{}{
-		"taId": TaID,
-		"isActive": taQueue.IsActive,
+		"taId":     TaID,
+		"isActive": isActive,
+		"queueID":  queueID,
 	}
 	socket.BroadcastJSONToAll(models.TA_LEAVE_QUEUE_EVENT, payload)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"id":       taQueue.ID,
-		"isActive": taQueue.IsActive,
+		"isActive": isActive,
 	})
 }
 

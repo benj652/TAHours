@@ -1,5 +1,6 @@
 import { authStore } from "@/store";
-import { AddPopUpProps, rolesConfig } from "@/types"; //imports types
+import { AddPopUpProps, RolesConfig} from "@/types";
+
 
 export const AddTaQueueButton: React.FC<AddPopUpProps> = ({
   isOpen,
@@ -14,9 +15,9 @@ export const AddTaQueueButton: React.FC<AddPopUpProps> = ({
 
   // Only show the Add Ta Queue Button to those with appropriate roles.
   if (
-    userItems.roles !== rolesConfig.ta &&
-    userItems.roles !== rolesConfig.admin &&
-    userItems.roles !== rolesConfig.admin
+    userItems.roles !== RolesConfig.Ta &&
+    userItems.roles !== RolesConfig.Admin &&
+    userItems.roles !== RolesConfig.Professor
   )
     return null;
   return (
