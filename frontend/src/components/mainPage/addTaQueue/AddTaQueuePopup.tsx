@@ -95,7 +95,7 @@ export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
         />
         <button
           type="submit"
-          className=" border bg-gray-300 hover:bg-accent hover:text-base-100"
+          className="bg-gray-300 hover:bg-accent hover:text-base-100 transition-colors duration-300 cursor-pointer px-2 rounded-box"
           disabled={activeClassesLoading || createLoading}
         >
           Confirm
