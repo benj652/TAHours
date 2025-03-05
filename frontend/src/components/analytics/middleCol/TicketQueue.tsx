@@ -1,12 +1,12 @@
 export const TicketQueue = ({ tickets }) => {
   return (
-    <div className="bg-base-100 rounded-lg p-4 shadow-lg">
+    <div className="bg-gray-300 rounded-lg p-4 shadow-lg">
       <ul className="list-none w-full space-y-2">
         {tickets.length > 0 ? (
           tickets.map((ticketName, index) => (
             <li
               key={index}
-              className="p-4 flex items-center gap-4 bg-gray-200 rounded-lg"
+              className="p-4 flex items-center gap-4 bg-base-100 rounded-lg"
             >
               <div className="size-10 rounded-full overflow-hidden">
                 <img

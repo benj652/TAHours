@@ -1,4 +1,3 @@
-import { analyticsPageStore } from "@/store";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 const data01 = [
