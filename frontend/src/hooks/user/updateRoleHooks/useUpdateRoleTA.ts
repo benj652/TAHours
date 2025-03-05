@@ -8,54 +8,57 @@ import { useState } from "react";
  * Hook to update the role of a user to TA
  */
 export const useUpdateRoleTA = () => {
-  const [taLoading, setTaLoading] = useState<boolean>(false);
-  const [taError, setTaError] = useState<string | null>(null);
+    const [taLoading, setTaLoading] = useState<boolean>(false);
+    const [taError, setTaError] = useState<string | null>(null);
 
-  const { addUserToCache, getItemsFromCache } = userStore();
+    const { addUserToCache, getItemsFromCache } = userStore();
 
-  const { userItems } = authStore();
+    const { userItems } = authStore();
 
-  /**
-   * Function to update the role of a user to TA
-   * @param userId - the id of the user to update
-   * @returns - void
-   * @throws - Error
-   * blah blah blaju
-   */
-  const updateRoleTA = async (userId: ObjectId) => {
-    setTaLoading(true);
-    try {
-      if (!userItems) {
-        throw new Error("User not found");
-      }
-      if (
-        userItems.roles != RolesConfig.Admin &&
-        userItems.roles != RolesConfig.Professor
-      ) {
-        throw new Error("User is not an allowed to update this user");
-      }
-      if (!userId) {
-        throw new Error("User not found");
-      }
+    /**
+     * Function to update the role of a user to TA
+     * @param userId - the id of the user to update
+     * @returns - void
+     * @throws - Error
+     * blah blah blaju
+     */
+    const updateRoleTA = async (userId: ObjectId) => {
+        setTaLoading(true);
+        try {
+            if (!userItems) {
+                throw new Error("User not found");
+            }
+            if (
+                userItems.roles != RolesConfig.Admin &&
+                userItems.roles != RolesConfig.Professor
+            ) {
+                throw new Error("User is not an allowed to update this user");
+            }
+            if (!userId) {
+                throw new Error("User not found");
+            }
 
-      const res = await httpClient.post(`${UserRoutes.UpdateRoleTA}${userId}`);
+            const res = await httpClient.post(`${UserRoutes.UpdateRoleTA}${userId}`);
 
-      const rdata = res.data;
+            const rdata = res.data;
 
-      if (!rdata) {
-        throw new Error("User not found");
-      }
-      const user = getItemsFromCache(userId as string);
-      if (!user) {
-        throw new Error("User not found");
-      }
-      user.roles = RolesConfig.Ta;
-      addUserToCache(user);
-    } catch (err) {
-      setTaError(err.message);
-    } finally {
-      setTaLoading(false);
-    }
-  };
-  return { taLoading, taError, updateRoleTA };
+            if (!rdata) {
+                throw new Error("User not found");
+            }
+
+            //@ts-ignore
+            //ts-ignore is used to ignore the error as they chill with this one
+            const user = getItemsFromCache(userId as string);
+            if (!user) {
+                throw new Error("User not found");
+            }
+            user.roles = RolesConfig.Ta;
+            addUserToCache(user);
+        } catch (err) {
+            setTaError(err instanceof Error ? err.message : "An error occurred");
+        } finally {
+            setTaLoading(false);
+        }
+    };
+    return { taLoading, taError, updateRoleTA };
 };

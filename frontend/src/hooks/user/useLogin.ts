@@ -25,21 +25,34 @@ export const useLogin = () => {
         setError(null);
         try {
             // Do login stuff
+            //
+            // Gets the JWT response from the google login
             const JWTR = jwtResponse.credential 
+
+            // Sets the JWT response in the local storage
             localStorage.setItem(TokenConfig.UserJWTResponseToken, JWTR as string);
+
+            // makes a post request to the server to get or create the user
             const res = await httpClient.post(UserRoutes.GetOrCreateUser)
+            
+            // Sets the user items in the local storage
             localStorage.setItem(TokenConfig.UserTimeoutToken, Date.now().toString());
             // const res = await httpClient.post(uriRoutes.getOrCreateUser, {}, {
             //     headers: {
             //        Authorization: `Bearer ${JWTR}`
             //     }
             // });
+            //
+            // sets the user items in the local storage
             localStorage.setItem(TokenConfig.UserItemsToken, JSON.stringify(res.data));
+
+            // reloads the page
             window.location.reload();
         } catch (error) {
+            // Capture and store any errors encountered during the request
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {
-            setLoading(false);
+            setLoading(false); // When all is set and done, stop loading
         }
     };
     return { loading, login, error, setError };

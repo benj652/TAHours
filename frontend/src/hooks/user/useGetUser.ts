@@ -4,6 +4,22 @@ import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
 
+/**
+* Custom hook: useGetUser
+*
+* It gets a user from the server and caches it
+*
+* What can i say, it gets a user
+*
+* If the user is already in the cahce, it does not make a api call
+* It just returns the user from the cache
+* otherwise it fetches the user from the server
+* and caches it
+*
+* so efficient
+*
+* genius play
+ */
 export const useGetUser = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -36,10 +52,12 @@ export const useGetUser = () => {
             
             return data;
         } catch (error) {
+            // Capture and store any errors encountered during the request
             setError(error instanceof Error ? error.message : "An error occurred");
         } finally {
+            // Reset loading state after the request completes
             setLoading(false);
         }
     };
-    return { loading, user, getUser, error, setError };
+    return { loading, user, getUser, error, setError }; // Return the state values and function for use in components
 };
