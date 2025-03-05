@@ -80,7 +80,7 @@ export const NavBar = () => {
             )}
           </ul>
         </div>
-        <div className="flex flex-row bg-white p-2 rounded-md space-x-2">
+        <div className="flex flex-row bg-base-100 p-2 rounded-md space-x-2">
           <img src={ColbySeal} alt="Colby Seal" className="h-10 w-10" />
           <img src={ColbyText} alt="Colby Seal" className="h-10 w-10" />
         </div>
