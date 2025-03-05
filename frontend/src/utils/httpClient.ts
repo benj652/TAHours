@@ -1,4 +1,4 @@
-import { tokenConfig } from "@/types";
+import { TokenConfig } from "@/types";
 import axios from "axios";
 
 export const httpClient = axios.create({
@@ -7,7 +7,7 @@ export const httpClient = axios.create({
 
 
 httpClient.interceptors.request.use((config) => {
-    const JWTR = localStorage.getItem(tokenConfig.userJWTResponseToken); // Get the token from localStorage
+    const JWTR = localStorage.getItem(TokenConfig.UserJWTResponseToken); // Get the token from localStorage
 
     if (JWTR) {
         // Add the Authorization header if the token is available

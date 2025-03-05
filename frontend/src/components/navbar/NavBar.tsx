@@ -3,9 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
 import { useLogout } from "@/hooks";
-import { routes } from "@/types";
+import { Routes } from "@/types";
 import { authStore } from "@/store";
-import { rolesConfig } from "@/types"; // Assuming the rolesConfig is imported
+import { RolesConfig } from "@/types"; // Assuming the rolesConfig is imported
 
 export const NavBar = () => {
     const location = useLocation();
@@ -42,24 +42,24 @@ export const NavBar = () => {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
                     >
-                        {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        {renderButton(userRole, [RolesConfig.Student, RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                             <li>
-                                <Link to={routes.main}>TA Hours</Link>
+                                <Link to={Routes.Main}>TA Hours</Link>
                             </li>
                         )}
-                        {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        {renderButton(userRole, [RolesConfig.Student, RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                             <li>
-                                <Link to={routes.profile}>Profile</Link>
+                                <Link to={Routes.Profile}>Profile</Link>
                             </li>
                         )}
-                        {renderButton(userRole, [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                        {renderButton(userRole, [RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                             <li>
-                                <Link to={routes.feed}>Thread</Link>
+                                <Link to={Routes.Feed}>Thread</Link>
                             </li>
                         )}
-                        {renderButton(userRole, [rolesConfig.professor, rolesConfig.admin]) && (
+                        {renderButton(userRole, [RolesConfig.Professor, RolesConfig.Admin]) && (
                             <li>
-                                <Link to={routes.analytics}>Professor</Link>
+                                <Link to={Routes.Analytics}>Professor</Link>
                             </li>
                         )}
                     </ul>
@@ -71,38 +71,38 @@ export const NavBar = () => {
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1 space-x-1">
-                    {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                    {renderButton(userRole, [RolesConfig.Student, RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                         <li>
                             <NavBarButton
                                 curLocation={curPath}
-                                buttonPath={routes.main}
+                                buttonPath={Routes.Main}
                                 label="TA Hours"
                             />
                         </li>
                     )}
-                    {renderButton(userRole, [rolesConfig.student, rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                    {renderButton(userRole, [RolesConfig.Student, RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                         <li>
                             <NavBarButton
                                 curLocation={curPath}
-                                buttonPath={routes.profile}
+                                buttonPath={Routes.Profile}
                                 label="Profile"
                             />
                         </li>
                     )}
-                    {renderButton(userRole, [rolesConfig.ta, rolesConfig.professor, rolesConfig.admin]) && (
+                    {renderButton(userRole, [RolesConfig.Ta, RolesConfig.Professor, RolesConfig.Admin]) && (
                         <li>
                             <NavBarButton
                                 curLocation={curPath}
-                                buttonPath={routes.feed}
+                                buttonPath={Routes.Feed}
                                 label="Thread"
                             />
                         </li>
                     )}
-                    {renderButton(userRole, [rolesConfig.professor, rolesConfig.admin]) && (
+                    {renderButton(userRole, [RolesConfig.Professor, RolesConfig.Admin]) && (
                         <li>
                             <NavBarButton
                                 curLocation={curPath}
-                                buttonPath={routes.analytics}
+                                buttonPath={Routes.Analytics}
                                 label="Professor"
                             />
                         </li>

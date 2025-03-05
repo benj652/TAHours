@@ -1,5 +1,5 @@
 import { ticketStore } from "@/store";
-import { uriRoutes } from "@/types";
+import { TicketRoutes } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
@@ -25,7 +25,7 @@ export const useResolveTicket = () => {
 
             // Send a request to the server
             const res = await httpClient.post(
-                `${uriRoutes.ticket.resoloveTicket}${ticketId}`,
+                `${TicketRoutes.ResolveTicket}${ticketId}`,
                 {
                     taNote,
                     newProblemType: problemType,

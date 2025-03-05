@@ -1,5 +1,5 @@
 import { authStore } from "@/store";
-import { rolesConfig, SOCKET_URI_CONSTS } from "@/types";
+import { RolesConfig, SOCKET_URI_CONSTS } from "@/types";
 import {
   createContext,
   useState,
@@ -10,7 +10,7 @@ import {
 
 interface OnlineUsersMessage {
   type: "onlineUsers";
-  users: string[]; // Adjust based on your actual data structure
+  users: string[]; 
 }
 
 interface SocketContextType {
@@ -44,9 +44,9 @@ export const SocketContextProvider = ({
   useEffect(() => {
     if (authUser) {
       const canSeeThread =
-        authUser.roles === rolesConfig.admin ||
-        authUser.roles === rolesConfig.ta ||
-        authUser.roles === rolesConfig.professor;
+        authUser.roles === RolesConfig.Admin ||
+        authUser.roles === RolesConfig.Ta ||
+        authUser.roles === RolesConfig.Professor;
       const ws = new WebSocket(
         canSeeThread
           ? `${SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}&${SOCKET_URI_CONSTS.THREAD_ACCESS}=9284091284920149`

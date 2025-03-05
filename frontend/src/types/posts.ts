@@ -20,3 +20,7 @@ export type ReplyProps = {
     comments: Comment[] | undefined;
     setComments: React.Dispatch<React.SetStateAction<Comment[] | undefined>>;
 }
+
+export type DeletePostResponse = {
+    message: string;
+}

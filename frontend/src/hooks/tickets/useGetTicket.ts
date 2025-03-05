@@ -1,5 +1,5 @@
 import { ticketStore } from "@/store";
-import { Ticket, uriRoutes } from "@/types";
+import { Ticket, TicketRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -30,7 +30,7 @@ export const useGetTicket = () => {
                 return ticket;
             }
             // send API request to get the ticket
-            const res = await httpClient.get<Ticket>(`${uriRoutes.ticket.getTicket}${id}`);
+            const res = await httpClient.get<Ticket>(`${TicketRoutes.GetTicket}${id}`);
             const data = res.data;
 
             setTicket(data);

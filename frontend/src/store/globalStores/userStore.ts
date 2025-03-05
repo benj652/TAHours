@@ -1,5 +1,5 @@
 
-import { tokenConfig, User } from "@/types";
+import { TokenConfig, User } from "@/types";
 import { create } from "zustand";
 
 // Define the shape of the authentication store
@@ -13,12 +13,12 @@ interface AuthState {
 }
 
 export const authStore = create<AuthState>((set) => ({
-    user: localStorage.getItem(tokenConfig.userTimeoutToken) || null, // Store as a raw string
+    user: localStorage.getItem(TokenConfig.UserTimeoutToken) || null, // Store as a raw string
     setUser: (user: string | null) => set({ user }),
-    jwtr: localStorage.getItem(tokenConfig.userJWTResponseToken) || null,
+    jwtr: localStorage.getItem(TokenConfig.UserJWTResponseToken) || null,
     setJWTR: (jwtr: string | null) => set({ jwtr }),
     userItems: JSON.parse(
-        localStorage.getItem(tokenConfig.userItemsToken) || "{}",
+        localStorage.getItem(TokenConfig.UserItemsToken) || "{}",
     ) as User,
     setUserItems: (userItems: User) => set({ userItems }),
 }));

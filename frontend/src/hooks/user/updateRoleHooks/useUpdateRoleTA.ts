@@ -1,9 +1,12 @@
 import { authStore, userStore } from "@/store";
-import { RolesConfig, rolesConfig, uriRoutes } from "@/types";
+import { RolesConfig, UserRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
 
+/**
+ * Hook to update the role of a user to TA
+ */
 export const useUpdateRoleTA = () => {
   const [taLoading, setTaLoading] = useState<boolean>(false);
   const [taError, setTaError] = useState<string | null>(null);
@@ -12,6 +15,13 @@ export const useUpdateRoleTA = () => {
 
   const { userItems } = authStore();
 
+  /**
+   * Function to update the role of a user to TA
+   * @param userId - the id of the user to update
+   * @returns - void
+   * @throws - Error
+   * blah blah blaju
+   */
   const updateRoleTA = async (userId: ObjectId) => {
     setTaLoading(true);
     try {
@@ -19,8 +29,8 @@ export const useUpdateRoleTA = () => {
         throw new Error("User not found");
       }
       if (
-        userItems.roles != rolesConfig.admin &&
-        userItems.roles != rolesConfig.professor
+        userItems.roles != RolesConfig.Admin &&
+        userItems.roles != RolesConfig.Professor
       ) {
         throw new Error("User is not an allowed to update this user");
       }
@@ -28,9 +38,7 @@ export const useUpdateRoleTA = () => {
         throw new Error("User not found");
       }
 
-      const res = await httpClient.post(
-        `${uriRoutes.user.UPDATE_ROLE_TA}${userId}`,
-      );
+      const res = await httpClient.post(`${UserRoutes.UpdateRoleTA}${userId}`);
 
       const rdata = res.data;
 

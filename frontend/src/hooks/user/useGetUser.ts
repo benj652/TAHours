@@ -1,5 +1,5 @@
 import { userStore } from "@/store";
-import { uriRoutes, User } from "@/types";
+import { User, UserRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export const useGetUser = () => {
             } 
 
             // If not, fetch the user from the server
-            const res = await httpClient.get<User>(`${uriRoutes.user.getOneUser}${id}`);
+            const res = await httpClient.get<User>(`${UserRoutes.GetOneUser}${id}`);
             // console.log("User fetched", res.data);
             const data = res.data;
             setUser(data);

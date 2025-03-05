@@ -1,4 +1,4 @@
-import { TaQueueLeaveResponse, uriRoutes } from "@/types";
+import { TaQueueLeaveResponse, TaQueueRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -39,7 +39,7 @@ export const useLeaveTaQueue = () => {
       // If the TA is the last one in the queue, it stops the queue and updates the class state
       // The class will have no active queue if it is the last TA leaving
       const res = await httpClient.post<TaQueueLeaveResponse>(
-        `${uriRoutes.taQueue.removeTa}${taQueueId}`, // Constructing API endpoint dynamically
+        `${TaQueueRoutes.RemoveTa}${taQueueId}`, // Constructing API endpoint dynamically
         {
           classId: classId,
         },

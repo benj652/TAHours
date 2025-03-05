@@ -1,4 +1,4 @@
-import { MainPageStoreProps, PopUpTypes } from "@/types";
+import { MainPageStoreProps, Modals, PopUpTypes } from "@/types";
 import { AddTicketPopup } from "./AddTicketPopup";
 import { ResolveTicketPopup } from "./ResolveTicketPopup";
 
@@ -26,27 +26,34 @@ import { ResolveTicketPopup } from "./ResolveTicketPopup";
 export const QueuePopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
   const {
     curPopUpType: type,
-    isExpanded: isOpen,
     setIsExpanded: setIsOpen,
     setCurTicket,
   } = curStore();
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   const handleClick = async () => {
     setIsOpen(false);
     setCurTicket(undefined);
   };
+  // <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
   return (
-    <div>
-      {type === PopUpTypes.AddTicket ? (
-        <AddTicketPopup curStore={curStore} />
-      ) : null}
-      {type === PopUpTypes.ResolveTicket ? (
-        <ResolveTicketPopup curStore={curStore} />
-      ) : null}
-      <button className="btn btn-error mt-2" onClick={handleClick}>
-        Close
-      </button>
-    </div>
+    <dialog id={Modals.QueuePopup} className="modal">
+      <div className="modal-box">
+        <form method="dialog">
+          {/* if there is a button in form, it will close the modal */}
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleClick}>
+            ✕
+          </button>
+        </form>
+        <div>
+          {type === PopUpTypes.AddTicket ? (
+            <AddTicketPopup curStore={curStore} />
+          ) : null}
+          {type === PopUpTypes.ResolveTicket ? (
+            <ResolveTicketPopup curStore={curStore} />
+          ) : null}
+        </div>
+      </div>
+    </dialog>
   );
 };

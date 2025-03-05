@@ -2,14 +2,14 @@ import { AddTaQueueButton, AddTaQueuePopup, TaQueue } from "@/components";
 import { cn } from "@/utils";
 import { useEffect, useState } from "react";
 import { useGetAllTaQueues } from "@/hooks";
+import { taQueueStore } from "@/store";
 
 export const MainPage = () => {
     const [addPopupOpen, setAddPopupOpen] = useState<boolean>(false);
     const {
-        data: curTaQueues,
-        getAllTaQueues,
-        setTaQueues,
+        getAllTaQueues
     } = useGetAllTaQueues();
+    const { allTaQueues: curTaQueues, setAllTaQueues } = taQueueStore();
 
     useEffect(() => {
         getAllTaQueues();
@@ -28,7 +28,7 @@ export const MainPage = () => {
                             directions={curTaQueue.directions}
                             tickets={curTaQueue.tickets}
                             isActive={curTaQueue.isActive}
-                            setTaQueues={setTaQueues}
+                            setTaQueues={setAllTaQueues}
                             curTaQueues={curTaQueues}
                         />
                     ))
@@ -40,7 +40,7 @@ export const MainPage = () => {
                 isOpen={addPopupOpen}
                 setIsOpen={setAddPopupOpen}
                 curTaQueues={curTaQueues}
-                setTaQueues={setTaQueues}
+                setTaQueues={setAllTaQueues}
             />
             <AddTaQueueButton isOpen={addPopupOpen} setIsOpen={setAddPopupOpen} />
         </div>
