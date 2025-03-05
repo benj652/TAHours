@@ -2,6 +2,7 @@ import { csClassStore } from "@/store";
 import { CSClass, CsClassRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * hook to get all active classes
@@ -41,7 +42,7 @@ export const useGetActiveClasses = () => {
         return data;
       }
       const res = await httpClient.get<CSClass[]>(
-        CsClassRoutes.GetActiveClasses,
+        CsClassRoutes.GetActiveClasses
       );
 
       // Set the data in the store to cache it
@@ -50,6 +51,7 @@ export const useGetActiveClasses = () => {
       setData(rdata);
       return rdata;
     } catch (error) {
+      toast.error("Error getting active classes");
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       // Set loading to false and say we have cached the data

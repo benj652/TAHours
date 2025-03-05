@@ -2,6 +2,7 @@ import { csClassStore } from "@/store";
 import { CreateCSClassParams, CSClass, CsClassRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook to create a CS class
@@ -36,34 +37,41 @@ export const useCreateCSClass = () => {
     try {
       // If the name field is empty, throw na error
       if (!name) {
+        toast.error("Name is required");
         throw new Error("Name is required");
       }
 
       // if the semester field is empty, throw an error
       if (!semester) {
+        toast.error("Semester is required");
         throw new Error("Semester is required");
       }
 
       // if the year field is empty or less than 2000, throw an error
       if (!year || year < 2000) {
-        throw new Error("Year is required");
+        toast.error("Year is required and must be greater than 2000");
+        throw new Error("Year is required and must be greater than 2000");
       }
 
       // send a post request to the server to create a new CS class
       const response = await httpClient.post<CSClass>(
         CsClassRoutes.CreateCsClass,
-        { name, semester, year, isactive: true },
+        { name, semester, year, isactive: true }
       );
       // set the data state to the response data
       setData(response.data);
 
       // Cache the response data
       setGetActiveCSClassesData([...getActiveCSClassesData, response.data]);
+      toast.success("Class created successfully");
       return response.data; // return the response data
     } catch (error) {
       // If there is an error, set the error state to the error message
+      toast.error(
+        error instanceof Error ? error.message : "An unknown error has occured"
+      );
       setError(
-        error instanceof Error ? error.message : "An unknown error has occured",
+        error instanceof Error ? error.message : "An unknown error has occured"
       );
     } finally {
       setLoading(false); // set the loading state to false after everything has been ran through
