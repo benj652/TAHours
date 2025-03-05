@@ -12,12 +12,13 @@ export const MiddleCol: React.FC = () => {
       "dumb ticket 4",
     ],
   };
+
   const handleSelect = (selectedOption) => {
     console.log("Selected:", selectedOption);
   };
 
   return (
-    <div className="ml-[-100px] xl:ml-[-400px]">
+    <div className="ml-0 xl:ml-0">
       <SearchFilter onSelect={handleSelect} />
       <TextAnalytics />
       <h1 className="text-lg font-semibold my-2">Detailed Tickets:</h1>
