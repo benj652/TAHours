@@ -2,6 +2,7 @@ import { CreateTaQueueResponse, CsClassRoutes, TaQueue } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook to create a TA queue
@@ -9,12 +10,14 @@ import { useState } from "react";
  *  Works well for now
  *
  *  Big slump gorb moment
+ *
+ * Hey thats not a great comment -Zach
  */
 export const useCreateTaQueue = () => {
   // State variables
   const [loading, setLoading] = useState<boolean>(false); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
-  const [data, setData] = useState<TaQueue| null>(null); // Data state for response data
+  const [data, setData] = useState<TaQueue | null>(null); // Data state for response data
 
   /**
    * Function to create a TA queue
@@ -29,7 +32,7 @@ export const useCreateTaQueue = () => {
   const createTaQueue = async (
     TAs: ObjectId[],
     ClassId: ObjectId,
-    directions: string,
+    directions: string
   ) => {
     setLoading(true); // Sets the loading state as we start the call
     try {
@@ -37,27 +40,33 @@ export const useCreateTaQueue = () => {
       if (!TAs || TAs.length === 0) {
         throw new Error("TAs are required");
       }
+      // If the ClassId field is empty, throw an error
       if (!ClassId) {
-        // If the ClassId field is empty, throw an error
+        toast.error("ClassId is required");
         throw new Error("ClassId is required");
       }
       // A ta queue needs directions so the simpltons are not lost in destress
       if (!directions) {
+        toast.error("Directions are required");
         throw new Error("Directions are required");
       }
 
-      const res = await httpClient.post<CreateTaQueueResponse>(CsClassRoutes.CreateTaQueue, {
-        TAs,
-        Class: ClassId,
-        directions,
-      });
+      const res = await httpClient.post<CreateTaQueueResponse>(
+        CsClassRoutes.CreateTaQueue,
+        {
+          TAs,
+          Class: ClassId,
+          directions,
+        }
+      );
 
       const rdata = res.data;
       setData(rdata);
+      toast.success("Ta queue created");
       return rdata;
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "An unknown error has occured",
+        error instanceof Error ? error.message : "An unknown error has occured"
       );
     } finally {
       setLoading(false);
