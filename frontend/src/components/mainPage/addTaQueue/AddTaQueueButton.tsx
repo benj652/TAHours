@@ -1,5 +1,5 @@
 import { authStore } from "@/store";
-import { AddPopUpProps, rolesConfig } from "@/types";
+import { AddPopUpProps, rolesConfig } from "@/types"; //imports types
 
 export const AddTaQueueButton: React.FC<AddPopUpProps> = ({
   isOpen,
