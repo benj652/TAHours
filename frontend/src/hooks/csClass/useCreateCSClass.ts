@@ -37,19 +37,16 @@ export const useCreateCSClass = () => {
     try {
       // If the name field is empty, throw na error
       if (!name) {
-        toast.error("Name is required");
         throw new Error("Name is required");
       }
 
       // if the semester field is empty, throw an error
       if (!semester) {
-        toast.error("Semester is required");
         throw new Error("Semester is required");
       }
 
       // if the year field is empty or less than 2000, throw an error
       if (!year || year < 2000) {
-        toast.error("Year is required and must be greater than 2000");
         throw new Error("Year is required and must be greater than 2000");
       }
 
@@ -62,7 +59,7 @@ export const useCreateCSClass = () => {
       setData(response.data);
 
       // Cache the response data
-      setGetActiveCSClassesData([...getActiveCSClassesData, response.data]);
+      setGetActiveCSClassesData([...getActiveCSClassesData || [], response.data]);
       toast.success("Class created successfully");
       return response.data; // return the response data
     } catch (error) {
