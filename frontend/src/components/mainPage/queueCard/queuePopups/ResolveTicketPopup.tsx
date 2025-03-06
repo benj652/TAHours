@@ -19,7 +19,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
   curStore,
 }) => {
   // Gets the currently selected ticket from the local store
-  const { curTicket, setIsExpanded } = curStore();
+  const { curTicket, setIsExpanded, taQueueId } = curStore();
 
   // Unpacks the getUser hook as we would like to display information
   // about the sender of the ticket
@@ -29,7 +29,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
   useEffect(() => {
     if (!curTicket || !curTicket._id) return;
     getUser(curTicket.studentId);
-  }, []);
+}, [curTicket]);
 
   // State to handle what the TA puts in as their resolution message
   const [taMessage, setTaMessage] = useState<string>("");
@@ -61,7 +61,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
 
     console.log(res);
     setIsExpanded(false);
-    document.getElementById(Modals.QueuePopup)?.close();
+    document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
   };
 
   // Const for whether or not the ticket has screenshots

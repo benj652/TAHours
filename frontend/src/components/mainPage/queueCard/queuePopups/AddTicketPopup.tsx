@@ -68,7 +68,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
 
     // Closes the popup
     setIsExpanded(false);
-    document.getElementById(Modals.QueuePopup)?.close();
+    document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
   };
 
   // Trackers to see what is netered in the form
