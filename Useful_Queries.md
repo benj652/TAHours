@@ -1,4 +1,4 @@
-# Usefull Queries
+# Useful Queries
 
 Some usefull queries for managing the DB
 
