@@ -52,13 +52,13 @@ export const useCreateComment = () => {
       if (!newComment) {
         throw new Error("No comment returned");
       }
+      toast.success("Comment created");
       // Return the new comment
       return newComment;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
       setError(error instanceof Error ? error.message : "An error occurred"); // set the error state to the error message
     } finally {
-      toast.success("Comment created");
       setLoading(false); // set the loading state to false
     }
   };

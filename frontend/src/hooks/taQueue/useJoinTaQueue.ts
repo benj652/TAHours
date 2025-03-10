@@ -24,13 +24,13 @@ export const useJoinTaQueue = () => {
       if (!taQueueId) throw new Error("TaQueue ID is required");
       // Send a request to the server
       const res = await httpClient.post(`${TaQueueRoutes.AddTa}${taQueueId}`);
+      toast.success("Joined TA session successfully");
       await res.data;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
       // If an error occurs, set the error state to the error message
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      toast.success("Joined TA session successfully");
       setLoading(false); // set the loading state to false once everything is ran through
     }
   };

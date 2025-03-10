@@ -28,11 +28,11 @@ export const useDeletePost = () => {
       );
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       res.data;
+      toast.success("Post deleted successfully");
     } catch (error) {
       toast.error("Failed to delete post");
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      toast.success("Post deleted successfully");
       setLoading(false);
     }
   };

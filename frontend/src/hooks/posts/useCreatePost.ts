@@ -55,13 +55,12 @@ export const useCreatePost = () => {
         body: body,
       });
       await res.data;
-
+      toast.success("Post created successfully");
       return res.data.post as Post;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      toast.success("Post created successfully");
       // Once we have done everything we want to, set the loading to false.
       setLoading(false);
     }

@@ -47,14 +47,13 @@ export const useLeaveTaQueue = () => {
       );
 
       const data = res.data; // Extract the response data
-
+      toast.success("Left TA session successfully");
       return data; // Return API response data
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
       // Capture and store any errors encountered during the request
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      toast.success("Left TA session successfully");
       setLoading(false); // Reset loading state after the request completes
     }
   };
