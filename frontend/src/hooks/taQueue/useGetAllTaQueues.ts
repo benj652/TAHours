@@ -2,6 +2,7 @@ import { taQueueStore } from "@/store";
 import { TaQueue, TaQueueRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook to get all TA queues
@@ -51,6 +52,7 @@ export const useGetAllTaQueues = () => {
       setTaQueues(rdata);
       return data;
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setFetchAllTaQueues(true);

@@ -2,6 +2,7 @@ import { TaQueueLeaveResponse, TaQueueRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Custom hook: useLeaveTaQueue
@@ -42,16 +43,18 @@ export const useLeaveTaQueue = () => {
         `${TaQueueRoutes.RemoveTa}${taQueueId}`, // Constructing API endpoint dynamically
         {
           classId: classId,
-        },
+        }
       );
 
       const data = res.data; // Extract the response data
 
       return data; // Return API response data
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       // Capture and store any errors encountered during the request
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
+      toast.success("Left TA session successfully");
       setLoading(false); // Reset loading state after the request completes
     }
   };

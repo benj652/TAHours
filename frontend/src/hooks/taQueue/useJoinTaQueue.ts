@@ -2,6 +2,7 @@ import { TaQueueRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /** Hook to join a TA queue */
 export const useJoinTaQueue = () => {
@@ -25,9 +26,11 @@ export const useJoinTaQueue = () => {
       const res = await httpClient.post(`${TaQueueRoutes.AddTa}${taQueueId}`);
       await res.data;
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       // If an error occurs, set the error state to the error message
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
+      toast.success("Joined TA session successfully");
       setLoading(false); // set the loading state to false once everything is ran through
     }
   };
