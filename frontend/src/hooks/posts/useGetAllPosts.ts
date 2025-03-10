@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { httpClient } from "@/utils";
-import { Post, PostRoutes } from "@/types";
 import { threadStore } from "@/store";
+import { Post, PostRoutes } from "@/types";
+import { httpClient } from "@/utils";
+import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  *  Hook to get all posts
@@ -50,6 +51,7 @@ export const useGetAllPosts = () => {
         setCachedData(data);
       }
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       // Set the error state to the error message if an error happens
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
