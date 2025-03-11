@@ -3,6 +3,7 @@ import { Ticket, TicketRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook for creating a ticket
@@ -38,13 +39,14 @@ export const useCreateTicket = () => {
     description: string,
     problem: string,
     curType: string,
-    screenshots: string[],
+    screenshots: string[]
   ) => {
     // console.log(screenshots);
     setLoading(true); // start the loading state
     try {
       // if the userItems field is empty, throw an error
       if (!userItems._id) throw new Error("No user id provided");
+      if (!problem) throw new Error("No problem provided");
       // if the description field is empty, throw an error
       if (!description) throw new Error("No description provided");
       // if the taQueueId field is empty, throw an error
@@ -60,18 +62,19 @@ export const useCreateTicket = () => {
           classId: classId,
           problemType: curType,
           screenshots: screenshots,
-        },
+        }
       );
       // console.log(res);
 
       const data = res.data;
-
+      toast.success("Ticket created successfully");
       return data; // return the data as a ticket
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
       // if an error occurs, set the error state to the error message
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      setLoading(false); // aftrer all is done, set the loading state to false
+      setLoading(false); // after all is done, set the loading state to false
     }
   };
   return { createTicket, loading, error }; // return the createTicket function, loading state, and error state
