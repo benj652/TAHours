@@ -21,7 +21,7 @@ export const ProfilePage: React.FC = () => {
   const { userItems } = authStore();
   return (
     <div className="flex w-full gap-4 p-4">
-      {/* Profile Card (1/3) */}
+      {/* Profile Card */}
       <div className="w-1/3">
         <div className="card bg-base-300 rounded-box flex flex-col items-center p-4">
           <div className="avatar">
@@ -48,7 +48,7 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Classes Card (1/3) */}
+      {/* Classes Card */}
       <div className="w-1/3">
         <div className="card bg-base-300 rounded-box flex flex-col items-center p-4">
           <h1 className="text-lg font-bold">Classes:</h1>
@@ -79,7 +79,7 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Resolved Tickets Card (1/3) */}
+      {/* Resolved Tickets Card */}
       <div className="w-1/3">
         <StudentTickets tickets={bruh.currentQueue} />
       </div>
