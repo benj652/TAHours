@@ -1,6 +1,7 @@
 import { useLogout } from "@/hooks";
 import { authStore } from "@/store";
 import { RolesConfig, Routes } from "@/types";
+import { Binary, ChartLine, Mails, UserPen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import ColbySeal from "../../assets/colbyseal.svg";
 import ColbyText from "../../assets/colbytext.svg";
@@ -48,7 +49,10 @@ export const NavBar = () => {
               RolesConfig.Admin,
             ]) && (
               <li>
-                <Link to={Routes.Main}>TA Hours</Link>
+                <Link to={Routes.Main} className="flex items-center space-x-2">
+                  <Binary size={16} />
+                  <span>TA Hours</span>
+                </Link>
               </li>
             )}
             {renderButton(userRole, [
@@ -58,7 +62,13 @@ export const NavBar = () => {
               RolesConfig.Admin,
             ]) && (
               <li>
-                <Link to={Routes.Profile}>Profile</Link>
+                <Link
+                  to={Routes.Profile}
+                  className="flex items-center space-x-2"
+                >
+                  <UserPen size={16} />
+                  <span>Profile</span>
+                </Link>
               </li>
             )}
             {renderButton(userRole, [
@@ -67,7 +77,10 @@ export const NavBar = () => {
               RolesConfig.Admin,
             ]) && (
               <li>
-                <Link to={Routes.Feed}>Thread</Link>
+                <Link to={Routes.Feed} className="flex items-center space-x-2">
+                  <Mails size={16} />
+                  <span>Thread</span>
+                </Link>
               </li>
             )}
             {renderButton(userRole, [
@@ -75,7 +88,13 @@ export const NavBar = () => {
               RolesConfig.Admin,
             ]) && (
               <li>
-                <Link to={Routes.Analytics}>Professor</Link>
+                <Link
+                  to={Routes.Analytics}
+                  className="flex items-center space-x-2"
+                >
+                  <ChartLine size={16} />
+                  <span>Analytics</span>
+                </Link>
               </li>
             )}
           </ul>

@@ -2,6 +2,7 @@ import { useDeletePost } from "@/hooks/posts/useDeletePost";
 import { authStore } from "@/store";
 import { Post as PostType, RolesConfig } from "@/types";
 import { cn } from "@/utils/classNames";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Replies } from "./Replies";
 
@@ -41,7 +42,7 @@ export const Post: React.FC<PostProps> = ({
     <div className={cn("flex p-4 w-vw")}>
       <div className={cn("flex flex-col p-2")}>
         <div className={cn("avatar")}>
-          <div className={cn("h-20 w-20 rounded-full border-2")}>
+          <div className={cn("h-20 w-20 rounded-full")}>
             <img
               src={title} // user Profile Pic
               alt="Profile Picture"
@@ -77,12 +78,12 @@ export const Post: React.FC<PostProps> = ({
       {isAdmin && (
         <button
           className={cn(
-            "btn w-20 h-20 mt-6 text-l btn-rectangle bg-accent text-base-100"
+            "btn w-20 h-10 mt-6 text-l btn-rectangle bg-accent text-base-100"
           )}
           onClick={handleDeleteSelf}
           disabled={loading}
         >
-          Delete Post
+          <Trash2 />
         </button>
       )}
     </div>

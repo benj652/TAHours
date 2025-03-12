@@ -1,5 +1,6 @@
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
 import { threadStore } from "@/store";
+import { Send } from "lucide-react";
 import { useState } from "react";
 
 // type WritePostProps = {
@@ -38,8 +39,7 @@ export const WritePost: React.FC = () => {
           className="absolute inset-y-0 end-0 flex items-center pe-3"
           disabled={loading}
         >
-          {" "}
-          Icon{" "}
+          <Send />
         </button>
       </div>
     </form>
