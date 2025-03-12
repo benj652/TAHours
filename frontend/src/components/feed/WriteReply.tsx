@@ -8,6 +8,13 @@ type ExtendedReplyProps = ReplyProps & {
   id: ObjectId | undefined;
 };
 
+/**
+ * A component for writing a reply to a post
+ * @param id The ID of the post to reply to
+ * @param comments The current comments on the post
+ * @param setComments A function to update the comments on the post
+ * @returns A form component for writing a reply
+ */
 export const WriteReply: React.FC<ExtendedReplyProps> = ({
   id,
   comments,
@@ -17,6 +24,7 @@ export const WriteReply: React.FC<ExtendedReplyProps> = ({
   const { loading, createComment, error } = useCreateComment();
   const { data } = threadStore();
   // console.log(curBody);
+  // handles submit
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (curBody === "") {
@@ -25,7 +33,8 @@ export const WriteReply: React.FC<ExtendedReplyProps> = ({
     const newComment = await createComment(id, curBody);
     if (error) return;
     if (!newComment) return;
-    setComments([...comments, newComment]); // litteraly no clue what the error is but ik it is some typescript nonsense so we can prob just ignore it
+    setComments([...(comments || []), newComment]);
+    setCurBody("");
     if (!data) return;
     const curTarget = data.find((post) => post._id === id);
     if (!curTarget) return;
@@ -35,6 +44,7 @@ export const WriteReply: React.FC<ExtendedReplyProps> = ({
       curTarget.comments.push(newComment);
     }
   };
+  // returns the css
   return (
     <form className="px-4 my-3" onSubmit={handleSubmit}>
       <div className="w-full relative">
@@ -43,6 +53,7 @@ export const WriteReply: React.FC<ExtendedReplyProps> = ({
           placeholder="Enter reply..."
           className="border text-sm rounded-lg block w-full p-2 bg-base-300"
           onChange={(e) => setCurBody(e.target.value)}
+          value={curBody}
         />
         <button
           type="submit"
