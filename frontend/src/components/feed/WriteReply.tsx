@@ -1,6 +1,7 @@
 import { useCreateComment } from "@/hooks/posts/useCreateComment";
 import { threadStore } from "@/store";
 import { ReplyProps } from "@/types";
+import { Send } from "lucide-react";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
 
@@ -60,8 +61,7 @@ export const WriteReply: React.FC<ExtendedReplyProps> = ({
           className="absolute inset-y-0 end-0 flex items-center pe-3"
           disabled={loading}
         >
-          {" "}
-          Icon{" "}
+          <Send />
         </button>
       </div>
     </form>

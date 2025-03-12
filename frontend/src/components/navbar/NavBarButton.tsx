@@ -1,6 +1,8 @@
 import { cn } from "@/utils";
-import * as Icons from "lucide-react";
+import { Binary, ChartLine, Mails, UserPen } from "lucide-react";
 import { Link } from "react-router-dom";
+
+const Icons = { ChartLine, Mails, Binary, UserPen };
 
 type NavBarButtonProps = {
   buttonPath: string;
