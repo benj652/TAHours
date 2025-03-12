@@ -23,6 +23,7 @@ export const AnalyticsPage = () => {
       {/* Right Column - Pie Chart */}
       <div className="flex flex-col items-center w-full">
         <AnalyticPieChart />
+        <button className="btn btn-accent mt-8">Export TA Hours</button>
       </div>
     </div>
   );
