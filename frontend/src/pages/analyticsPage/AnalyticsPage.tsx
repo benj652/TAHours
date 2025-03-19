@@ -1,5 +1,18 @@
-import { AnalyticPieChart, ClassList, SearchableDropdown } from "@/components";
+import {
+  AnalyticPieChart,
+  ClassList,
+  SearchableDropdown,
+  TaHoursTable,
+} from "@/components";
 import { MiddleCol } from "@/components/analytics/middleCol";
+
+const tasks = [
+  { name: "Ben", numhours: 5 },
+  { name: "Zack", numhours: 5 },
+  { name: "Slump", numhours: 3 },
+  { name: "Glasses", numhours: 99 },
+  { name: "Slacker", numhours: 0 },
+];
 
 export const AnalyticsPage = () => {
   return (
@@ -23,7 +36,8 @@ export const AnalyticsPage = () => {
       {/* Right Column - Pie Chart */}
       <div className="flex flex-col items-center w-full">
         <AnalyticPieChart />
-        <button className="btn btn-accent mt-8">Export TA Hours</button>
+        <button className="btn btn-accent mt-8 mb-8">Export TA Hours</button>
+        <TaHoursTable hours={tasks} />
       </div>
     </div>
   );

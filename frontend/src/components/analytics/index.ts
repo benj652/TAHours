@@ -1,4 +1,5 @@
 export * from "./AnalyticPieChart";
-export * from "./roleAssigning";
-export * from "./middleCol"
 export * from "./classManagement";
+export * from "./middleCol";
+export * from "./roleAssigning";
+export * from "./TaHoursTable";
