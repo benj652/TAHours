@@ -295,7 +295,7 @@ func GetClassTickets(c *fiber.Ctx) error {
 	filter := bson.M{"class": classID}
 	collection := db.GetCollection(classQueue.TableName())
 
-	err = collection.FindOne(context.Background(), filter).Decode(&classQueue)
+	cursor, err := collection.Find(context.Background(), filter)
 	if err == mongo.ErrNoDocuments {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"tickets": make([]models.Ticket, 0),
@@ -306,9 +306,43 @@ func GetClassTickets(c *fiber.Ctx) error {
 			"message": "Error getting queue from class | " + err.Error(),
 		})
 	}
+	defer cursor.Close(context.Background())
+
+	classQueues := new([]models.TAQueue)
+
+	err = cursor.All(context.Background(), classQueues)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from cursor | " + err.Error(),
+		})
+	}
+
+	if len(*classQueues) == 0 {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+
+	tickets := new([]models.Ticket)
+
+	for _, queue := range *classQueues {
+		for _, id := range queue.Tickets {
+			var ticket models.Ticket
+			ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
+			filter := bson.M{"_id": id}
+			err = ticketCollection.FindOne(context.Background(), filter).Decode(&ticket)
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"message": "Error getting ticket from cursor | " + err.Error(),
+				})
+			}
+			*tickets = append(*tickets, ticket)
+		}
+	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"tickets": classQueue.Tickets,
+		"tickets": tickets,
 	})
 }
 
