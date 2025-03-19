@@ -324,21 +324,28 @@ func GetClassTickets(c *fiber.Ctx) error {
 		})
 	}
 
-	tickets := new([]models.Ticket)
+	// returns full ticket, would be too much info we want just id instead
+	//
+	//tickets := new([]models.Ticket)
+	//
+	// for _, queue := range *classQueues {
+	// 	for _, id := range queue.Tickets {
+	// 		var ticket models.Ticket
+	// 		ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
+	// 		filter := bson.M{"_id": id}
+	// 		err = ticketCollection.FindOne(context.Background(), filter).Decode(&ticket)
+	// 		if err != nil {
+	// 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 				"message": "Error getting ticket from cursor | " + err.Error(),
+	// 			})
+	// 		}
+	// 		*tickets = append(*tickets, ticket)
+	// 	}
+	// }
 
+	tickets := new([]primitive.ObjectID)
 	for _, queue := range *classQueues {
-		for _, id := range queue.Tickets {
-			var ticket models.Ticket
-			ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
-			filter := bson.M{"_id": id}
-			err = ticketCollection.FindOne(context.Background(), filter).Decode(&ticket)
-			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-					"message": "Error getting ticket from cursor | " + err.Error(),
-				})
-			}
-			*tickets = append(*tickets, ticket)
-		}
+		*tickets = append(*tickets, queue.Tickets...)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
