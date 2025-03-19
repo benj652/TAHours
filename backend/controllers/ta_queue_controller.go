@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // GetAllTAQueues retrieves all TA queues from the database and returns them
@@ -221,7 +222,7 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	})
 }
 
-// getActiveTickets returns a list of all active tickets within a specific queue. tickets are maked as active when they have no TA assigned
+// getActiveTickets returns a list of all active tickets within a specific queue. tickets are marked as active when they have no TA assigned
 func GetActiveTickets(c *fiber.Ctx) error {
 	id := c.Params("id")
 	queueID, err := primitive.ObjectIDFromHex(id)
@@ -274,6 +275,35 @@ func GetActiveTickets(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"tickets": tickets,
+	})
+}
+
+func GetClassTickets(c *fiber.Ctx) error {
+	id := c.Params("id")
+	classID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID",
+		})
+	}
+	var classQueue models.TAQueue
+	filter := bson.M{"class": classID}
+	collection := db.GetCollection(classQueue.TableName())
+
+	err = collection.FindOne(context.Background(), filter).Decode(&classQueue)
+	if err == mongo.ErrNoDocuments {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from class | " + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"tickets": classQueue.Tickets,
 	})
 }
 
