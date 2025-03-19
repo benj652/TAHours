@@ -287,6 +287,12 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 	var targetUser models.User
 	err = collection.FindOne(context.Background(), filter).Decode(&targetUser)
 
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+
 	if targetUser.Roles == roles.Admin {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"err": "You do not have permission to update this user",
@@ -428,6 +434,13 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 
 	// Find the user to update
 	err = collection.FindOne(context.Background(), filter).Decode(&targetUser)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "User not found",
+		})
+	}
+
 	if targetUser.Roles == roles.Admin {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"err": "You do not have permission to update this user",

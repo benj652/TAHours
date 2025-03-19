@@ -109,6 +109,11 @@ func AddTaToQueue(c *fiber.Ctx) error {
 		})
 	}
 	err = collection.FindOne(context.Background(), filter).Decode(&taQueue)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to add TA to queue" + err.Error(),
+		})
+	}
 
 	for i := 0; i < len(taQueue.TAs); i++ {
 		if taQueue.TAs[i] == taId {
