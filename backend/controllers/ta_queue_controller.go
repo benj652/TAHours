@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // GetAllTAQueues retrieves all TA queues from the database and returns them
@@ -108,6 +109,11 @@ func AddTaToQueue(c *fiber.Ctx) error {
 		})
 	}
 	err = collection.FindOne(context.Background(), filter).Decode(&taQueue)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to add TA to queue" + err.Error(),
+		})
+	}
 
 	for i := 0; i < len(taQueue.TAs); i++ {
 		if taQueue.TAs[i] == taId {
@@ -221,7 +227,7 @@ func RemoveTaFromQueue(c *fiber.Ctx) error {
 	})
 }
 
-// getActiveTickets returns a list of all active tickets within a specific queue. tickets are maked as active when they have no TA assigned
+// getActiveTickets returns a list of all active tickets within a specific queue. tickets are marked as active when they have no TA assigned
 func GetActiveTickets(c *fiber.Ctx) error {
 	id := c.Params("id")
 	queueID, err := primitive.ObjectIDFromHex(id)
@@ -270,6 +276,76 @@ func GetActiveTickets(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to get active tickets" + err.Error(),
 		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"tickets": tickets,
+	})
+}
+
+func GetClassTickets(c *fiber.Ctx) error {
+	id := c.Params("id")
+	classID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID",
+		})
+	}
+	var classQueue models.TAQueue
+	filter := bson.M{"class": classID}
+	collection := db.GetCollection(classQueue.TableName())
+
+	cursor, err := collection.Find(context.Background(), filter)
+	if err == mongo.ErrNoDocuments {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from class | " + err.Error(),
+		})
+	}
+	defer cursor.Close(context.Background())
+
+	classQueues := new([]models.TAQueue)
+
+	err = cursor.All(context.Background(), classQueues)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from cursor | " + err.Error(),
+		})
+	}
+
+	if len(*classQueues) == 0 {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+
+	// returns full ticket, would be too much info we want just id instead
+	//
+	//tickets := new([]models.Ticket)
+	//
+	// for _, queue := range *classQueues {
+	// 	for _, id := range queue.Tickets {
+	// 		var ticket models.Ticket
+	// 		ticketCollection := db.GetCollection((&models.Ticket{}).TableName())
+	// 		filter := bson.M{"_id": id}
+	// 		err = ticketCollection.FindOne(context.Background(), filter).Decode(&ticket)
+	// 		if err != nil {
+	// 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 				"message": "Error getting ticket from cursor | " + err.Error(),
+	// 			})
+	// 		}
+	// 		*tickets = append(*tickets, ticket)
+	// 	}
+	// }
+
+	tickets := new([]primitive.ObjectID)
+	for _, queue := range *classQueues {
+		*tickets = append(*tickets, queue.Tickets...)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

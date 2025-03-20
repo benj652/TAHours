@@ -35,4 +35,10 @@ func TAQueueRoutes(app *fiber.App) {
 	* Returns all active tickets in the queue
 	**/
 	taQueueGroup.Get("/active-tickets/:id", controllers.GetActiveTickets)
+
+	/** Route to get all tickets from specified class. Requires class ID in the URL.
+	*
+	* Returns all tickets related to specified class.
+	**/
+	taQueueGroup.Get("/class-tickets/:id", controllers.GetClassTickets)
 }
