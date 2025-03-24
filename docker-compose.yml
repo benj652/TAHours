@@ -42,7 +42,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=scoobydoo123shaggy123fred123oliver
     volumes:
       - ./mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
-      - ./mongo-dump:/mongo-dump
+      - ./database/mongo-dump:/mongo-dump
       - tahours-data:/data/db
     networks:
       - funny-network
