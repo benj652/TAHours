@@ -40,10 +40,10 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=scoobydoo123oliverthompson
       - MONGO_INITDB_ROOT_PASSWORD=scoobydoo123shaggy123fred123oliver
-    # volumes:
-    #   - ./mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
-    #   - ./tahours-mongo-data:/db-dump
-    #   - tahours-mongo-data:/data/db 
+    volumes:
+      - ./mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
+      - ./mongo-dump:/mongo-dump
+      - tahours-data:/data/db
     networks:
       - funny-network
 
@@ -53,5 +53,5 @@ networks:
     driver: bridge
 
 volumes:
-  tahours-mongo-data:
+  tahours-data:
     driver: local

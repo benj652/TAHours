@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mongorestore -d TAHours /tahours-mong-data/TAHours
+mongorestore -d TAHours /mongo-dump/TAHours

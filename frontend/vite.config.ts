@@ -29,7 +29,7 @@ export default defineConfig(() => {
             },
         },
         preview: {
-            allowedHosts: ["a53d-137-146-130-98.ngrok-free.app","42a4-137-146-130-98.ngrok-free.app", "localhost"], // Add ngrok host here
+            allowedHosts: ["4b52-137-146-130-98.ngrok-free.app", "a53d-137-146-130-98.ngrok-free.app","42a4-137-146-130-98.ngrok-free.app", "localhost"], // Add ngrok host here
         },
         // preview: {
         //     allowedHosts: ['546f-137-146-130-98.ngrok-free.app', 'localhost']

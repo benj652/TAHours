@@ -10,7 +10,7 @@ import {
 
 interface OnlineUsersMessage {
   type: "onlineUsers";
-  users: string[]; 
+  users: string[];
 }
 
 interface SocketContextType {
@@ -41,6 +41,7 @@ export const SocketContextProvider = ({
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const { userItems: authUser } = authStore();
 
+  const MODE = import.meta.env.RUN_MODE || "production";
   useEffect(() => {
     if (authUser) {
       const canSeeThread =
@@ -49,8 +50,8 @@ export const SocketContextProvider = ({
         authUser.roles === RolesConfig.Professor;
       const ws = new WebSocket(
         canSeeThread
-          ? `${SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}&${SOCKET_URI_CONSTS.THREAD_ACCESS}=9284091284920149`
-          : `${SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}`,
+          ? `${MODE === "bproduction" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}&${SOCKET_URI_CONSTS.THREAD_ACCESS}=9284091284920149`
+          : `${MODE === "bproduction" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}`,
       );
 
       ws.onopen = () => {
