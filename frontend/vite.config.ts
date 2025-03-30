@@ -20,7 +20,7 @@ export default defineConfig(() => {
             port: 3000,
             proxy: {
                 "/api": {
-                    target: MODE === "production" ? "http://tahours-backend:8000" : "http://localhost:8000",
+                    target: MODE === "production" ? "http://backend:8000" : "http://localhost:8000",
                 },
             },
             host: "0.0.0.0",

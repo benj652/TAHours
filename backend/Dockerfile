@@ -20,8 +20,8 @@ RUN GOOS=linux GOARCH=amd64 go build -o myapp ./cmd/server
 FROM alpine:latest
 
 # Install necessary certificates and libraries (for Go to work properly)
-RUN apk --no-cache add ca-certificates
-COPY .env .env
+RUN apk --no-cache add ca-certificates curl
+# COPY .env .env
 
 # Set the Current Working Directory inside the container
 WORKDIR /root/
@@ -34,4 +34,4 @@ COPY --from=builder /app/myapp .
 EXPOSE 8000
 
 # Command to run the executable
-CMD ["./myapp"]
+CMD ["./myapp", "-v"]
