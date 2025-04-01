@@ -15,6 +15,8 @@ var connectedDB *mongo.Database
 func ConnectToMongo() {
 	// Connect to MongoDB
 	MONGODB_URI := os.Getenv("MONGODB_URI")
+
+	// fmt.Println(MONGODB_URI)
 	clientOptions := options.Client().ApplyURI(MONGODB_URI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {

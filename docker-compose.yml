@@ -1,0 +1,88 @@
+version: "3.7"
+
+services:
+  frontend:
+    build: ./frontend
+    image: tahours-frontend:latest
+    container_name: tahours-frontend
+    ports:
+      - "3000:3000"
+    secrets:
+      - frontend_env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    networks:
+      - funny-network
+
+  backend:
+    build: ./backend
+    image: tahours-backend:latest
+    stdin_open: true
+    tty: true
+    secrets:
+      - backend_env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    networks:
+      - funny-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  database:
+    image: mongo:latest
+    container_name: tahours-db
+    stdin_open: true
+    tty: true
+    ports:
+      - "27017:27017"
+    secrets:
+      - mongo_user
+      - mongo_pass
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_user
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_pass
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
+      - ./database/mongo-dump:/mongo-dump
+      - tahours-data:/data/db
+    networks:
+      - funny-network
+
+
+networks:
+  funny-network:
+    driver: overlay
+
+volumes:
+  tahours-data:
+    driver: local
+
+secrets:
+  frontend_env:
+    external: true
+  backend_env:
+    external: true
+  mongo_user:
+    external: true
+  mongo_pass:
+    external: true
