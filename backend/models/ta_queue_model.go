@@ -10,6 +10,7 @@ type TAQueue struct {
 	Class      primitive.ObjectID   `json:"class"`
 	Directions string               `json:"directions"`
 	Tickets    []primitive.ObjectID `json:"tickets"`
+	Date       primitive.DateTime   `json:"date"`
 }
 
 func (t *TAQueue) TableName() string {
