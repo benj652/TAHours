@@ -1,5 +1,5 @@
 import { authStore, userStore } from "@/store";
-import { User, UserRoutes } from "@/types";
+import { UserRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
 import { useState } from "react";
@@ -45,23 +45,21 @@ export const useUpdateUserDesc = () => {
 
       // Get the user from cache or create a new one if not found
       //@ts-ignore
-      let user = getItemsFromCache(userId as string);
+      const cachedUser = getItemsFromCache(userId as string);
 
-      if (!user) {
-        // If no user exists, create a new user with default params
-        user = {
-          _id: userItems._id,
-          description: newDesc,
-          firstName: userItems.firstName,
-          accessToken: userItems.accessToken,
-          email: userItems.email,
-          lastName: userItems.lastName,
-          profilePic: userItems.profilePic,
-          roles: userItems.roles,
-        } as User;
-      } else {
-        user.description = newDesc;
-      }
+      const user = cachedUser
+        ? { ...cachedUser, description: newDesc } // Update existing user
+        : {
+            // Create new user if not found
+            _id: userItems._id,
+            description: newDesc,
+            firstName: userItems.firstName,
+            accessToken: userItems.accessToken,
+            email: userItems.email,
+            lastName: userItems.lastName,
+            profilePic: userItems.profilePic,
+            roles: userItems.roles,
+          };
 
       // Add user to the cache
       addUserToCache(user);
