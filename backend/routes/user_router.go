@@ -33,7 +33,7 @@ func UserRoutes(app *fiber.App) {
 	*
 	* Make sure to protect in a way that a user can only update thier own description
 	**/
-	userGroup.Post("/update-description/:id", authMiddleware, controllers.ChangeDescription)
+	userGroup.Post("/update-desc/:id", authMiddleware, controllers.ChangeDescription)
 
 	/**
 	* DEPRECATED AT THE MOMENT: THe user can just change thier google profile pic if they care so much
