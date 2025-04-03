@@ -25,11 +25,11 @@ export default defineConfig(() => {
             },
             host: "0.0.0.0",
             watch: {
-                usePolling: true, // Optional: helps with file system watches in certain environments
+                usePolling: true, 
             },
         },
         preview: {
-            allowedHosts: ["4b52-137-146-130-98.ngrok-free.app", "a53d-137-146-130-98.ngrok-free.app","42a4-137-146-130-98.ngrok-free.app", "localhost"], // Add ngrok host here
+            allowedHosts: ["d000-137-146-130-98.ngrok-free.app", "da5d-137-146-130-98.ngrok-free.app", "42a4-137-146-130-98.ngrok-free.app", "localhost"], // Add ngrok host here
         },
         // preview: {
         //     allowedHosts: ['546f-137-146-130-98.ngrok-free.app', 'localhost']

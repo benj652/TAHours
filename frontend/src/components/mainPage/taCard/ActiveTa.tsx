@@ -1,4 +1,5 @@
 import { useGetUser } from "@/hooks/user/useGetUser";
+import { forceUpdateStore } from "@/store";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
 
@@ -7,10 +8,11 @@ type ActiveTaProps = {
 };
 export const ActiveTa: React.FC<ActiveTaProps> = ({ curTa }) => {
   const { loading, getUser, user } = useGetUser();
+ const { forceRenderKey } = forceUpdateStore();
 
   useEffect(() => {
     getUser(curTa);
-  }, []);
+}, [forceRenderKey]);
   // console.log(user);
   if (loading) {
     return (
