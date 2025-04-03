@@ -1,5 +1,5 @@
 import { useLeaveTaQueue } from "@/hooks/taQueue/useLeaveTaQueue";
-import { authStore, taQueueStore } from "@/store";
+import { authStore, forceUpdateStore, taQueueStore } from "@/store";
 import { SessionButtonProps, TaQueue } from "@/types";
 import { ObjectId } from "mongodb";
 
@@ -22,6 +22,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
   setTaQueues,
 }) => {
   const { leaveTaQueue, loading } = useLeaveTaQueue();
+  const { triggerRerender } = forceUpdateStore();
   const { userItems } = authStore();
   const { allTaQueues } = taQueueStore();
   const handleLeaveSession = async () => {
@@ -30,7 +31,11 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     const res = await leaveTaQueue(taQueueId, classId);
     if (!res) return;
     if (!userItems?._id) return;
+    console.log("curTas", curTas);
     const newCurTas = curTas.filter((taId) => taId !== userItems._id);
+    console.log("newCurTas", newCurTas);
+    setCurTas(newCurTas);
+    triggerRerender();
     const curTaQueue = allTaQueues.filter(
       (curTaQueueId) => curTaQueueId._id === taQueueId
     );
@@ -41,6 +46,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     if (curTaQueue[0].TAs.length === 0) return;
 
     if (!res.isActive) {
+      // The ta was the last one in the queue, so the queue is now over as they have left.
       console.log("curTaQueue[0].TAs.length === 1");
       const newTaQueues = curTaQueues.filter(
         (taQueue) => taQueue._id !== taQueueId
@@ -50,8 +56,8 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
       curTaQueue[0].TAs = curTaQueue[0].TAs.filter(
         (taId) => taId !== userItems._id
       );
+    triggerRerender();
     }
-    setCurTas(newCurTas);
   };
   return (
     <button

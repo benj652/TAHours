@@ -1,5 +1,5 @@
 import { useSocketContext } from "@/context";
-import { forceUpdateStore, taQueueStore, ticketStore } from "@/store";
+import { authStore, forceUpdateStore, taQueueStore, ticketStore } from "@/store";
 import {
     TaQueue,
     TaQueueJoinEvent,
@@ -20,6 +20,7 @@ export const useListenMainPage = () => {
     const { socket } = useSocketContext();
     const { getTicketFromCache, addTicketToCache } = ticketStore();
     const { triggerRerender } = forceUpdateStore();
+    const { userItems } = authStore();
 
     // Call `forceRender()` instead of `setForceRender`
 
@@ -38,22 +39,22 @@ export const useListenMainPage = () => {
                     addTicketToCache(resolved);
                 }
                 if (newMessage.type === THREAD_EVENTS.TA_LEAVE_QUEUE_EVENT) {
-                    const res = newMessage.data as TaQueueLeaveEvent;
+                    // const res = newMessage.data as TaQueueLeaveEvent;
 
                     // If the last TA leaves a queue, set it to inactive and remove it
-                    if (!res.isActive) {
-                        const filteredTaQueues = allTaQueues.filter(
-                            (queue) => queue._id !== res.queueID,
-                        );
-                        setAllTaQueues(filteredTaQueues);
-                        return;
-                    }
+                    // if (!res.isActive) {
+                    //     const filteredTaQueues = allTaQueues.filter(
+                    //         (queue) => queue._id !== res.queueID,
+                    //     );
+                    //     setAllTaQueues(filteredTaQueues);
+                    //     return;
+                    // }
 
-                    const targetTaQueue = allTaQueues.filter(
-                        (queue) => queue._id === res.queueID,
-                    );
+                    // const targetTaQueue = allTaQueues.filter(
+                    //     (queue) => queue._id === res.queueID,
+                    // );
 
-                    if (!targetTaQueue || targetTaQueue.length === 0) return;
+                    // if (!targetTaQueue || targetTaQueue.length === 0) return;
                     // console.log(
                         // "new ta oogachacka yeeeeeeeeeeww yeah buddy nascar geetin there get that bread",
                     // );
@@ -61,11 +62,11 @@ export const useListenMainPage = () => {
 
                     // Need to likely make this mutate global state idk if this
                     // will work as as
-                    targetTaQueue[0].TAs = targetTaQueue[0].TAs.filter(
-                        (taId) => taId !== res.taId,
-                    );
+                    // targetTaQueue[0].TAs = targetTaQueue[0].TAs.filter(
+                    //     (taId) => taId !== res.taId,
+                    // );
 
-                    triggerRerender();
+                    // triggerRerender();
                     // const handleLeaveSession = async () => {
                     //     if (!classId) return;
                     //     if (!taQueueId) return;
@@ -108,6 +109,7 @@ export const useListenMainPage = () => {
                     if (!targetQueue) return;
 
                     // update the current store
+                    if (newMessage.data.taId === userItems?._id) return;
                     targetQueue.TAs.push(res.data.taId);
                     triggerRerender();
 
@@ -127,6 +129,7 @@ export const useListenMainPage = () => {
                 if (newMessage.type === THREAD_EVENTS.TICKET_CREATE_EVVENT) {
                     const res = newMessage as TicketCreateEvent;
                     // console.log("new ticket", res);
+                    if (res.data.ticket.studentId === userItems._id) return;
                     const newTicketID = res.data.ticket._id;
 
                     // add the ticket to the cache
