@@ -164,28 +164,41 @@ func ChangeDescription(c *fiber.Ctx) error {
 	var user models.User
 	collection := db.GetCollection(user.TableName())
 
+	// Get user ID from URL params and from the locals
 	id := c.Params("id")
 	userId := c.Locals("UserID")
 
-	if userId == nil {
+	// Ensure userId is a string, if not, return a bad request
+	userIdPrim, ok := userId.(primitive.ObjectID)
+	if !ok {
+		// Handle the case where userId is not an ObjectID
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "User not found",
+			"message": "User ID is not a valid ObjectID",
 		})
 	}
-	if id != userId {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	userIdStr := userIdPrim.Hex()
+	print(userIdStr)
+	print(id)
+
+	// Ensure the ID from URL matches the userId (both should be strings)
+	if id != userIdStr {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"err": "You do not have permission to update this user",
 		})
 	}
-	objectID, err := primitive.ObjectIDFromHex(id)
 
+	// Convert the string ID to ObjectID for MongoDB query
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid user ID" + err.Error(),
+			"message": "Invalid user ID format",
 		})
 	}
+
+	// Create the filter for MongoDB query
 	filter := bson.M{"_id": objectID}
 
+	// Parse the new description from the request body
 	var description NewDescription
 	if err := c.BodyParser(&description); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -193,23 +206,27 @@ func ChangeDescription(c *fiber.Ctx) error {
 		})
 	}
 
-	if id == "" {
+	// Check if description is provided
+	if description.Description == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "ID is required",
+			"message": "Description is required",
 		})
 	}
 
+	// Prepare the update operation
 	update := bson.M{"$set": bson.M{"description": description.Description}}
 
+	// Update the user in the database
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to update user",
+			"message": "Failed to update user description",
 		})
 	}
 
+	// Return a success response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "User updated successfully",
+		"message": "User description updated successfully",
 	})
 }
 

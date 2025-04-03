@@ -1,5 +1,7 @@
 import { StudentTickets } from "@/components";
+import { useUpdateUserDesc } from "@/hooks";
 import { authStore } from "@/store";
+import { useState } from "react";
 
 const bruh = {
   userName: "glasses emoji",
@@ -18,6 +20,20 @@ const bruh = {
 
 export const ProfilePage: React.FC = () => {
   const { userItems } = authStore();
+  const { loading, error, updateUserDesc } = useUpdateUserDesc();
+  const [outfit, setOutfit] = useState(userItems.description);
+
+  const handleOutfitChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newOutfit = e.target.value;
+    setOutfit(newOutfit);
+  };
+
+  const handleOutfitBlur = async () => {
+    if (userItems?._id) {
+      await updateUserDesc(userItems._id, outfit);
+    }
+  };
+
   return (
     <div className="flex w-full gap-4 p-4">
       {/* Profile Card (1/2) */}
@@ -51,8 +67,13 @@ export const ProfilePage: React.FC = () => {
               type="text"
               placeholder="Type here"
               className="input"
-              defaultValue={bruh.userOutfit}
+              value={outfit}
+              onChange={handleOutfitChange}
+              onBlur={handleOutfitBlur}
+              disabled={loading}
             />
+            {loading && <p className="text-sm text-gray-500">Updating...</p>}
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
         </div>
       </div>
