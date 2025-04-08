@@ -59,7 +59,8 @@ else
 endif
 
 prune:
-	docker volume prune -f
+	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) down -v
 
 run:
 	$(DOCKER_STACK) deploy -c docker-compose.yml --detach=false $(STACK_NAME)
