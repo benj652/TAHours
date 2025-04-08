@@ -28,7 +28,7 @@ export const StudentTickets: React.FC<StudentTicketsProps> = ({ tickets }) => {
             </li>
           ))
         ) : (
-          <p>No Unresolved Tickets</p>
+          <p>No Tickets Made</p>
         )}
       </ul>
     </div>
