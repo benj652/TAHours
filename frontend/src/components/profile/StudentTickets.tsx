@@ -20,7 +20,7 @@ export const StudentTickets: React.FC<StudentTicketsProps> = ({ tickets }) => {
   };
 
   // Reverse tickets for display
-  const reversedTickets = [...tickets].reverse();
+  const reversedTickets = [...(tickets || [])].reverse();
 
   return (
     <>
