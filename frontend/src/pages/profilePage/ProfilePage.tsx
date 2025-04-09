@@ -38,6 +38,7 @@ export const ProfilePage: React.FC = () => {
     if (userItems?._id) {
       await updateUserDesc(userItems._id, outfit);
     }
+    userItems.description = outfit;
   };
 
   return (
