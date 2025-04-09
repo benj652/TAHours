@@ -2,10 +2,10 @@ import { analyticsPageStore } from "@/store";
 import { formatDateRange } from "@/utils";
 
 /**
- * This componenet will talk about some analytics of past 
+ * This componenet will talk about some analytics of past
  * TA HOUR sessions
  *
-* RN it is a major work in progress
+ * RN it is a major work in progress
  */
 export const TextAnalytics = () => {
   const { selectedClass, selectedDates } = analyticsPageStore();

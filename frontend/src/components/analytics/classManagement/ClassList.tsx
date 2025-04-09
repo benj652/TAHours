@@ -1,4 +1,4 @@
-import { useGetActiveClasses } from "@/hooks";
+import { useGetActiveClasses, useGetClassQueues } from "@/hooks";
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass } from "@/types";
 import { useEffect, useState } from "react";
@@ -12,7 +12,20 @@ export const ClassList = () => {
     getActiveClasses();
   }, []);
 
-  const { selectedClass, setSelectedClass } = analyticsPageStore();
+  const { getClassQueues } = useGetClassQueues();
+  useEffect(() => {
+    if (selectedClass) {
+      getClassQueues(selectedClass._id);
+    }
+  }, []);
+
+  const {
+    selectedClass,
+    selectedClassQueues,
+    setSelectedClass,
+    setSelectedClassQueues,
+  } = analyticsPageStore();
+
   const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
 
   const handleSelect = (csClass: CSClass) => {
@@ -20,9 +33,11 @@ export const ClassList = () => {
     if (csClass === selectedClass) {
       setAnimatingClass(csClass);
       setSelectedClass(null);
+      setSelectedClassQueues(null);
     } else {
       setAnimatingClass(csClass);
       setSelectedClass(csClass);
+      setSelectedClassQueues(null);
     }
   };
 

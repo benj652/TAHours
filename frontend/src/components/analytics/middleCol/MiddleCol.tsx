@@ -1,3 +1,4 @@
+import { analyticsPageStore } from "@/store";
 import { SearchFilter } from "./SearchFilter";
 import { TextAnalytics } from "./TextAnalytics";
 import { TicketQueue } from "./TicketQueue";
@@ -12,6 +13,7 @@ export const MiddleCol: React.FC = () => {
       "dumb ticket 4",
     ],
   };
+  const { selectedClassQueues } = analyticsPageStore();
 
   const handleSelect = (selectedOption) => {
     console.log("Selected:", selectedOption);
@@ -22,7 +24,11 @@ export const MiddleCol: React.FC = () => {
       <SearchFilter onSelect={handleSelect} />
       <TextAnalytics />
       <h1 className="text-lg font-semibold my-2">Detailed Tickets:</h1>
-      <TicketQueue tickets={bruh.currentQueue} />
+      <TicketQueue
+        tickets={
+          selectedClassQueues ? selectedClassQueues.tickets : bruh.Tickets
+        }
+      />
     </div>
   );
 };
