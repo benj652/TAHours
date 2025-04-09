@@ -19,7 +19,7 @@ export const StudentTickets: React.FC<StudentTicketsProps> = ({ tickets }) => {
     setSelectedTicket(null); // Close popup when onClose is triggered
   };
 
-  // Reverse tickets for display
+  // Reverse tickets for display purposes
   const reversedTickets = [...(tickets || [])].reverse();
 
   return (
