@@ -6,7 +6,10 @@ services:
     image: tahours-frontend:latest
     container_name: tahours-frontend
     ports:
-      - "3000:3000"
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
     secrets:
       - frontend_env
     healthcheck:
