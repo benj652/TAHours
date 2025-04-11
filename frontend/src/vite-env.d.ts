@@ -4,7 +4,7 @@
 interface ImportMetaEnv {
   readonly VITE_API_URL: string;
   readonly VITE_OAUTH_CLIENT: string;
-  readonly RUN_MODE: string;
+  readonly VITE_RUN_MODE: string;
   // Add other env variables here
 }
 

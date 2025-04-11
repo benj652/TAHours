@@ -59,7 +59,7 @@ export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
       directions
     )) as TaQueueCreateResponse;
     //@ts-expect-error setqueues
-    setTaQueues([...curTaQueues, res.taQueue]);
+    setTaQueues([...curTaQueues || [], res.taQueue]);
     // setTaQueues([...(taQueues || []), res.taQueue]);
     // console.log("new quesues", taQueues);
     console.log(res.taQueue);
