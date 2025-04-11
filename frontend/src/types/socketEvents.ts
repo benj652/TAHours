@@ -1,7 +1,7 @@
 export enum SOCKET_URI_CONSTS {
-    prod_socket_uri = "ws://tahours-backend:8000/ws",
+    prod_socket_uri = "ws://backend:8000/ws",
     SOCKET_URI = "ws://localhost:8000/ws",
-    PROD_SOCKET_URI = "ws://tahours-backend:8000/ws",
+    PROD_SOCKET_URI = "ws://backend:8000/ws",
     USER_WS_ID = "userWSId",
     THREAD_ACCESS = "threadAccess",
 };

@@ -10,7 +10,7 @@ TESTMODE ?= false
 NOCACHE ?= false
 
 # Targets
-.PHONY: all build swarm-init remove-secrets create-secrets deploy prune run
+.PHONY: all build swarm-init remove-secrets create-secrets deploy prune run destroy
 
 # Default target
 all: build swarm-init prune remove-secrets create-secrets  deploy
@@ -61,6 +61,9 @@ endif
 prune:
 	$(DOCKER_COMPOSE) down -v
 	$(DOCKER_COMPOSE) down -v
+
+destroy:
+	$(DOCKER_STACK) rm $(STACK_NAME)
 
 run:
 	$(DOCKER_STACK) deploy -c docker-compose.yml --detach=false $(STACK_NAME)

@@ -50,8 +50,8 @@ export const SocketContextProvider = ({
         authUser.roles === RolesConfig.Professor;
       const ws = new WebSocket(
         canSeeThread
-          ? `${MODE === "bproduction" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}&${SOCKET_URI_CONSTS.THREAD_ACCESS}=9284091284920149`
-          : `${MODE === "bproduction" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}`,
+          ? `${MODE === "production" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}&${SOCKET_URI_CONSTS.THREAD_ACCESS}=9284091284920149`
+          : `${MODE === "production" ? SOCKET_URI_CONSTS.prod_socket_uri : SOCKET_URI_CONSTS.SOCKET_URI}?${SOCKET_URI_CONSTS.USER_WS_ID}=${authUser._id}`,
       );
 
       ws.onopen = () => {
