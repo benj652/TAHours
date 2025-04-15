@@ -1,9 +1,19 @@
 import { analyticsPageStore } from "@/store";
+import { PROBLEM_TYPES } from "@/types";
 
 export const SearchFilter = () => {
-    const { selectedDates, setSelectedDates } = analyticsPageStore();
+    const { selectedDates, setSelectedDates, setTicketTypes} = analyticsPageStore();
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDates(e.target.value);
+        setTicketTypes([
+    { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
+    { name: PROBLEM_TYPES.SYNTAX, value: 0 },
+    { name: PROBLEM_TYPES.LOGIC, value: 0 },
+    { name: PROBLEM_TYPES.RUNTIME, value: 0 },
+    { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
+    { name: PROBLEM_TYPES.OTHER, value: 0 },
+  ])
+
   };
 
   const { selectedClass } = analyticsPageStore();

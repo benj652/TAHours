@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
@@ -73,6 +74,7 @@ func CreateTicket(c *fiber.Ctx) error {
 	}
 
 	ticket := new(models.Ticket)
+	ticket.Date = primitive.DateTime(time.Now().UnixMilli())
 	collection := db.GetCollection(ticket.TableName())
 
 	// Parse the request body

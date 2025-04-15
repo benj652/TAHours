@@ -6,6 +6,7 @@ export const TicketQueue = () => {
   const { selectedTickets: tickets, selectedDates } = analyticsPageStore();
 
 console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
+    const dateRangeBounds = getDateRangeBounds(selectedDates || "0");
 
     
   // console.log(tickets);
@@ -14,7 +15,7 @@ console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
       <ul className="list-none w-full space-y-2">
         {tickets && tickets.length > 0 ? (
           tickets.map((ticketName, index) => (
-            <TicketDisplay curTicketId={ticketName} key={index} />
+            <TicketDisplay curTicketId={ticketName} key={index} dateRangeBounds={dateRangeBounds}/>
           ))
         ) : (
           <p>No Tickets</p>
