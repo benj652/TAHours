@@ -7,16 +7,23 @@ DOCKER_SECRET = docker secret
 DOCKER_STACK = docker stack
 STACK_NAME = tahours
 TESTMODE ?= false
+NOCACHE ?= false
 
 # Targets
-.PHONY: all build swarm-init remove-secrets create-secrets deploy
+.PHONY: all build swarm-init remove-secrets create-secrets deploy prune run destroy
 
 # Default target
-all: build swarm-init remove-secrets create-secrets deploy
+all: build swarm-init prune remove-secrets create-secrets  deploy
 
 # Build Docker images without cache
 build:
-	$(DOCKER_COMPOSE) build --no-cache
+	@if [ "$(NOCACHE)" = "true" ]; then \
+		echo "Building images without cache..."; \
+		$(DOCKER_COMPOSE) build --no-cache; \
+	else \
+		echo "Building images with cache..."; \
+		$(DOCKER_COMPOSE) build; \
+	fi
 
 # Initialize Docker swarm only if not already in a swarm
 swarm-init:
@@ -50,3 +57,14 @@ ifeq ($(TESTMODE), true)
 else
 	$(DOCKER_STACK) deploy -c docker-compose.yml $(STACK_NAME)
 endif
+
+prune:
+	$(DOCKER_COMPOSE) down -v
+	$(DOCKER_COMPOSE) down -v
+
+destroy:
+	$(DOCKER_STACK) rm $(STACK_NAME)
+
+run:
+	$(DOCKER_STACK) deploy -c docker-compose.yml --detach=false $(STACK_NAME)
+

@@ -1,5 +1,5 @@
 import { useSocketContext } from "@/context";
-import { threadStore } from "@/store";
+import { authStore, threadStore } from "@/store";
 import { THREAD_EVENTS } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -22,6 +22,7 @@ const useListenMessages = () => {
   const { socket } = useSocketContext(); // socket is the WebSocket connection
   const { data: messages, setData: setMessages } = threadStore(); // messages is the state of the messages
   const [, setForceRender] = useState(false); // force render to update the UI
+  const { userItems } = authStore();
 
   /**
    * This hook listens for messages from the WebSocket connection and updates the messages state accordingly.
@@ -46,6 +47,9 @@ const useListenMessages = () => {
         } else if (newMessage.type === THREAD_EVENTS.NEW_COMMENT) {
           // WORK IN PROGRESS
           const targetId = newMessage.data.postId;
+
+          // Prevents multiple renders of the same comment
+          if(newMessage.data.user === userItems.firstName + " " + userItems.lastName) return;
           console.log(newMessage.data.comment);
           // const targetMessage = messages.find(
           const targetMessage = messages.find((post) => post._id === targetId);

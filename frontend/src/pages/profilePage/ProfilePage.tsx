@@ -1,5 +1,7 @@
 import { StudentTickets } from "@/components";
+import { useUpdateUserDesc, useUserTickets } from "@/hooks";
 import { authStore } from "@/store";
+import { useEffect, useState } from "react";
 
 const bruh = {
   userName: "glasses emoji",
@@ -18,12 +20,32 @@ const bruh = {
 
 export const ProfilePage: React.FC = () => {
   const { userItems } = authStore();
+  const { loading: descLoading, error, updateUserDesc } = useUpdateUserDesc();
+  const { userTickets, tickets, loading: ticketsLoading } = useUserTickets();
+  const [outfit, setOutfit] = useState(userItems.description);
+
+  useEffect(() => {
+    if (userItems?._id) {
+      userTickets(userItems._id);
+    }
+  }, [userItems?._id]);
+
+  const handleOutfitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOutfit(e.target.value);
+  };
+
+  const handleOutfitBlur = async () => {
+    if (userItems?._id) {
+      await updateUserDesc(userItems._id, outfit);
+    }
+    userItems.description = outfit;
+  };
+
   return (
     <div className="flex w-full gap-4 p-4">
-      {/* Profile Card (1/2) */}
+      {/* Profile Card */}
       <div className="w-1/2">
         <div className="card bg-base-300 rounded-box flex flex-row items-center p-4 shadow-lg gap-4">
-          {/* Profile Picture on the Left */}
           <div className="avatar w-1/3">
             <div className="w-full h-full rounded-full">
               <img
@@ -33,7 +55,6 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Profile Details on the Right */}
           <div className="flex flex-col text-left w-2/3">
             <h1 className="text-lg font-bold">Name:</h1>
             <p>
@@ -44,22 +65,35 @@ export const ProfilePage: React.FC = () => {
             <p>{userItems.email}</p>
 
             <h1 className="text-lg font-bold mt-2">Role:</h1>
-            <p>{bruh.userRole}</p>
+            <p>{userItems.roles}</p>
 
             <h1 className="text-lg font-bold mt-2">Outfit:</h1>
             <input
               type="text"
               placeholder="Type here"
               className="input"
-              defaultValue={bruh.userOutfit}
+              value={outfit}
+              onChange={handleOutfitChange}
+              onBlur={handleOutfitBlur}
+              disabled={descLoading}
             />
+            {descLoading && (
+              <p className="text-sm text-gray-500">Updating...</p>
+            )}
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
         </div>
       </div>
 
-      {/* Resolved Tickets Card (1/2) */}
+      {/* Tickets Card */}
       <div className="w-1/2">
-        <StudentTickets tickets={bruh.currentQueue} />
+        {ticketsLoading ? (
+          <div className="card bg-base-200 rounded-box p-4 shadow">
+            <p>Loading tickets...</p>
+          </div>
+        ) : (
+          <StudentTickets tickets={tickets} />
+        )}
       </div>
     </div>
   );
