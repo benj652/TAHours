@@ -146,9 +146,8 @@ func CreateTicket(c *fiber.Ctx) error {
 
 	ticket.ID = insertResult.InsertedID.(primitive.ObjectID)
 
-
 	payload := map[string]interface{}{
-		"ticket": ticket,
+		"ticket":  ticket,
 		"taQueue": queueId,
 	}
 	socket.BroadcastJSONToAll(models.TICKET_CREATE_EVVENT, payload)
@@ -175,6 +174,7 @@ type ResolveTicketBody struct {
 func ResolveTicket(c *fiber.Ctx) error {
 	ticketId := c.Params("id")
 	objectID, err := primitive.ObjectIDFromHex(ticketId)
+	resolverRole := c.Locals(models.USER_ROLE_PARAM)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -186,6 +186,12 @@ func ResolveTicket(c *fiber.Ctx) error {
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
+		})
+	}
+
+	if resolverRole != roles.Ta && resolverRole != roles.Professor && resolverRole != roles.Admin {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
 		})
 	}
 

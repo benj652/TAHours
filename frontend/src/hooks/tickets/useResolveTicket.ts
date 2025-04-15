@@ -1,5 +1,5 @@
-import { ticketStore } from "@/store";
-import { TicketRoutes } from "@/types";
+import { authStore, ticketStore } from "@/store";
+import { Role, Roles, TicketRoutes } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export const useResolveTicket = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { userItems } = authStore();
 
   const { getTicketFromCache, addTicketToCache } = ticketStore();
   const resolveTicket = async (
@@ -23,6 +24,10 @@ export const useResolveTicket = () => {
       if (!ticketId) throw new Error("Ticket ID is required");
       if (!taNote) throw new Error("TA Note is required");
       if (!problemType) throw new Error("Problem type is required");
+      const role = userItems.roles;
+      if (role !== Role.Ta && role !== Role.Professor && role !== Role.Admin) {
+         throw new Error("You do not have permission to resolve tickets");
+      }
 
       // Send a request to the server
       const res = await httpClient.post(

@@ -1,6 +1,6 @@
-import { useGetActiveClasses, useGetClassQueues } from "@/hooks";
+import { useGetActiveClasses } from "@/hooks";
 import { analyticsPageStore, csClassStore } from "@/store";
-import { CSClass } from "@/types";
+import { CSClass, PROBLEM_TYPES } from "@/types";
 import { useEffect, useState } from "react";
 import CuteStar from "../../../assets/star.svg";
 import { AddClassForm } from "./AddClassForm";
@@ -12,32 +12,45 @@ export const ClassList = () => {
     getActiveClasses();
   }, []);
 
-  const { getClassQueues } = useGetClassQueues();
-  useEffect(() => {
-    if (selectedClass) {
-      getClassQueues(selectedClass._id);
-    }
-  }, []);
+  // const { getClassQueues } = useGetClassQueues();
+  // useEffect(() => {
+  //   if (selectedClass) {
+  //     getClassQueues(selectedClass._id);
+  //   }
+  // }, []);
 
   const {
     selectedClass,
-    selectedClassQueues,
     setSelectedClass,
     setSelectedClassQueues,
+    setTicketTypes,
   } = analyticsPageStore();
 
-  const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
+  // const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
 
   const handleSelect = (csClass: CSClass) => {
     // If clicking the same class, it should collapse, else it opens
-    if (csClass === selectedClass) {
-      setAnimatingClass(csClass);
+    setTicketTypes([
+      { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
+      { name: PROBLEM_TYPES.SYNTAX, value: 0 },
+      { name: PROBLEM_TYPES.LOGIC, value: 0 },
+      { name: PROBLEM_TYPES.RUNTIME, value: 0 },
+      { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
+      { name: PROBLEM_TYPES.OTHER, value: 0 },
+    ]);
+    if (csClass._id === selectedClass?._id) {
+      // setAnimatingClass(csClass);
       setSelectedClass(null);
       setSelectedClassQueues(null);
     } else {
-      setAnimatingClass(csClass);
-      setSelectedClass(csClass);
-      setSelectedClassQueues(null);
+      setSelectedClass(null); // temporarily clear it to force effect
+      setTimeout(() => {
+        setSelectedClass(csClass);
+        setSelectedClassQueues(null);
+      }, 0);
+      // setAnimatingClass(csClass);
+      // setSelectedClass(csClass);
+      // setSelectedClassQueues(null);
     }
   };
 

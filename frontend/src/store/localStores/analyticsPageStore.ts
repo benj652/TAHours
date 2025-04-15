@@ -1,4 +1,5 @@
-import { CSClass, TaQueue, Ticket } from "@/types";
+import { CSClass, PROBLEM_TYPES, TaQueue, TicketPieType } from "@/types";
+import { ObjectId } from "mongodb";
 import { create } from "zustand";
 
 type AnalyticsPageStore = {
@@ -10,8 +11,10 @@ type AnalyticsPageStore = {
   setSelectedClassQueues: (selectedClassQueues: TaQueue[] | null) => void;
   inRangeQueues: TaQueue[] | null;
   setInRangeQueues: (inRangeQueues: TaQueue[] | null) => void;
-  selectedTickets: Ticket[] | null;
-  setSelectedTickets: (selectedTickets: Ticket[] | null) => void;
+  selectedTickets: ObjectId[] | null;
+  setSelectedTickets: (selectedTickets: ObjectId[] | null) => void;
+  ticketTypes: TicketPieType[];
+  setTicketTypes: (ticketTypes: TicketPieType[]) => void;
 };
 
 /**
@@ -33,7 +36,21 @@ export const analyticsPageStore = create<AnalyticsPageStore>((set) => ({
     set({ selectedClassQueues }),
   inRangeQueues: null,
   setInRangeQueues: (inRangeQueues: TaQueue[] | null) => set({ inRangeQueues }),
-  selectedTickets: null,
-  setSelectedTickets: (selectedTickets: Ticket[] | null) =>
+  selectedTickets: [],
+  setSelectedTickets: (selectedTickets: ObjectId[] | null) =>
     set({ selectedTickets }),
+  ticketTypes: [
+    { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
+    { name: PROBLEM_TYPES.SYNTAX, value: 0 },
+    { name: PROBLEM_TYPES.LOGIC, value: 0 },
+    { name: PROBLEM_TYPES.RUNTIME, value: 0 },
+    { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
+    { name: PROBLEM_TYPES.OTHER, value: 0 },
+  ],
+  // setTicketTypes: (ticketTypes: TicketPieType[]) => set({ ticketTypes }),
+    setTicketTypes: (updater) =>
+  set((state) => ({
+    ticketTypes:
+      typeof updater === "function" ? updater(state.ticketTypes) : updater,
+  })),
 }));

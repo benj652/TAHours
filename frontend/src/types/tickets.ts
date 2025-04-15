@@ -24,13 +24,13 @@ export type TicketProps = {
 // <option value="runtime">Runtime</option>
 // <option value="installation">Installation</option>
 // <option value="other">Other</option>
-export const PROBLEM_TYPES = {
-  DEBUGGING: "debugging",
-  SYNTAX: "syntax",
-  LOGIC: "logic",
-  RUNTIME: "runtime",
-  INSTALLATION: "installation",
-  OTHER: "other",
+export enum PROBLEM_TYPES  {
+  DEBUGGING= "debugging",
+  SYNTAX= "syntax",
+  LOGIC= "logic",
+  RUNTIME= "runtime",
+  INSTALLATION= "installation",
+  OTHER= "other",
 };
 
 export type TicketCreateEvent = {
@@ -44,5 +44,19 @@ export type TicketCreateEvent = {
 export type TicketResolveEvent = {
     type: string;
     data: ObjectId
+}
+
+
+export enum TicketTypeLocations  {
+    Debugging= 0,
+    Syntax= 1,
+    Logic= 2,
+    Runtime= 3,
+    Installation= 4,
+    Other= 5,
+}
+export interface TicketPieType {
+  name: PROBLEM_TYPES;
+  value: number;
 }
 

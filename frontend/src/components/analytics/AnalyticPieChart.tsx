@@ -1,13 +1,21 @@
+import { analyticsPageStore } from "@/store";
+// import { useEffect } from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
-const data01 = [
-  { name: "Debugging", value: 60 },
-  { name: "Concepts", value: 10 },
-  { name: "Instructions", value: 20 },
-  { name: "Other", value: 10 },
-];
+// const data01 = [
+//   { name: "Debugging", value: 60 },
+//   { name: "Concepts", value: 10 },
+//   { name: "Instructions", value: 20 },
+//   { name: "Other", value: 10 },
+// ];
 
 export const AnalyticPieChart = () => {
+    const { ticketTypes } = analyticsPageStore();
+
+    // useEffect(() => {
+    //     console.log("data01", ticketTypes);
+    // }, [ticketTypes]);
+
   return (
     <div className="w-80">
       <h2 className="text-center text-lg font-semibold mb-4">
@@ -18,7 +26,7 @@ export const AnalyticPieChart = () => {
         <div className="w-72 h-72 bg-base-100 p-6 rounded-lg flex justify-center items-center">
           <PieChart width={250} height={250}>
             <Pie
-              data={data01}
+              data={ticketTypes}
               dataKey="value"
               nameKey="name"
               cx="50%"
