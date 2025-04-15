@@ -1,9 +1,23 @@
 import { analyticsPageStore } from "@/store";
+import { PROBLEM_TYPES } from "@/types";
 
 export const SearchFilter = () => {
-    const { setSelectedDates } = analyticsPageStore();
+    const { selectedDates, setSelectedDates, setTicketTypes, setRenderedTickets} = analyticsPageStore();
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDates(e.target.value);
+        setTicketTypes([
+    { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
+    { name: PROBLEM_TYPES.SYNTAX, value: 0 },
+    { name: PROBLEM_TYPES.LOGIC, value: 0 },
+    { name: PROBLEM_TYPES.RUNTIME, value: 0 },
+    { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
+    { name: PROBLEM_TYPES.OTHER, value: 0 },
+  ])
+        setRenderedTickets(0)
+analyticsPageStore.getState().setIndividualAttenders(new Set());
+analyticsPageStore.getState().setTaAttenders(new Set());
+
+
   };
 
   const { selectedClass } = analyticsPageStore();
@@ -14,9 +28,10 @@ export const SearchFilter = () => {
         type="range"
         min="0"
         max="99"
-        defaultValue="0"
+        // defaultValue="0"
         className="w-full range range-lg mb-4 mt-4"
         step="33"
+                value={selectedDates || "0"}
         disabled={!selectedClass}
         onChange={handleSelect}
       />

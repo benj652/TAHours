@@ -46,6 +46,7 @@ export enum TaQueueRoutes {
   AddTa = `${taQueueBase}/add-ta/`,
   RemoveTa = `${taQueueBase}/remove-ta/`,
   GetActiveTickets = `${taQueueBase}/active-tickets`,
+  GetClassQueues = `${taQueueBase}/class-queues/`,
 }
 
 export enum TicketRoutes {

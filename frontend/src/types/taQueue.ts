@@ -9,6 +9,7 @@ export interface TaQueue {
   class: ObjectId;
   directions: string;
   tickets: ObjectId[];
+  date: Date;
 }
 
 export type QueueProps = {

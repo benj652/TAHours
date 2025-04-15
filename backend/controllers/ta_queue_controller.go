@@ -353,6 +353,131 @@ func GetClassTickets(c *fiber.Ctx) error {
 	})
 }
 
+func GetClassQueues(c *fiber.Ctx) error {
+	id := c.Params("id")
+	classID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID",
+		})
+	}
+
+	var classQueue models.TAQueue
+	filter := bson.M{"class": classID}
+	collection := db.GetCollection(classQueue.TableName())
+
+	cursor, err := collection.Find(context.Background(), filter)
+	if err == mongo.ErrNoDocuments {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"tickets": make([]models.Ticket, 0),
+		})
+	}
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from class | " + err.Error(),
+		})
+	}
+	defer cursor.Close(context.Background())
+
+	classQueues := new([]models.TAQueue)
+
+	err = cursor.All(context.Background(), classQueues)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error getting queue from cursor | " + err.Error(),
+		})
+	}
+
+	if len(*classQueues) == 0 {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"queues": make([]models.TAQueue, 0),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"queues": classQueues,
+	})
+}
+
+// perhaps useless
+// type dateRange struct {
+// 	startDate primitive.DateTime
+// 	endDate   primitive.DateTime
+// }
+
+// func GetNumSessions(c *fiber.Ctx) error {
+// 	id := c.Params("id")
+// 	classID, err := primitive.ObjectIDFromHex(id)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Invalid class ID",
+// 		})
+// 	}
+
+// 	var classQueue models.TAQueue
+// 	filter := bson.M{"class": classID}
+// 	collection := db.GetCollection(classQueue.TableName())
+
+// 	cursor, err := collection.Find(context.Background(), filter)
+// 	if err == mongo.ErrNoDocuments {
+// 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 			"tickets": make([]models.Ticket, 0),
+// 		})
+// 	}
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"message": "Error getting queue from class | " + err.Error(),
+// 		})
+// 	}
+// 	defer cursor.Close(context.Background())
+
+// 	classQueues := new([]models.TAQueue)
+
+// 	err = cursor.All(context.Background(), classQueues)
+
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"message": "Error getting queue from cursor | " + err.Error(),
+// 		})
+// 	}
+
+// 	dateRange := new(dateRange)
+
+// 	if err = c.BodyParser(dateRange); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Error parsing request body: " + err.Error(),
+// 		})
+// 	}
+
+// 	startDate := dateRange.startDate
+// 	endDate := dateRange.endDate
+
+// 	if startDate == 0 || endDate == 0 {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Missing start or end date",
+// 		})
+// 	}
+
+// 	if startDate > endDate {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "Start date must be before end date",
+// 		})
+// 	}
+
+// 	inRangeQueues := new([]models.TAQueue)
+
+// 	for _, queue := range *classQueues {
+// 		if queue.Date < endDate && queue.Date > startDate {
+// 			*inRangeQueues = append(*inRangeQueues, queue)
+// 		}
+// 	}
+
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"numSessions": len(*inRangeQueues),
+// 	})
+// }
+
 // Aditional CRUD utility methods labeled CR
 
 // func CreateTAQueueCR(tas []primitive.ObjectID, isActive bool, class primitive.ObjectID, directions string, tickets []primitive.ObjectID) error {
