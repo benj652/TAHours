@@ -19,6 +19,12 @@ type AnalyticsPageStore = {
   setIndividualAttenders: (
     updater: Set<ObjectId> | ((prev: Set<ObjectId>) => Set<ObjectId>),
   ) => void;
+    renderedTickets: number;
+  setRenderedTickets: (value: number) => void;
+  taAttenders: Set<ObjectId>;
+  setTaAttenders: (
+    updater: Set<ObjectId> | ((prev: Set<ObjectId>) => Set<ObjectId>),
+  ) => void;
 };
 
 /**
@@ -59,6 +65,20 @@ export const analyticsPageStore = create<AnalyticsPageStore>((set) => ({
     })),
   individualAttenders: new Set<ObjectId>(),
   setIndividualAttenders: (updater) =>
+    set((state) => ({
+      individualAttenders:
+        typeof updater === "function"
+          ? updater(state.individualAttenders)
+          : updater,
+    })),
+    renderedTickets: 0,
+    setRenderedTickets: (updater: number | ((prev: number) => number)) =>
+  set((state) => ({
+    renderedTickets:
+      typeof updater === "function" ? updater(state.renderedTickets) : updater,
+  })),
+  taAttenders: new Set<ObjectId>(),
+  setTaAttenders: (updater) =>
     set((state) => ({
       individualAttenders:
         typeof updater === "function"

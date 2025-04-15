@@ -1,7 +1,7 @@
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { analyticsPageStore } from "@/store";
-import { DateRangeBounds, Ticket, TicketPieType } from "@/types";
+import { DateRangeBounds, NIL_OBJECT_ID, Ticket, TicketPieType } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
 
@@ -37,6 +37,11 @@ const TicketDisplay = ({
         });
       }
     };
+    analyticsPageStore.getState().setTaAttenders((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(ticket.taId);
+            return newSet;
+        })
     gettingUSer();
     // const updatedType = ticketTypes.map((type) => {
     //   if (type.name === ticket?.problemtype) {
@@ -47,6 +52,8 @@ const TicketDisplay = ({
 
     //     // console.log("updatedType", updatedType);
     //     setTicketTypes(updatedType);
+    analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);
+
     setTicketTypes((prevTypes: TicketPieType[]) =>
       prevTypes.map((type) =>
         type.name === ticket.problemtype 

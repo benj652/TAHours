@@ -25,6 +25,7 @@ export const ClassList = () => {
     setSelectedClassQueues,
     setTicketTypes,
         setSelectedDates,
+        setRenderedTickets,
   } = analyticsPageStore();
 
   // const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
@@ -39,7 +40,9 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
+        setRenderedTickets(0);
     setSelectedDates("0");
+
 
     if (csClass._id === selectedClass?._id) {
       // setAnimatingClass(csClass);

@@ -2,7 +2,7 @@ import { analyticsPageStore } from "@/store";
 import { PROBLEM_TYPES } from "@/types";
 
 export const SearchFilter = () => {
-    const { selectedDates, setSelectedDates, setTicketTypes} = analyticsPageStore();
+    const { selectedDates, setSelectedDates, setTicketTypes, setRenderedTickets} = analyticsPageStore();
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDates(e.target.value);
         setTicketTypes([
@@ -13,6 +13,10 @@ export const SearchFilter = () => {
     { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
     { name: PROBLEM_TYPES.OTHER, value: 0 },
   ])
+        setRenderedTickets(0)
+analyticsPageStore.getState().setIndividualAttenders(new Set());
+analyticsPageStore.getState().setTaAttenders(new Set());
+
 
   };
 

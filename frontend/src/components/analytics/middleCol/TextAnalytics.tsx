@@ -8,9 +8,10 @@ import { formatDateRange } from "@/utils";
  * RN it is a major work in progress
  */
 export const TextAnalytics = () => {
-  const { selectedClass, selectedDates, selectedTickets } =
+  const { selectedClass, selectedDates, selectedTickets, renderedTickets } =
     analyticsPageStore();
   const individualAttenders = analyticsPageStore((s) => s.individualAttenders);
+    const taAttenders = analyticsPageStore((s) => s.taAttenders);
   const NO_CLASS_SELECTED = "No Class Selected";
 console.log(selectedDates);
   return (
@@ -30,13 +31,18 @@ console.log(selectedDates);
           ? (individualAttenders.size / selectedClass.queues.length).toFixed(2)
           : 0}
       </p>
-      <p>Total Tickets: {selectedTickets ? selectedTickets.length : 0}</p>
+      <p>Total Tickets: {renderedTickets}</p>
       <p>
         Average Number of Tickets Per Session:{" "}
         {selectedTickets && selectedClass && selectedClass.queues?.length
-          ? (selectedTickets.length / selectedClass.queues.length).toFixed(2)
+          ? (renderedTickets / selectedClass.queues.length).toFixed(2)
           : 0}
       </p>
+            <p>
+TAs per session:{" "}
+ {taAttenders.size}           </p>
+            <p>Average number of TAs per session: {" "}
+             {taAttenders.size}</p>
     </div>
   );
 };
