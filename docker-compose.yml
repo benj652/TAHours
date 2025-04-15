@@ -7,7 +7,7 @@ services:
     container_name: tahours-frontend
     ports:
       - target: 3000
-        published: 3000
+        published: 3001
         protocol: tcp
         mode: host
     secrets:
