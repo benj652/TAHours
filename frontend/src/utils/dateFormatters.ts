@@ -1,3 +1,5 @@
+import { DateRangeBounds } from "@/types";
+
 export const dateOptions = {
   0: "Today",
   33: "Past Week",
@@ -29,4 +31,19 @@ export const formatDateRange = (option: string) => {
   if (startDate === "Class Creation")
     return `${startDate} - ${now.toLocaleDateString()}`;
   return `${startDate.toLocaleDateString()} - ${now.toLocaleDateString()}`;
+};
+
+export const getDateRangeBounds = (option: string): DateRangeBounds => {
+  const now = new Date();
+  const start = getDateRange(option);
+  const fallbackStartDate = new Date(
+    now.getFullYear() - 100,
+    now.getMonth(),
+    now.getDate(),
+  );
+  if (start === "Class Creation") {
+    return { startDate: fallbackStartDate, endDate: now }; // No lower bound
+  }
+
+  return { startDate: start as Date, endDate: now };
 };

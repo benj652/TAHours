@@ -1,7 +1,7 @@
 import { useGetActiveClasses } from "@/hooks";
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass, PROBLEM_TYPES } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CuteStar from "../../../assets/star.svg";
 import { AddClassForm } from "./AddClassForm";
 
@@ -24,6 +24,7 @@ export const ClassList = () => {
     setSelectedClass,
     setSelectedClassQueues,
     setTicketTypes,
+        setSelectedDates,
   } = analyticsPageStore();
 
   // const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
@@ -38,6 +39,8 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
+    setSelectedDates("0");
+
     if (csClass._id === selectedClass?._id) {
       // setAnimatingClass(csClass);
       setSelectedClass(null);

@@ -1,7 +1,7 @@
 import { analyticsPageStore } from "@/store";
 
 export const SearchFilter = () => {
-    const { setSelectedDates } = analyticsPageStore();
+    const { selectedDates, setSelectedDates } = analyticsPageStore();
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDates(e.target.value);
   };
@@ -14,9 +14,10 @@ export const SearchFilter = () => {
         type="range"
         min="0"
         max="99"
-        defaultValue="0"
+        // defaultValue="0"
         className="w-full range range-lg mb-4 mt-4"
         step="33"
+                value={selectedDates || "0"}
         disabled={!selectedClass}
         onChange={handleSelect}
       />

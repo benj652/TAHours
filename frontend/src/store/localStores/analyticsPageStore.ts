@@ -15,6 +15,10 @@ type AnalyticsPageStore = {
   setSelectedTickets: (selectedTickets: ObjectId[] | null) => void;
   ticketTypes: TicketPieType[];
   setTicketTypes: (ticketTypes: TicketPieType[]) => void;
+  individualAttenders: Set<ObjectId>;
+  setIndividualAttenders: (
+    updater: Set<ObjectId> | ((prev: Set<ObjectId>) => Set<ObjectId>),
+  ) => void;
 };
 
 /**
@@ -48,9 +52,17 @@ export const analyticsPageStore = create<AnalyticsPageStore>((set) => ({
     { name: PROBLEM_TYPES.OTHER, value: 0 },
   ],
   // setTicketTypes: (ticketTypes: TicketPieType[]) => set({ ticketTypes }),
-    setTicketTypes: (updater) =>
-  set((state) => ({
-    ticketTypes:
-      typeof updater === "function" ? updater(state.ticketTypes) : updater,
-  })),
+  setTicketTypes: (updater) =>
+    set((state) => ({
+      ticketTypes:
+        typeof updater === "function" ? updater(state.ticketTypes) : updater,
+    })),
+  individualAttenders: new Set<ObjectId>(),
+  setIndividualAttenders: (updater) =>
+    set((state) => ({
+      individualAttenders:
+        typeof updater === "function"
+          ? updater(state.individualAttenders)
+          : updater,
+    })),
 }));

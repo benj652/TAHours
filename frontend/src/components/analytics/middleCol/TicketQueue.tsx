@@ -1,8 +1,13 @@
 import { analyticsPageStore } from "@/store";
 import TicketDisplay from "./TicketDisplay";
+import { getDateRangeBounds } from "@/utils";
 
 export const TicketQueue = () => {
-  const { selectedTickets: tickets } = analyticsPageStore();
+  const { selectedTickets: tickets, selectedDates } = analyticsPageStore();
+
+console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
+
+    
   // console.log(tickets);
   return (
     <div className="bg-gray-300 rounded-lg p-4 shadow-lg">
