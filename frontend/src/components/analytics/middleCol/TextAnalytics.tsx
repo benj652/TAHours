@@ -28,21 +28,21 @@ console.log(selectedDates);
       <p>
         Average Number Of Attendees:{" "}
         {selectedClass?.queues?.length
-          ? (individualAttenders.size / selectedClass.queues.length).toFixed(2)
+          ? (individualAttenders.size / selectedClass.queues.length + 1).toFixed(2)
           : 0}
       </p>
       <p>Total Tickets: {renderedTickets}</p>
       <p>
         Average Number of Tickets Per Session:{" "}
         {selectedTickets && selectedClass && selectedClass.queues?.length
-          ? (renderedTickets / selectedClass.queues.length).toFixed(2)
+          ? (renderedTickets / selectedClass.queues.length + 1).toFixed(2)
           : 0}
       </p>
             <p>
 TAs per session:{" "}
- {taAttenders.size}           </p>
+ {taAttenders.size - 1}           </p>
             <p>Average number of TAs per session: {" "}
-             {taAttenders.size}</p>
+             {(taAttenders.size - 1) }</p>
     </div>
   );
 };
