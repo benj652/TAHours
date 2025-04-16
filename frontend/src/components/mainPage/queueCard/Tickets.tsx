@@ -2,6 +2,8 @@ import { MainPageStoreProps } from "@/types";
 import { cn } from "@/utils";
 import { AddTicketButton } from "./AddTicketButton";
 import { Ticket } from "./Ticket";
+import { forceUpdateStore } from "@/store";
+import { useEffect, useState } from "react";
 
 // type TicketPropsExpanded = TicketProps & {
 //     curTickets: ObjectId[];
@@ -9,9 +11,15 @@ import { Ticket } from "./Ticket";
 // };
 export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
   const { isExpanded, curTickets } = curStore();
+    const [a, sa] = useState(0);
+    const { forceRenderKey } = forceUpdateStore();
   if (!curTickets) {
     return <div>loading</div>;
   }
+    useEffect(() => {
+       sa(a + 1) 
+    }, [forceRenderKey]);
+    
 
   // The count of tickets is way more complicated then it needs to be so for now,
   // i am depricating it
