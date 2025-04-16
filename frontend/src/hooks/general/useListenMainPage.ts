@@ -122,7 +122,7 @@ export const useListenMainPage = () => {
                     const res = newMessage.data as TaQueue;
                     // console.log("new queue", res);
                     // add the queue to the cache
-                    setAllTaQueues([...allTaQueues || [], res]);
+                    setAllTaQueues([...(allTaQueues || []), res]);
                     triggerRerender();
                 }
                 // if the message is a ticket create event
@@ -147,6 +147,7 @@ export const useListenMainPage = () => {
                     // console.log("new ticket here");
                     // update the current store
                     targetQueue.tickets.push(newTicketID);
+                    triggerRerender();
                 }
             } catch (error) {
                 console.error(error);
