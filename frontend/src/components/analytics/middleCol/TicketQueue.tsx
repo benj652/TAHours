@@ -1,21 +1,24 @@
 import { analyticsPageStore } from "@/store";
-import TicketDisplay from "./TicketDisplay";
 import { getDateRangeBounds } from "@/utils";
+import TicketDisplay from "./TicketDisplay";
 
 export const TicketQueue = () => {
   const { selectedTickets: tickets, selectedDates } = analyticsPageStore();
 
-console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
-    const dateRangeBounds = getDateRangeBounds(selectedDates || "0");
+  console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
+  const dateRangeBounds = getDateRangeBounds(selectedDates || "0");
 
-    
   // console.log(tickets);
   return (
     <div className="bg-gray-300 rounded-lg p-4 shadow-lg">
       <ul className="list-none w-full space-y-2">
         {tickets && tickets.length > 0 ? (
           tickets.map((ticketName, index) => (
-            <TicketDisplay curTicketId={ticketName} key={index} dateRangeBounds={dateRangeBounds}/>
+            <TicketDisplay
+              curTicketId={ticketName}
+              key={index}
+              dateRangeBounds={dateRangeBounds}
+            />
           ))
         ) : (
           <p>No Tickets</p>
