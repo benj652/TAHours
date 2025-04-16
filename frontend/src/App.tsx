@@ -109,7 +109,7 @@ function App() {
                     path="*"
                     element={
                         user ? (
-                            <Navigate to={routes.Analytics} />
+                            <Navigate to={routes.Main} />
                         ) : (
                             <Navigate to={routes.Login} />
                         )
