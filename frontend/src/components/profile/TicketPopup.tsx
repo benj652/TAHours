@@ -100,7 +100,7 @@ export const TicketPopup: React.FC<TicketPopupProps> = ({
           )}
           <div className="mt-5">
             <p className="text-sm text-gray-500">TA Comments</p>
-            <p className="text-base font-medium">{ticket.taNote}</p>
+            <p className="text-base font-medium">{ticket.taNotes}</p>
           </div>
         </div>
       </div>

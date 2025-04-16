@@ -46,7 +46,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
       curDescription,
       curProblem,
       curType,
-      curAttachments,
+      curAttachments
     )) as Ticket;
     //need to toast this or something
     if (!res) return;
@@ -56,7 +56,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
     addTicketToCache(res);
 
     // It is saying that tickets needs some object tytpe iterator or whatever but I always just ignore that error and it all works out
-    //@ts-ignore
+    //@ts-expect-error type not defined
     setTickets([...tickets, res._id]);
 
     // Updates the cached queue to have the new id
