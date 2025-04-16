@@ -1,31 +1,46 @@
+import { TicketPopup } from "@/components/profile/TicketPopup";
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { analyticsPageStore } from "@/store";
-import { DateRangeBounds, NIL_OBJECT_ID, Ticket, TicketPieType } from "@/types";
+import { DateRangeBounds, Ticket, TicketPieType } from "@/types";
 import { ObjectId } from "mongodb";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const TicketDisplay = ({
-  curTicketId,
-  dateRangeBounds,
-}: {
+interface TicketDisplayProps {
   curTicketId: ObjectId;
   dateRangeBounds: DateRangeBounds;
+}
+
+export const TicketDisplay: React.FC<TicketDisplayProps> = ({
+  curTicketId,
+  dateRangeBounds,
 }) => {
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+  const handleOpenPopup = (ticket: Ticket) => {
+    setSelectedTicket(ticket); // Sets selected ticket on click
+  };
+
+  const handleClosePopup = () => {
+    setSelectedTicket(null); // Close popup when onClose is triggered
+  };
+
   const { ticket, getTicket } = useGetTicket();
   const { selectedDates, ticketTypes, setTicketTypes } = analyticsPageStore();
   const { getUser, user } = useGetUser();
+
   const ticketDate = new Date(ticket?.date || 0);
   const isValid = ticketDate?.getTime() > dateRangeBounds?.startDate.getTime();
+
   useEffect(() => {
     getTicket(curTicketId);
-  }, []);
+  }, [curTicketId, getTicket]);
 
-  // console.log(ticket)
   useEffect(() => {
-    if(!isValid) return;
+    if (!isValid) return;
     if (!ticket || !ticket.problemtype) return;
-    const gettingUSer = async () => {
+
+    const gettingUser = async () => {
       if (ticket?.studentId) {
         const res = await getUser(ticket?.studentId);
         analyticsPageStore.getState().setIndividualAttenders((prev) => {
@@ -37,62 +52,55 @@ const TicketDisplay = ({
         });
       }
     };
+
     analyticsPageStore.getState().setTaAttenders((prev) => {
-        const newSet = new Set(prev);
-        newSet.add(ticket.taId);
-            return newSet;
-        })
-    gettingUSer();
-    // const updatedType = ticketTypes.map((type) => {
-    //   if (type.name === ticket?.problemtype) {
-    //     return { ...type, value: type.value + 1 };
-    //   }
-    //   return type;
-    // });
+      const newSet = new Set(prev);
+      newSet.add(ticket.taId);
+      return newSet;
+    });
 
-    //     // console.log("updatedType", updatedType);
-    //     setTicketTypes(updatedType);
-    analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);
+    gettingUser();
 
+    // Update ticket types for analytics
     setTicketTypes((prevTypes: TicketPieType[]) =>
       prevTypes.map((type) =>
-        type.name === ticket.problemtype 
+        type.name === ticket.problemtype
           ? { ...type, value: type.value + 1 }
-          : type,
-      ),
+          : type
+      )
     );
-  }, [ticket, isValid, selectedDates]);
 
-  // console.log("TicketDisplay", ticket);
-  // console.log("ticket date", ticketDate.getTime())
-  // console.log("start date", dateRangeBounds?.startDate.getTime())
-  // console.log("end date", dateRangeBounds?.endDate.getTime())
-  // console.log(ticketDate.getTime() > dateRangeBounds?.startDate.getTime())
-  if (!isValid) return;
+    analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);
+  }, [ticket, isValid, selectedDates, setTicketTypes]);
+
+  if (!isValid || !ticket) return <p>Loading...</p>;
+
   return (
-    <li className="p-4 flex items-center gap-4 bg-base-100 rounded-lg">
-      {ticket ? (
-        <>
-          <div className="size-10 rounded-full overflow-hidden">
-            <img src={user?.profilePic} alt="Ticket Icon" />
-          </div>
-          <div className="font-semibold">{ticket.problem}</div>
-          <div className="text-xs font-normal opacity-60">
-            {ticket.description}
-          </div>
-        </>
-      ) : (
-        <p>Loading...</p>
+    <>
+      <li
+        key={ticket._id.toString()}
+        onClick={() => handleOpenPopup(ticket)}
+        className="p-4 flex items-center gap-4 bg-base-100 rounded-lg"
+      >
+        <div className="size-10 rounded-full overflow-hidden">
+          <img src={user?.profilePic} alt="Ticket Icon" />
+        </div>
+        <div className="font-semibold">{ticket.problem}</div>
+        <div className="text-xs font-normal opacity-60">
+          {ticket.description}
+        </div>
+      </li>
+
+      {/* Ticket Popup (Modal) */}
+      {selectedTicket && (
+        <TicketPopup
+          ticket={selectedTicket}
+          isOpen={!!selectedTicket} // Opens when a ticket is selected
+          onClose={handleClosePopup} // Close popup when onClose is triggered
+        />
       )}
-    </li>
+    </>
   );
 };
 
 export default TicketDisplay;
-
-// {tickets && tickets.length > 0 ? (
-//     tickets.map((ticketName, index) => (
-//     ))
-// ) : (
-//         <p>No Unresolved Tickets</p>
-//     )}
