@@ -18,17 +18,17 @@ export const TicketPopup: React.FC<TicketPopupProps> = ({
 
   // Fetchs ta info on mount/update
   useEffect(() => {
-    if (ticket.taId) {
-      getUser(ticket.taId);
-    }
+    const PLACEHOLDER_TA_ID = "000000000000000000000000";
 
-    // Prevents background scroll while popup is open
-    document.body.style.overflow = "hidden";
+    if (ticket?.taId && ticket.taId.toString() !== PLACEHOLDER_TA_ID) {
+      getUser(ticket.taId);
+      document.body.style.overflow = "hidden";
+    }
 
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [ticket]);
+  }, [ticket?.taId, getUser]);
 
   return (
     <dialog
@@ -49,20 +49,22 @@ export const TicketPopup: React.FC<TicketPopupProps> = ({
         {/* Header */}
         <h1 className="text-2xl font-bold mb-4">Ticket Details</h1>
 
-        {/* TA Info */}
-        <div className="flex items-center gap-4 bg-base-300 p-4 rounded-lg mb-6">
-          <img
-            src={user?.profilePic}
-            alt="Student profile"
-            className="w-14 h-14 rounded-full object-cover"
-          />
-          <div>
-            <p className="text-sm text-gray-500">{user?.email}</p>
-            <p className="text-lg font-medium">
-              {user?.firstName} {user?.lastName}
-            </p>
+        {/* TA Info (only show if TA exists) */}
+        {ticket.taId && user && (
+          <div className="flex items-center gap-4 bg-base-300 p-4 rounded-lg mb-6">
+            <img
+              src={user.profilePic}
+              alt="TA profile"
+              className="w-14 h-14 rounded-full object-cover"
+            />
+            <div>
+              <p className="text-sm text-gray-500">{user.email}</p>
+              <p className="text-lg font-medium">
+                {user.firstName} {user.lastName}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Ticket Info */}
         <div className="space-y-3">
@@ -100,7 +102,9 @@ export const TicketPopup: React.FC<TicketPopupProps> = ({
           )}
           <div className="mt-5">
             <p className="text-sm text-gray-500">TA Comments</p>
-            <p className="text-base font-medium">{ticket.taNotes}</p>
+            <p className="text-base font-medium">
+              {ticket.taNote || "unresolved"}
+            </p>
           </div>
         </div>
       </div>
