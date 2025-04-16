@@ -28,13 +28,13 @@ export const RolesConfig = {
 } as const;
 
 export const PLACEHOLER_USER: User = {
-    //@ts-ignore
-    _id: NIL_OBJECT_ID as ObjectId,
-    accessToken: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    profilePic: "",
-    description: "",
-    roles: Role.Student,
-}
+  //@ts-ignore
+  _id: NIL_OBJECT_ID as ObjectId,
+  accessToken: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  profilePic: "",
+  description: "",
+  roles: Role.Student,
+};
