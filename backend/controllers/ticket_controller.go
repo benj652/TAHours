@@ -218,7 +218,7 @@ func ResolveTicket(c *fiber.Ctx) error {
 	collection := db.GetCollection((&models.Ticket{}).TableName())
 
 	filter := bson.M{"_id": objectID}
-	update := bson.M{"$set": bson.M{"ta": TaId, "taNote": body.TaNote}}
+	update := bson.M{"$set": bson.M{"ta": TaId, "taNote": body.TaNote, "problemtype": body.NewProblemType}}
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
