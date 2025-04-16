@@ -123,6 +123,7 @@ export const useListenMainPage = () => {
                     // console.log("new queue", res);
                     // add the queue to the cache
                     setAllTaQueues([...allTaQueues || [], res]);
+                    triggerRerender();
                 }
                 // if the message is a ticket create event
                 // Update the curent store and cache to include the new ticket
