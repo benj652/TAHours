@@ -73,14 +73,15 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({
     analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);
   }, [ticket, isValid, selectedDates, setTicketTypes]);
 
-  if (!isValid || !ticket) return <p>Loading...</p>;
+  if (!isValid) return;
+  if (!ticket) return <p>Loading...</p>;
 
   return (
     <>
       <li
         key={ticket._id.toString()}
         onClick={() => handleOpenPopup(ticket)}
-        className="p-4 flex items-center gap-4 bg-base-100 rounded-lg"
+        className="p-4 flex items-center gap-4 bg-base-100 rounded-lg cursor-pointer hover:bg-base-300 transition duration-200"
       >
         <div className="size-10 rounded-full overflow-hidden">
           <img src={user?.profilePic} alt="Ticket Icon" />
