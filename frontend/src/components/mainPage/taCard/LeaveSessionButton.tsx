@@ -15,8 +15,6 @@ type ExtendedSessionButtonProps = SessionButtonProps & {
  */
 export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
   classId,
-  setCurTas,
-  curTas,
   taQueueId,
   curTaQueues,
   setTaQueues,
@@ -31,10 +29,10 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     const res = await leaveTaQueue(taQueueId, classId);
     if (!res) return;
     if (!userItems?._id) return;
-    console.log("curTas", curTas);
-    const newCurTas = curTas.filter((taId) => taId !== userItems._id);
-    console.log("newCurTas", newCurTas);
-    setCurTas(newCurTas);
+    // console.log("curTas", curTas);
+    // const newCurTas = curTas.filter((taId) => taId !== userItems._id);
+    // console.log("newCurTas", newCurTas);
+    // setCurTas(newCurTas);
     triggerRerender();
     const curTaQueue = allTaQueues.filter(
       (curTaQueueId) => curTaQueueId._id === taQueueId
@@ -47,15 +45,26 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
 
     if (!res.isActive) {
       // The ta was the last one in the queue, so the queue is now over as they have left.
-      console.log("curTaQueue[0].TAs.length === 1");
+      // console.log("curTaQueue[0].TAs.length === 1");
       const newTaQueues = curTaQueues.filter(
         (taQueue) => taQueue._id !== taQueueId
       );
       setTaQueues(newTaQueues);
     } else {
-      curTaQueue[0].TAs = curTaQueue[0].TAs.filter(
-        (taId) => taId !== userItems._id
-      );
+      // curTaQueue[0].TAs = curTaQueue[0].TAs.filter(
+      //   (taId) => taId !== userItems._id
+      // );
+     const updatedQueues = curTaQueues.map((queue) => {
+    if (queue._id === taQueueId) {
+      return {
+        ...queue,
+        TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+      };
+    }
+    return queue;
+  });
+  setTaQueues(updatedQueues);
+        // console.log("updatedQueues", updatedQueues);
     triggerRerender();
     }
   };
