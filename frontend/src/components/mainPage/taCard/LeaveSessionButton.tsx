@@ -15,8 +15,6 @@ type ExtendedSessionButtonProps = SessionButtonProps & {
  */
 export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
   classId,
-  // setCurTas,
-  curTas,
   taQueueId,
   curTaQueues,
   setTaQueues,
@@ -47,7 +45,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
 
     if (!res.isActive) {
       // The ta was the last one in the queue, so the queue is now over as they have left.
-      console.log("curTaQueue[0].TAs.length === 1");
+      // console.log("curTaQueue[0].TAs.length === 1");
       const newTaQueues = curTaQueues.filter(
         (taQueue) => taQueue._id !== taQueueId
       );
@@ -66,7 +64,7 @@ export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
     return queue;
   });
   setTaQueues(updatedQueues);
-        console.log("updatedQueues", updatedQueues);
+        // console.log("updatedQueues", updatedQueues);
     triggerRerender();
     }
   };

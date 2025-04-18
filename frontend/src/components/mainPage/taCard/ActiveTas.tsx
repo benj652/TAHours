@@ -39,17 +39,13 @@ export const ActiveTas: React.FC<ActiveTasProps> = ({
             {userInSession.length > 0 ? (
                 <LeaveSessionButton
                     taQueueId={queueId}
-                    curTas={tas}
-                    setCurTas={() => {}} // optional, could omit
                     classId={classId}
-                    curTaQueues={curTaQueues}
                     setTaQueues={setTaQueues}
+                    curTaQueues={curTaQueues}
                 />
             ) : (
                 <JoinSessionButton
                     taQueueId={queueId}
-                    curTas={tas}
-                    setCurTas={() => {}} // optional
                     curTaQueues={curTaQueues}
                     setTaQueues={setTaQueues}
                 />

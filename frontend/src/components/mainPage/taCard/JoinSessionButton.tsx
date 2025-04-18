@@ -3,10 +3,7 @@ import { authStore, taQueueStore } from "@/store";
 import { SessionButtonProps } from "@/types";
 
 export const JoinSessionButton: React.FC<SessionButtonProps> = ({
-  curTas,
-  setCurTas,
   taQueueId,
-  curTaQueues,
   setTaQueues,
 }) => {
   const { error, joinTaQueue, loading } = useJoinTaQueue();
