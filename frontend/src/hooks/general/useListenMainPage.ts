@@ -1,5 +1,10 @@
 import { useSocketContext } from "@/context";
-import { authStore, forceUpdateStore, taQueueStore, ticketStore } from "@/store";
+import {
+    authStore,
+    forceUpdateStore,
+    taQueueStore,
+    ticketStore,
+} from "@/store";
 import {
     TaQueue,
     TaQueueJoinEvent,
@@ -40,7 +45,6 @@ export const useListenMainPage = () => {
                 }
                 if (newMessage.type === THREAD_EVENTS.TA_LEAVE_QUEUE_EVENT) {
                     // const res = newMessage.data as TaQueueLeaveEvent;
-
                     // If the last TA leaves a queue, set it to inactive and remove it
                     // if (!res.isActive) {
                     //     const filteredTaQueues = allTaQueues.filter(
@@ -49,23 +53,19 @@ export const useListenMainPage = () => {
                     //     setAllTaQueues(filteredTaQueues);
                     //     return;
                     // }
-
                     // const targetTaQueue = allTaQueues.filter(
                     //     (queue) => queue._id === res.queueID,
                     // );
-
                     // if (!targetTaQueue || targetTaQueue.length === 0) return;
                     // console.log(
-                        // "new ta oogachacka yeeeeeeeeeeww yeah buddy nascar geetin there get that bread",
+                    // "new ta oogachacka yeeeeeeeeeeww yeah buddy nascar geetin there get that bread",
                     // );
                     // console.log(targetTaQueue);
-
                     // Need to likely make this mutate global state idk if this
                     // will work as as
                     // targetTaQueue[0].TAs = targetTaQueue[0].TAs.filter(
                     //     (taId) => taId !== res.taId,
                     // );
-
                     // triggerRerender();
                     // const handleLeaveSession = async () => {
                     //     if (!classId) return;
@@ -77,12 +77,10 @@ export const useListenMainPage = () => {
                     //     const curTaQueue = allTaQueues.filter(
                     //         (curTaQueueId) => curTaQueueId._id === taQueueId,
                     //     );
-
                     //     // these two cases will onlky happen if htere is an error
                     //     if (curTaQueue.length === 0) return;
                     //     if (!curTaQueues || curTaQueues.length === 0) return;
                     //     if (curTaQueue[0].TAs.length === 0) return;
-
                     //     if (curTaQueue[0].TAs.length === 1) {
                     //         console.log("curTaQueue[0].TAs.length === 1");
                     //         const newTaQueues = curTaQueues.filter(
@@ -147,6 +145,18 @@ export const useListenMainPage = () => {
                     // console.log("new ticket here");
                     // update the current store
                     targetQueue.tickets.push(newTicketID);
+
+                    // setAllTaQueues((prevQueues: TaQueue[]) => {
+                    //     return prevQueues.map((queue) => {
+                    //         if (queue._id === res.data.taQueue) {
+                    //             return {
+                    //                 ...queue,
+                    //                 tickets: [...queue.tickets, newTicketID],
+                    //             };
+                    //         }
+                    //         return queue;
+                    //     });
+                    // });
                     triggerRerender();
                 }
             } catch (error) {
