@@ -56,6 +56,7 @@ export const MiddleCol: React.FC = () => {
     const selectedTaQueues = allTaQueues?.filter(
       (taQueue) => taQueue.class === selectedClass._id,
     );
+    if(!selectedTaQueues) return;
 
     setSelectedClassQueues(selectedTaQueues);
 
