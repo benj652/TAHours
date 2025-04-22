@@ -109,6 +109,7 @@ export const useListenMainPage = () => {
               return queue;
             });
             setAllTaQueues(updatedQueues);
+            triggerRerender();
 
             // console.log(
             // "new ta oogachacka yeeeeeeeeeeww yeah buddy nascar geetin there get that bread",
@@ -199,9 +200,10 @@ export const useListenMainPage = () => {
           // console.log("new ticket here");
           // update the current store
           // targetQueue.tickets.push(newTicketID);
+            if (!allTaQueues) return;
 
           setAllTaQueues((prevQueues: TaQueue[]) => {
-              return prevQueues.map((queue) => {
+              return prevQueues?.map((queue) => {
                   if (queue._id === res.data.taQueue) {
                       return {
                           ...queue,
