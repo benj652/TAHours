@@ -1,4 +1,4 @@
-import { TicketPopup } from "@/components/profile/TicketPopup";
+import { TicketPopupAnal } from "@/components/analytics/middleCol/ticketpopupanal";
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { analyticsPageStore } from "@/store";
@@ -94,7 +94,7 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({
 
       {/* Ticket Popup (Modal) */}
       {selectedTicket && (
-        <TicketPopup
+        <TicketPopupAnal
           ticket={selectedTicket}
           isOpen={!!selectedTicket} // Opens when a ticket is selected
           onClose={handleClosePopup} // Close popup when onClose is triggered
