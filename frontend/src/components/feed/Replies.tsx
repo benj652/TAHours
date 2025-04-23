@@ -14,7 +14,7 @@ export const Replies: React.FC<ExtendedReplyProps> = ({
 }) => {
   return (
     <div className={cn("flex flex-col w-full gap-2 ali float-right")}>
-      {comments?.map((comment, index) => (
+      {comments?.slice(1).map((comment, index) => (
         <Reply
           key={index}
           reply={comment}

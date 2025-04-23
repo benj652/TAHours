@@ -83,6 +83,11 @@ func CreatePost(c *fiber.Ctx) error {
 		})
 	}
 	post.Comments = make([]models.Comment, 0)
+	post.Comments = append(post.Comments, models.Comment{
+		User:    "Automod",
+		Content: "Please Be Nice!",
+		Title:   "No one shall ever see this",
+	})
 	collection := db.GetCollection((&models.Post{}).TableName())
 
 	insertedReesult, err := collection.InsertOne(context.Background(), post)
