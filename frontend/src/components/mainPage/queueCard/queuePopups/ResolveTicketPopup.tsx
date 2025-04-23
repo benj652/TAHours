@@ -29,7 +29,7 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
   useEffect(() => {
     if (!curTicket || !curTicket._id) return;
     getUser(curTicket.studentId);
-}, [curTicket]);
+  }, [curTicket]);
 
   // State to handle what the TA puts in as their resolution message
   const [taMessage, setTaMessage] = useState<string>("");
@@ -62,6 +62,9 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
     console.log(res);
     setIsExpanded(false);
     document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
+
+    // reset fields
+    setTaMessage("");
   };
 
   // Const for whether or not the ticket has screenshots
