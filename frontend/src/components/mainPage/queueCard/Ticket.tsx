@@ -44,7 +44,7 @@ export const Ticket: React.FC<TicketProps> = ({
   //this function will set the ticket open to true and the popup type to resolve ticket
   //this will open the resolve ticket popup
   const handleClick = async () => {
-    if (unauthorized && !user) {
+    if (unauthorized && ticket?.studentId !== userItems._id) {
       //toast.error("You do not have permission to view this ticket");
       return;
     }
@@ -96,7 +96,8 @@ export const Ticket: React.FC<TicketProps> = ({
   return (
     <li
       className={`p-4 flex items-center gap-4 bg-gray-300 rounded-lg mb-2 ${
-        !unauthorized && "hover:cursor-pointer hover:bg-gray-200"
+        (!unauthorized || ticket?.studentId == userItems._id) &&
+        "hover:cursor-pointer hover:bg-gray-200"
       }`}
       onClick={handleClick}
     >
