@@ -2,7 +2,7 @@
 import { cn } from "@/utils";
 import { AddTicketButton } from "./AddTicketButton";
 import { Ticket } from "./Ticket";
-import { forceUpdateStore } from "@/store";
+import { forceUpdateStore, taQueueStore } from "@/store";
 import { useEffect, useState } from "react";
 import { ObjectId } from "mongodb";
 
@@ -13,9 +13,12 @@ import { ObjectId } from "mongodb";
 
 type TicketProps = {
     queueId: ObjectId | undefined;
-    curTickets: ObjectId[];
+    // curTickets: ObjectId[];
 }
-export const Tickets: React.FC<TicketProps> = ({ queueId, curTickets }) => {
+export const Tickets: React.FC<TicketProps> = ({ queueId }) => {
+    const { allTaQueues } = taQueueStore();
+    const curTaQueue = allTaQueues?.find((taQueue) => taQueue._id === queueId);
+    const curTickets = curTaQueue?.tickets;
     const [a, sa] = useState(0);
     const { forceRenderKey } = forceUpdateStore();
   if (!curTickets) {
