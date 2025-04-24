@@ -1,16 +1,21 @@
-import { MainPageStoreProps } from "@/types";
+// import { MainPageStoreProps } from "@/types";
 import { cn } from "@/utils";
 import { AddTicketButton } from "./AddTicketButton";
 import { Ticket } from "./Ticket";
 import { forceUpdateStore } from "@/store";
 import { useEffect, useState } from "react";
+import { ObjectId } from "mongodb";
 
 // type TicketPropsExpanded = TicketProps & {
 //     curTickets: ObjectId[];
 //     setCurPopUp: React.Dispatch<React.SetStateAction<string>>;
 // };
-export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
-  const { isExpanded, curTickets } = curStore();
+
+type TicketProps = {
+    queueId: ObjectId | undefined;
+    curTickets: ObjectId[];
+}
+export const Tickets: React.FC<TicketProps> = ({ queueId, curTickets }) => {
     const [a, sa] = useState(0);
     const { forceRenderKey } = forceUpdateStore();
   if (!curTickets) {
@@ -36,13 +41,13 @@ export const Tickets: React.FC<MainPageStoreProps> = ({ curStore }) => {
       <ul className="list-none w-full space-y-2">
         {curTickets && curTickets?.length > 0 ? (
           curTickets.map((ticketId, index2) => (
-            <Ticket key={index2} ticketId={ticketId} curStore={curStore} />
+            <Ticket key={index2} ticketId={ticketId} taQueueId={queueId}/>
           ))
         ) : (
           <p>No Unresolved Tickets</p>
         )}
       </ul>
-      <AddTicketButton curStore={curStore} />
+      <AddTicketButton taQueueId={queueId} />
     </div>
   );
 };

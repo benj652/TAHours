@@ -23,13 +23,6 @@ export const MainPage = () => {
                         <TaQueue
                             key={index}
                             _id={curTaQueue._id}
-                            TAs={curTaQueue.TAs}
-                            class={curTaQueue.class}
-                            directions={curTaQueue.directions}
-                            tickets={curTaQueue.tickets}
-                            isActive={curTaQueue.isActive}
-                            setTaQueues={setAllTaQueues}
-                            curTaQueues={curTaQueues}
                         />
                     ))
                 ) : (

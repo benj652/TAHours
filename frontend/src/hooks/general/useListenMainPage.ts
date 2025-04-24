@@ -201,18 +201,28 @@ export const useListenMainPage = () => {
           // update the current store
           // targetQueue.tickets.push(newTicketID);
             if (!allTaQueues) return;
+            const updatedTaQueues = allTaQueues.map((queue: TaQueue) => {
+                if (queue._id === res.data.taQueue) {
+                    return {
+                        ...queue,
+                        tickets: [...(queue.tickets || []), newTicketID],
+                    };
+                }
+                return queue;
+                            })
+                    setAllTaQueues(updatedTaQueues);
 
-          setAllTaQueues((prevQueues: TaQueue[]) => {
-              return prevQueues?.map((queue) => {
-                  if (queue._id === res.data.taQueue) {
-                      return {
-                          ...queue,
-                          tickets: [...queue.tickets, newTicketID],
-                      };
-                  }
-                  return queue;
-              });
-          });
+//           setAllTaQueues((prevQueues: TaQueue[]) => {
+//               return prevQueues?.map((queue) => {
+//                   if (queue._id === res.data.taQueue) {
+//                       return {
+//                           ...queue,
+//                           tickets: [...queue.tickets, newTicketID],
+//                       };
+//                   }
+//                   return queue;
+//               });
+//           });
           triggerRerender();
         }
       } catch (error) {

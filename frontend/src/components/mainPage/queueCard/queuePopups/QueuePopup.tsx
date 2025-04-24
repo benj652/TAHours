@@ -1,6 +1,9 @@
-import { MainPageStoreProps, Modals, PopUpTypes } from "@/types";
+import { Modals, PopUpTypes, TaQueue } from "@/types";
 import { AddTicketPopup } from "./AddTicketPopup";
 import { ResolveTicketPopup } from "./ResolveTicketPopup";
+import { ObjectId } from "mongodb";
+import { useState } from "react";
+import { mainPageStore } from "@/store";
 
 // export const QueuePopup = ({
 //     isOpen,
@@ -23,22 +26,31 @@ import { ResolveTicketPopup } from "./ResolveTicketPopup";
 //     curTicket: ObjectId;
 //     setCurrentTicket: React.Dispatch<React.SetStateAction<ObjectId>>;
 // }) => {
-export const QueuePopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
-    const {
-        taQueueId,
-        curPopUpType: type,
-        setIsExpanded: setIsOpen,
-        setCurTicket,
-    } = curStore();
-    // if (!isOpen) return null;
+//
+
+type QueuePopupProps = {
+    curTaQueue: TaQueue | undefined;
+}
+export const QueuePopup: React.FC<QueuePopupProps> = ({ curTaQueue }) => {
+    // const {
+    //     taQueueId,
+    //     curPopUpType: type,
+    //     setIsExpanded: setIsOpen,
+    //     setCurTicket,
+    // } = curStore();
+    // const [isOpen, setIsOpen] = useState(false);
+
+    const { setCurTicket, curPopUpType: type } = mainPageStore();
 
     const handleClick = async () => {
-        setIsOpen(false);
+        // setIsOpen(false);
         setCurTicket(undefined);
     };
+    // console.log("curTaQueue", curTaQueue?._id);
     // <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
+    // if (!isOpen || !curTaQueue) return null;
     return (
-        <dialog id={`${Modals.QueuePopup}${taQueueId}`} className="modal">
+        <dialog id={`${Modals.QueuePopup}${curTaQueue._id}`} className="modal">
             <div className="modal-box">
                 <form method="dialog">
                     {/* if there is a button in form, it will close the modal */}
@@ -51,10 +63,10 @@ export const QueuePopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
                 </form>
                 <div>
                     {type === PopUpTypes.AddTicket ? (
-                        <AddTicketPopup curStore={curStore} />
+                        <AddTicketPopup classId={curTaQueue?.class} taQueueId={curTaQueue?._id}  />
                     ) : null}
                     {type === PopUpTypes.ResolveTicket ? (
-                        <ResolveTicketPopup curStore={curStore} />
+                        <ResolveTicketPopup taQueueId={curTaQueue?._id} />
                     ) : null}
                 </div>
             </div>

@@ -1,7 +1,7 @@
-import { authStore, forceUpdateStore } from "@/store";
-import { TaQueue } from "@/types";
+import { authStore } from "@/store";
+// import { TaQueue } from "@/types";
 import { ObjectId } from "mongodb";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { ActiveTa } from "./ActiveTa";
 import { JoinSessionButton } from "./JoinSessionButton";
 import { LeaveSessionButton } from "./LeaveSessionButton";
@@ -10,8 +10,8 @@ type ActiveTasProps = {
     tas: ObjectId[];
     queueId: ObjectId | undefined;
     classId: ObjectId | undefined;
-    curTaQueues: TaQueue[] | null;
-    setTaQueues: (taQueues: TaQueue[]) => void;
+    // curTaQueues: TaQueue[] | null;
+    // setTaQueues: (taQueues: TaQueue[]) => void;
 };
 
 
@@ -19,8 +19,8 @@ export const ActiveTas: React.FC<ActiveTasProps> = ({
     tas,
     queueId,
     classId,
-    curTaQueues,
-    setTaQueues,
+    // curTaQueues,
+    // setTaQueues,
 }) => {
     const { userItems } = authStore();
 
@@ -40,14 +40,10 @@ export const ActiveTas: React.FC<ActiveTasProps> = ({
                 <LeaveSessionButton
                     taQueueId={queueId}
                     classId={classId}
-                    setTaQueues={setTaQueues}
-                    curTaQueues={curTaQueues}
                 />
             ) : (
                 <JoinSessionButton
                     taQueueId={queueId}
-                    curTaQueues={curTaQueues}
-                    setTaQueues={setTaQueues}
                 />
             )}
         </div>
