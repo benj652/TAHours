@@ -64,7 +64,6 @@ export const TaQueue: React.FC<TaQueueProps> = ({
                     <div className="flex w-full gap-4">
                         {/* Active TAs Card */}
                         <ActiveTas
-                            tas={curTaQueue.TAs}
                             queueId={curTaQueue._id}
                             classId={curTaQueue.class}
                         />
