@@ -34,17 +34,17 @@ export type TaQueueCreateResponse = {
 };
 
 export type MainPageStore = {
-  curTickets: ObjectId[] | null;
-  setCurTickets: (tickets: ObjectId[] | null) => void;
-  isExpanded: boolean;
-  setIsExpanded: (isExpanded: boolean) => void;
-  taQueueId: ObjectId | undefined;
-  setTaQueueId: (taQueueId: ObjectId | undefined) => void;
-  classId: ObjectId | null;
-  setClassId: (classId: ObjectId | null) => void;
+  // curTickets: ObjectId[] | null;
+  // setCurTickets: (tickets: ObjectId[] | null) => void;
+  // isExpanded: boolean;
+  // setIsExpanded: (isExpanded: boolean) => void;
+  // taQueueId: ObjectId | undefined;
+  // setTaQueueId: (taQueueId: ObjectId | undefined) => void;
+  // classId: ObjectId | null;
+  // setClassId: (classId: ObjectId | null) => void;
   curPopUpType: PopUpType | undefined;
   setCurrentPopUpType: (popUpType: PopUpType | undefined) => void;
-  curTicket: Ticket;
+  curTicket: Ticket | undefined;
   setCurTicket: (ticket: Ticket | undefined) => void;
 };
 

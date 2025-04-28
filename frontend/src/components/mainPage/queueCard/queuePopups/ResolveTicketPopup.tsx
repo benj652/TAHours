@@ -1,6 +1,7 @@
 import { useResolveTicket } from "@/hooks/tickets/useResolveTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
-import { MainPageStoreProps, Modals, PROBLEM_TYPES } from "@/types";
+import { mainPageStore, taQueueStore } from "@/store";
+import { Modals, PROBLEM_TYPES } from "@/types";
 import { useEffect, useState } from "react";
 
 // type ResolveTicketPopupProps = {
@@ -15,15 +16,15 @@ import { useEffect, useState } from "react";
  * might want to add some checks to make sure normie users
  * can not see this by mistake
  */
-export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
-  curStore,
-}) => {
+export const ResolveTicketPopup = ({taQueueId}) => {
   // Gets the currently selected ticket from the local store
-  const { curTicket, setIsExpanded, taQueueId } = curStore();
+  // const { curTicket, setIsExpanded, taQueueId } = curStore();
 
   // Unpacks the getUser hook as we would like to display information
   // about the sender of the ticket
   const { getUser, user } = useGetUser();
+  const { curTicket } = mainPageStore();
+    const { setAllTaQueues, allTaQueues } = taQueueStore();
 
   // Use the hook to get the user info
   useEffect(() => {
@@ -60,10 +61,12 @@ export const ResolveTicketPopup: React.FC<MainPageStoreProps> = ({
     const res = await resolveTicket(curTicket._id, taMessage, curType);
 
     console.log(res);
-    setIsExpanded(false);
+    // setIsExpanded(false);
     document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
+        setAllTaQueues([...allTaQueues]);
 
     // reset fields
+    
     setTaMessage("");
   };
 

@@ -1,6 +1,7 @@
 import { useCreateTicket } from "@/hooks";
 import { taQueueStore, ticketStore } from "@/store";
-import { MainPageStoreProps, Modals, PROBLEM_TYPES, Ticket } from "@/types";
+import { Modals, PROBLEM_TYPES, Ticket } from "@/types";
+import { ObjectId } from "mongodb";
 import { useState } from "react";
 
 // type AddTicketPopupProps = {
@@ -9,23 +10,29 @@ import { useState } from "react";
 //     tickets: ObjectId[];
 //     setTickets: React.Dispatch<React.SetStateAction<ObjectId[]>>;
 // };
+
+type AddTicketPopupProps = {
+    classId: ObjectId | undefined;
+    taQueueId: ObjectId | undefined;
+}
+
 /**
  * This is the popup used when you want to add a ticket
  * It looks ugly atm and will need to be looking bussin
  */
-export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
-  const {
-    classId,
-    taQueueId,
-    setCurTickets: setTickets,
-    curTickets: tickets,
-    setIsExpanded,
-  } = curStore();
+export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueueId }) => {
+  // const {
+  //   classId,
+  //   taQueueId,
+  //   setCurTickets: setTickets,
+  //   curTickets: tickets,
+  //   setIsExpanded,
+  // } = curStore();
 
   // We unpack a bunch of caching stuff so no reloads are needed
   const { loading, createTicket, error } = useCreateTicket();
   const { addTicketToCache } = ticketStore();
-  const { allTaQueues } = taQueueStore();
+  const { allTaQueues, setAllTaQueues } = taQueueStore();
 
   /**
    * Function to handle adding a new ticket
@@ -56,8 +63,18 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
     addTicketToCache(res);
 
     // It is saying that tickets needs some object tytpe iterator or whatever but I always just ignore that error and it all works out
-    //@ts-expect-error type not defined
-    setTickets([...tickets, res._id]);
+    // setTickets([...tickets || [], res._id]);
+    const updatedTaQueues = allTaQueues.map((queue) => {
+       if (queue._id === taQueueId) {
+            return {
+                ...queue,
+                    tickets: [...queue.tickets || [], res._id],
+            }
+       } 
+            return queue;
+    });
+    setAllTaQueues(updatedTaQueues);
+
 
     // Updates the cached queue to have the new id
     const targetQueue = allTaQueues.find((queue) => queue._id === taQueueId);
@@ -67,7 +84,7 @@ export const AddTicketPopup: React.FC<MainPageStoreProps> = ({ curStore }) => {
     console.log(res);
 
     // Closes the popup
-    setIsExpanded(false);
+    // setIsExpanded(false);
     document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
 
     // reset fields

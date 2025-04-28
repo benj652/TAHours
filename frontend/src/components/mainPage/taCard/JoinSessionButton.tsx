@@ -1,14 +1,19 @@
 import { useJoinTaQueue } from "@/hooks";
 import { authStore, taQueueStore } from "@/store";
-import { SessionButtonProps } from "@/types";
+import { ObjectId } from "mongodb";
+// import { SessionButtonProps } from "@/types";
 
-export const JoinSessionButton: React.FC<SessionButtonProps> = ({
+type JoinSessionButtonProps = {
+    taQueueId: ObjectId| undefined;
+    // setTaQueues: (taQueues: TaQueue[]) => void;
+    };
+export const JoinSessionButton: React.FC<JoinSessionButtonProps> = ({
   taQueueId,
-  setTaQueues,
+  // setTaQueues,
 }) => {
   const { error, joinTaQueue, loading } = useJoinTaQueue();
   const { userItems } = authStore();
-  const { allTaQueues } = taQueueStore();
+  const { allTaQueues, setAllTaQueues: setTaQueues} = taQueueStore();
   const handleJoinSession = async () => {
     if (!taQueueId) return;
     if (!userItems?._id) return;
