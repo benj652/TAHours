@@ -8,14 +8,15 @@ import {
 import {
   TaQueue,
   TaQueueJoinEvent,
+  TaQueueLeaveEvent,
   THREAD_EVENTS,
   TicketCreateEvent,
-  TaQueueLeaveEvent,
   TicketResolveEvent,
 } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook to listen for events on the main page
@@ -39,8 +40,13 @@ export const useListenMainPage = () => {
           const res = newMessage as TicketResolveEvent;
           const resolved = getTicketFromCache(res.data);
           if (!resolved) return;
-          //@ts-ignore
+          //@ts-expect-error noitems
           resolved.taId = RANDOM_OBJECT_ID as ObjectId;
+          //console.log(newMessage, "resolved");
+          // waiting till tomorrow to test
+          if (userItems._id === resolved.studentId) {
+            toast.success("Your ticket has been resolved");
+          }
           addTicketToCache(resolved);
         }
         if (newMessage.type === THREAD_EVENTS.TA_LEAVE_QUEUE_EVENT) {
@@ -84,7 +90,7 @@ export const useListenMainPage = () => {
           //     return;
           // }
           const targetTaQueue = allTaQueues.filter(
-            (queue: TaQueue) => queue._id === res.queueID,
+            (queue: TaQueue) => queue._id === res.queueID
           );
           if (!targetTaQueue || targetTaQueue.length === 0) return;
 
@@ -92,7 +98,7 @@ export const useListenMainPage = () => {
             // The ta was the last one in the queue, so the queue is now over as they have left.
             // console.log("curTaQueue[0].TAs.length === 1");
             const newTaQueues = allTaQueues.filter(
-              (taQueue: TaQueue) => taQueue._id !== res.queueID,
+              (taQueue: TaQueue) => taQueue._id !== res.queueID
             );
             setAllTaQueues(newTaQueues);
           } else {
@@ -155,7 +161,7 @@ export const useListenMainPage = () => {
 
           // Find the queue that the new ticket needs to be pushed to
           const targetQueue = allTaQueues.find(
-            (queue: TaQueue) => queue._id === res.data.queueId,
+            (queue: TaQueue) => queue._id === res.data.queueId
           );
           // console.log("new ta hjerere bro");
           // These errors should never happen
@@ -191,7 +197,7 @@ export const useListenMainPage = () => {
 
           // Find the queue that the new ticket needs to be pushed to
           const targetQueue = allTaQueues.find(
-            (queue: TaQueue) => queue._id === res.data.taQueue,
+            (queue: TaQueue) => queue._id === res.data.taQueue
           );
 
           // These errors should never happen
@@ -200,29 +206,29 @@ export const useListenMainPage = () => {
           // console.log("new ticket here");
           // update the current store
           // targetQueue.tickets.push(newTicketID);
-            if (!allTaQueues) return;
-            const updatedTaQueues = allTaQueues.map((queue: TaQueue) => {
-                if (queue._id === res.data.taQueue) {
-                    return {
-                        ...queue,
-                        tickets: [...(queue.tickets || []), newTicketID],
-                    };
-                }
-                return queue;
-                            })
-                    setAllTaQueues(updatedTaQueues);
+          if (!allTaQueues) return;
+          const updatedTaQueues = allTaQueues.map((queue: TaQueue) => {
+            if (queue._id === res.data.taQueue) {
+              return {
+                ...queue,
+                tickets: [...(queue.tickets || []), newTicketID],
+              };
+            }
+            return queue;
+          });
+          setAllTaQueues(updatedTaQueues);
 
-//           setAllTaQueues((prevQueues: TaQueue[]) => {
-//               return prevQueues?.map((queue) => {
-//                   if (queue._id === res.data.taQueue) {
-//                       return {
-//                           ...queue,
-//                           tickets: [...queue.tickets, newTicketID],
-//                       };
-//                   }
-//                   return queue;
-//               });
-//           });
+          //           setAllTaQueues((prevQueues: TaQueue[]) => {
+          //               return prevQueues?.map((queue) => {
+          //                   if (queue._id === res.data.taQueue) {
+          //                       return {
+          //                           ...queue,
+          //                           tickets: [...queue.tickets, newTicketID],
+          //                       };
+          //                   }
+          //                   return queue;
+          //               });
+          //           });
           triggerRerender();
         }
       } catch (error) {
