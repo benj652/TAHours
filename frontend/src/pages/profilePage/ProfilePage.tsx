@@ -70,7 +70,7 @@ export const ProfilePage: React.FC = () => {
             <h1 className="text-lg font-bold mt-2">Outfit:</h1>
             <input
               type="text"
-              placeholder="Type here"
+              placeholder="How could someone find you in the room?"
               className="input"
               value={outfit}
               onChange={handleOutfitChange}

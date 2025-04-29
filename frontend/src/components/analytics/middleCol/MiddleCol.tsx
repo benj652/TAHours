@@ -1,20 +1,11 @@
 import { analyticsPageStore, taQueueStore } from "@/store";
+import { ObjectId } from "mongodb";
+import { useEffect } from "react";
 import { SearchFilter } from "./SearchFilter";
 import { TextAnalytics } from "./TextAnalytics";
 import { TicketQueue } from "./TicketQueue";
-import { useEffect } from "react";
-import { ObjectId } from "mongodb";
 
 export const MiddleCol: React.FC = () => {
-  const bruh = {
-    classesRunning: ["CS150", "CS232", "CS400"],
-    currentQueue: [
-      "dumb ticket",
-      "dumb ticket 2",
-      "dumb ticket 3",
-      "dumb ticket 4",
-    ],
-  };
   const {
     selectedClass,
     // selectedClassQueues,
@@ -51,19 +42,18 @@ export const MiddleCol: React.FC = () => {
       setSelectedTickets([]);
       return;
     }
-    
 
     const selectedTaQueues = allTaQueues?.filter(
-      (taQueue) => taQueue.class === selectedClass._id,
+      (taQueue) => taQueue.class === selectedClass._id
     );
-    if(!selectedTaQueues) return;
+    if (!selectedTaQueues) return;
 
     setSelectedClassQueues(selectedTaQueues);
 
     const collectedTickets: ObjectId[] = [];
     for (const queue of selectedTaQueues) {
       if (queue.tickets && queue.tickets.length > 0) {
-        collectedTickets.push(...queue.tickets || []);
+        collectedTickets.push(...(queue.tickets || []));
       }
     }
 
