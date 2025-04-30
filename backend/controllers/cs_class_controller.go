@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
@@ -11,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
 
 // GetCSClass retrieves a CS class from the database using the class ID provided
 // as a URL parameter. The function expects the :id parameter to be a valid MongoDB
@@ -107,6 +107,7 @@ func CreateCSClass(c *fiber.Ctx) error {
 // queue's _id, or a 500 error if there was a problem creating the queue.
 func CreateTAQueue(c *fiber.Ctx) error {
 	taQueue := new(models.TAQueue)
+	taQueue.Date = primitive.DateTime(time.Now().UnixMilli())
 	collection := db.GetCollection(taQueue.TableName())
 	if err := c.BodyParser(&taQueue); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
