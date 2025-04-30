@@ -115,6 +115,18 @@ export const useListenMainPage = () => {
               return queue;
             });
             setAllTaQueues(updatedQueues);
+
+            targetTaQueue[0].TAs.push(res.taId);
+            const updatedQueues2 = allTaQueues.map((queue: TaQueue) => {
+              if (queue._id === res.queueID) {
+                return {
+                  ...queue,
+                  TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+                };
+              }
+              return queue;
+            });
+            setAllTaQueues(updatedQueues2);
             triggerRerender();
 
             // console.log(
