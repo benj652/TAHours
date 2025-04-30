@@ -109,19 +109,22 @@ export const useListenMainPage = () => {
               if (queue._id === res.queueID) {
                 return {
                   ...queue,
-                  TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+                  TAs: queue.TAs.filter((taId) => taId !== res.taId),
                 };
               }
               return queue;
             });
             setAllTaQueues(updatedQueues);
+          const targetTaQueue2 = allTaQueues.filter(
+            (queue: TaQueue) => queue._id === res.queueID
+          );
+                        targetTaQueue2[0].TAs.push(res.taId);
 
-            targetTaQueue[0].TAs.push(res.taId);
             const updatedQueues2 = allTaQueues.map((queue: TaQueue) => {
               if (queue._id === res.queueID) {
                 return {
                   ...queue,
-                  TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+                  TAs: queue.TAs.filter((taId) => taId !== res.taId),
                 };
               }
               return queue;
