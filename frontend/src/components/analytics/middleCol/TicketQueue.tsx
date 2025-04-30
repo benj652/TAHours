@@ -5,7 +5,7 @@ import TicketDisplay from "./TicketDisplay";
 export const TicketQueue = () => {
   const { selectedTickets: tickets, selectedDates } = analyticsPageStore();
 
-  console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
+  // console.log("Date Range bounds: ", getDateRangeBounds(selectedDates || "0"));
   const dateRangeBounds = getDateRangeBounds(selectedDates || "0");
 
   // console.log(tickets);

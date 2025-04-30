@@ -86,3 +86,7 @@ export type TaQueueLeaveEvent = {
   isActive: boolean;
   queueID: ObjectId;
 };
+
+export type GetClassQueuesResponse = {
+    queues: TaQueue[];
+}
