@@ -38,10 +38,9 @@ const useListenMessages = () => {
         const newMessage = JSON.parse(event.data);
         console.log("newMessage", newMessage);
         if (newMessage.type === THREAD_EVENTS.NEW_MESSAGE) {
-          if (
-            newMessage.data.user ===
-            userItems.firstName + " " + userItems.lastName
-          )
+          // Prevents multiple renders of the same message
+          const targetName = newMessage.data.user.replace(/------.*$/, "");
+          if (targetName === userItems.firstName + " " + userItems.lastName)
             return;
           setMessages([...(messages || []), newMessage.data]);
         } else if (newMessage.type === THREAD_EVENTS.DELETE_MESSAGE) {
