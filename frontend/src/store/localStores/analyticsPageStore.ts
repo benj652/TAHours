@@ -84,7 +84,7 @@ export const analyticsPageStore = create<AnalyticsPageStore>((set) => ({
     set((state) => ({
       taAttenders:
         typeof updater === "function"
-          ? updater(state.individualAttenders)
+          ? updater(state.taAttenders)
           : updater,
     })),
 }));
