@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { SearchFilter } from "./SearchFilter";
 import { TextAnalytics } from "./TextAnalytics";
 import { TicketQueue } from "./TicketQueue";
+import { PROBLEM_TYPES } from "@/types";
 
 export const MiddleCol: React.FC = () => {
   const {
@@ -11,6 +12,10 @@ export const MiddleCol: React.FC = () => {
     // selectedClassQueues,
     setSelectedClassQueues,
     // selectedTickets,
+    setSelectedClass,
+    setTicketTypes,
+        setRenderedTickets,
+        setSelectedDates,
     setSelectedTickets,
   } = analyticsPageStore();
   const { allTaQueues } = taQueueStore();
@@ -60,6 +65,32 @@ export const MiddleCol: React.FC = () => {
     setSelectedTickets(collectedTickets);
   }, [selectedClass, allTaQueues]);
 
+    // clear all to prevent duplication bug
+useEffect(() => {
+        // clear class
+        setSelectedClass(null)
+    setTicketTypes([
+      { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
+      { name: PROBLEM_TYPES.SYNTAX, value: 0 },
+      { name: PROBLEM_TYPES.LOGIC, value: 0 },
+      { name: PROBLEM_TYPES.RUNTIME, value: 0 },
+      { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
+      { name: PROBLEM_TYPES.OTHER, value: 0 },
+    ]);
+        setRenderedTickets(0);
+    setSelectedDates("0");
+
+
+        analyticsPageStore.getState().setIndividualAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
+        analyticsPageStore.getState().setTaAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
+
+    },[location.pathname])
   const handleSelect = (selectedOption) => {
     console.log("Selected:", selectedOption);
   };

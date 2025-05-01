@@ -42,6 +42,14 @@ export const ClassList = () => {
     ]);
         setRenderedTickets(0);
     setSelectedDates("0");
+        analyticsPageStore.getState().setIndividualAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
+        analyticsPageStore.getState().setTaAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
 
 
     if (csClass._id === selectedClass?._id) {
