@@ -1,9 +1,54 @@
+import { GetClassQueuesResponse, NIL_OBJECT_ID, TaQueueRoutes } from "@/types";
+import { httpClient } from "@/utils";
+import { ObjectId } from "mongodb";
+import { useState } from "react";
+import { toast } from "sonner";
+
+const useGetClassQueues = () => {
+  const [loading, setLoading] = useState<boolean>(true); // loading state
+  const [error, setError] = useState<string | null>(null); // error state
+
+  const getClassQueues = async (classId: ObjectId) => {
+    setLoading(true);
+    try {
+      if (!classId) {
+        throw new Error("Class ID is required");
+      }
+      if (classId.toString() === NIL_OBJECT_ID) {
+        throw new Error("Class ID is invalid");
+      }
+      const res = await httpClient<GetClassQueuesResponse>(
+        `${TaQueueRoutes.GetClassQueues}${classId}`,
+      );
+      const data = res.data;
+      if (!data) {
+        throw new Error("No data found");
+      }
+      const daQueues = data.queues;
+      if (!daQueues) {
+        throw new Error("Queues currupted");
+      }
+
+      return daQueues;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "An error occurred");
+      toast.error(e as string);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    getClassQueues,
+    loading,
+    error,
+  };
+};
+export default useGetClassQueues;
 /**
  * ---------------
  * UNUSED FOR NOW
  * ---------------
  */
-
 
 //import { analyticsPageStore, taQueueStore } from "@/store";
 //import { TaQueue, TaQueueRoutes, Ticket } from "@/types";
