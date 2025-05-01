@@ -42,3 +42,7 @@ export const PLACEHOLER_USER: User = {
 export type UserChageDescriptionEventPayload = {
     updatedUser: User;
 }
+
+export type UserRoleChangeEventPayload = {
+    newRole: string;
+}

@@ -13,7 +13,9 @@ import {
   THREAD_EVENTS,
   TicketCreateEvent,
   TicketResolveEvent,
+  TokenConfig,
   UserChageDescriptionEventPayload,
+  UserRoleChangeEventPayload,
 } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
@@ -256,6 +258,11 @@ export const useListenMainPage = () => {
             const res = newMessage.data as UserChageDescriptionEventPayload;
             addUserToCache(res.updatedUser);
             setAllTaQueues([...(allTaQueues || [])]);
+        }
+        if (newMessage.type === THREAD_EVENTS.USER_ROLE_CHANGE_EVENT) {
+          const res = newMessage.data as UserRoleChangeEventPayload;
+          const curUser = {...userItems, roles : res.newRole}
+          localStorage.setItem(TokenConfig.UserItemsToken, JSON.stringify(curUser));
         }
       } catch (error) {
         console.error(error);
