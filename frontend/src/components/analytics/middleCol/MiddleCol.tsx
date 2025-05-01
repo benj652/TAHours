@@ -5,6 +5,7 @@ import { SearchFilter } from "./SearchFilter";
 import { TextAnalytics } from "./TextAnalytics";
 import { TicketQueue } from "./TicketQueue";
 import { PROBLEM_TYPES } from "@/types";
+import { useGetAllTaQueues } from "@/hooks";
 
 export const MiddleCol: React.FC = () => {
   const {
@@ -14,12 +15,17 @@ export const MiddleCol: React.FC = () => {
     // selectedTickets,
     setSelectedClass,
     setTicketTypes,
-        setRenderedTickets,
-        setSelectedDates,
+    setRenderedTickets,
+    setSelectedDates,
     setSelectedTickets,
   } = analyticsPageStore();
   const { allTaQueues } = taQueueStore();
 
+  // This is cached so no big deal
+  const { getAllTaQueues } = useGetAllTaQueues();
+  useEffect(() => {
+    getAllTaQueues();
+  }, []);
   //   const selectedClassChanged = () => {
   //     const selectedTaQueues = allTaQueues.filter(
   //       (taQueue) => taQueue.class === selectedClass?._id,
@@ -49,7 +55,7 @@ export const MiddleCol: React.FC = () => {
     }
 
     const selectedTaQueues = allTaQueues?.filter(
-      (taQueue) => taQueue.class === selectedClass._id
+      (taQueue) => taQueue.class === selectedClass._id,
     );
     if (!selectedTaQueues) return;
 
@@ -65,10 +71,9 @@ export const MiddleCol: React.FC = () => {
     setSelectedTickets(collectedTickets);
   }, [selectedClass, allTaQueues]);
 
-    // clear all to prevent duplication bug
-useEffect(() => {
-        // clear class
-        setSelectedClass(null)
+  // clear all to prevent duplication bug
+  useEffect(() => {
+    // clear class
     setTicketTypes([
       { name: PROBLEM_TYPES.DEBUGGING, value: 0 },
       { name: PROBLEM_TYPES.SYNTAX, value: 0 },
@@ -77,20 +82,19 @@ useEffect(() => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
-        setRenderedTickets(0);
+    setRenderedTickets(0);
     setSelectedDates("0");
+    setSelectedClass(null);
 
-
-        analyticsPageStore.getState().setIndividualAttenders((prev) => {
-          const newSet = new Set();
-          return newSet;
-        });
-        analyticsPageStore.getState().setTaAttenders((prev) => {
-          const newSet = new Set();
-          return newSet;
-        });
-
-    },[location.pathname])
+    analyticsPageStore.getState().setIndividualAttenders((prev) => {
+      const newSet = new Set();
+      return newSet;
+    });
+    analyticsPageStore.getState().setTaAttenders((prev) => {
+      const newSet = new Set();
+      return newSet;
+    });
+  }, [location.pathname]);
   const handleSelect = (selectedOption) => {
     console.log("Selected:", selectedOption);
   };

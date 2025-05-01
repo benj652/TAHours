@@ -41,7 +41,7 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
         setRenderedTickets(0);
-    setSelectedDates("0");
+    // setSelectedDates("0");
         analyticsPageStore.getState().setIndividualAttenders((prev) => {
           const newSet = new Set();
           return newSet;
