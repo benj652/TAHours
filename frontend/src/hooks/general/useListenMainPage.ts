@@ -262,6 +262,7 @@ export const useListenMainPage = () => {
         if (newMessage.type === THREAD_EVENTS.USER_ROLE_CHANGE_EVENT) {
           const res = newMessage.data as UserRoleChangeEventPayload;
           const curUser = {...userItems, roles : res.newRole}
+            console.log("BAHHH", curUser)
           localStorage.setItem(TokenConfig.UserItemsToken, JSON.stringify(curUser));
         }
       } catch (error) {
