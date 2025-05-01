@@ -10,9 +10,12 @@ export enum THREAD_EVENTS {
     DELETE_MESSAGE = "deleteMessage",
     NEW_COMMENT = "newComment",
 
+    USER_CHANGE_DESCRIPTION_EVENT = "user_change_description",
+
     NEW_TA_QUEUE_EVENT = "new_ta_queue",
     TA_JOIN_QUEUE_EVENT = "ta_join_queue",
     TA_LEAVE_QUEUE_EVENT = "ta_leave_queue",
     TICKET_CREATE_EVVENT = "ticket_create",
     TICKET_RESOLVE_EVENT = "ticket_resolve",
+
 };

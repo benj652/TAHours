@@ -7,6 +7,8 @@ const(
 	TICKET_CREATE_EVVENT = "ticket_create"
 	TICKET_RESOLVE_EVENT = "ticket_resolve"
 
+	USER_CHANGE_DESCRIPTION_EVENT = "user_change_description"
+
 	DELETE_POST_EVENT = "deleteMessage"
 	NEW_POST_EVENT = "newMessage"
 	NEW_COMMENT_EVENT = "newComment"

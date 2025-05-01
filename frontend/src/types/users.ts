@@ -38,3 +38,7 @@ export const PLACEHOLER_USER: User = {
   description: "",
   roles: Role.Student,
 };
+
+export type UserChageDescriptionEventPayload = {
+    updatedUser: User;
+}

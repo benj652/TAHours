@@ -4,6 +4,7 @@ import {
   forceUpdateStore,
   taQueueStore,
   ticketStore,
+  userStore,
 } from "@/store";
 import {
   TaQueue,
@@ -12,6 +13,7 @@ import {
   THREAD_EVENTS,
   TicketCreateEvent,
   TicketResolveEvent,
+  UserChageDescriptionEventPayload,
 } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
@@ -25,6 +27,7 @@ export const useListenMainPage = () => {
   const { setAllTaQueues, allTaQueues } = taQueueStore();
   const { socket } = useSocketContext();
   const { getTicketFromCache, addTicketToCache } = ticketStore();
+  const { addUserToCache } = userStore();
   const { triggerRerender } = forceUpdateStore();
   const { userItems } = authStore();
 
@@ -36,6 +39,7 @@ export const useListenMainPage = () => {
       try {
         if (!allTaQueues) return;
         const newMessage = JSON.parse(event.data);
+        // console.log("new message", newMessage);
         if (newMessage.type === THREAD_EVENTS.TICKET_RESOLVE_EVENT) {
           const res = newMessage as TicketResolveEvent;
           const resolved = getTicketFromCache(res.data);
@@ -245,6 +249,13 @@ export const useListenMainPage = () => {
           //               });
           //           });
           triggerRerender();
+        }
+        if (newMessage.type === THREAD_EVENTS.USER_CHANGE_DESCRIPTION_EVENT) {
+          // const res = newMessage as MessageEvent;
+          // console.log("new message", res);
+            const res = newMessage.data as UserChageDescriptionEventPayload;
+            addUserToCache(res.updatedUser);
+            setAllTaQueues([...(allTaQueues || [])]);
         }
       } catch (error) {
         console.error(error);
