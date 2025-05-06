@@ -18,6 +18,13 @@ import (
 // ObjectID. Returns a JSON response with the CS class if found, or an error
 // message if the class is not found, the ID is invalid, or missing.
 func GetCSClass(c *fiber.Ctx) error {
+
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to get specific class",
+		})
+	}
+
 	class := new(models.CSClass)
 	collection := db.GetCollection(class.TableName())
 
@@ -54,6 +61,13 @@ func GetCSClass(c *fiber.Ctx) error {
 // a 500 error if there was a problem creating the class.
 // Make sure only professors and admis can create classes in middleware
 func CreateCSClass(c *fiber.Ctx) error {
+
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to create class",
+		})
+	}
+
 	class := new(models.CSClass)
 	collection := db.GetCollection(class.TableName())
 
@@ -106,6 +120,13 @@ func CreateCSClass(c *fiber.Ctx) error {
 // with the queue's details. It returns a JSON response with the newly created
 // queue's _id, or a 500 error if there was a problem creating the queue.
 func CreateTAQueue(c *fiber.Ctx) error {
+
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Ta && c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to create queue",
+		})
+	}
+
 	taQueue := new(models.TAQueue)
 	taQueue.Date = primitive.DateTime(time.Now().UnixMilli())
 	collection := db.GetCollection(taQueue.TableName())
@@ -210,6 +231,13 @@ type SetActiveRequest struct {
 //
 // Need to make this method take in a boolean parameter to set to active instead of hardcode
 func SetActive(c *fiber.Ctx) error {
+
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Ta && c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to set class as active",
+		})
+	}
+
 	class := new(models.CSClass)
 	id := c.Params("id")
 	classId, err := primitive.ObjectIDFromHex(id)
