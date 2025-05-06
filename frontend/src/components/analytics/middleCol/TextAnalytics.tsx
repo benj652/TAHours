@@ -19,11 +19,14 @@ export const TextAnalytics = () => {
 
   const NO_CLASS_SELECTED = "No Class Selected";
 
+  // const ticketDate = new Date(ticket?.date || 0);
+  // const isValid = ticketDate?.getTime() > dateRangeBounds?.startDate.getTime();
+
   const sessionCount =
     curTaQueues && curTaQueues.length > 0
       ? curTaQueues.filter(
           (taQueue) =>
-            new Date(taQueue.date) >= dateRangeBounds.startDate?.getDate(),
+            new Date(taQueue.date || 0).getDate() > dateRangeBounds.startDate.getTime(),
         ).length
       : 0;
   // console.log("Session Count: ", sessionCount);
