@@ -1,3 +1,8 @@
+/*
+ * TicketDisplay.tsx
+ * This file contains the ticket display component
+ * It shows the tickets from the selected class
+ */
 import { TicketPopupAnal } from "@/components/analytics/middleCol/ticketpopupanal";
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
@@ -6,11 +11,13 @@ import { DateRangeBounds, NIL_OBJECT_ID, Ticket, TicketPieType } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 
+// defines the props for the TicketDisplay component
 interface TicketDisplayProps {
   curTicketId: ObjectId;
   dateRangeBounds: DateRangeBounds;
 }
 
+// defines the TicketDisplay component
 export const TicketDisplay: React.FC<TicketDisplayProps> = ({
   curTicketId,
   dateRangeBounds,
@@ -70,8 +77,8 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({
       prevTypes.map((type) =>
         type.name === ticket.problemtype
           ? { ...type, value: type.value + 1 }
-          : type,
-      ),
+          : type
+      )
     );
 
     analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);
