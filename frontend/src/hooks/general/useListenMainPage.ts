@@ -4,18 +4,23 @@ import {
   forceUpdateStore,
   taQueueStore,
   ticketStore,
+  userStore,
 } from "@/store";
 import {
   TaQueue,
   TaQueueJoinEvent,
+  TaQueueLeaveEvent,
   THREAD_EVENTS,
   TicketCreateEvent,
-  TaQueueLeaveEvent,
   TicketResolveEvent,
+  TokenConfig,
+  UserChageDescriptionEventPayload,
+  UserRoleChangeEventPayload,
 } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 /**
  * Hook to listen for events on the main page
@@ -24,6 +29,7 @@ export const useListenMainPage = () => {
   const { setAllTaQueues, allTaQueues } = taQueueStore();
   const { socket } = useSocketContext();
   const { getTicketFromCache, addTicketToCache } = ticketStore();
+  const { addUserToCache } = userStore();
   const { triggerRerender } = forceUpdateStore();
   const { userItems } = authStore();
 
@@ -35,12 +41,18 @@ export const useListenMainPage = () => {
       try {
         if (!allTaQueues) return;
         const newMessage = JSON.parse(event.data);
+        // console.log("new message", newMessage);
         if (newMessage.type === THREAD_EVENTS.TICKET_RESOLVE_EVENT) {
           const res = newMessage as TicketResolveEvent;
           const resolved = getTicketFromCache(res.data);
           if (!resolved) return;
-          //@ts-ignore
+          //@ts-expect-error noitems
           resolved.taId = RANDOM_OBJECT_ID as ObjectId;
+          //console.log(newMessage, "resolved");
+          // waiting till tomorrow to test
+          if (userItems._id === resolved.studentId) {
+            toast.success("Your ticket has been resolved");
+          }
           addTicketToCache(resolved);
         }
         if (newMessage.type === THREAD_EVENTS.TA_LEAVE_QUEUE_EVENT) {
@@ -84,7 +96,7 @@ export const useListenMainPage = () => {
           //     return;
           // }
           const targetTaQueue = allTaQueues.filter(
-            (queue: TaQueue) => queue._id === res.queueID,
+            (queue: TaQueue) => queue._id === res.queueID
           );
           if (!targetTaQueue || targetTaQueue.length === 0) return;
 
@@ -92,7 +104,7 @@ export const useListenMainPage = () => {
             // The ta was the last one in the queue, so the queue is now over as they have left.
             // console.log("curTaQueue[0].TAs.length === 1");
             const newTaQueues = allTaQueues.filter(
-              (taQueue: TaQueue) => taQueue._id !== res.queueID,
+              (taQueue: TaQueue) => taQueue._id !== res.queueID
             );
             setAllTaQueues(newTaQueues);
           } else {
@@ -103,12 +115,27 @@ export const useListenMainPage = () => {
               if (queue._id === res.queueID) {
                 return {
                   ...queue,
-                  TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+                  TAs: queue.TAs.filter((taId) => taId !== res.taId),
                 };
               }
               return queue;
             });
             setAllTaQueues(updatedQueues);
+          const targetTaQueue2 = allTaQueues.filter(
+            (queue: TaQueue) => queue._id === res.queueID
+          );
+                        targetTaQueue2[0].TAs.push(res.taId);
+
+            const updatedQueues2 = allTaQueues.map((queue: TaQueue) => {
+              if (queue._id === res.queueID) {
+                return {
+                  ...queue,
+                  TAs: queue.TAs.filter((taId) => taId !== res.taId),
+                };
+              }
+              return queue;
+            });
+            setAllTaQueues(updatedQueues2);
             triggerRerender();
 
             // console.log(
@@ -155,7 +182,7 @@ export const useListenMainPage = () => {
 
           // Find the queue that the new ticket needs to be pushed to
           const targetQueue = allTaQueues.find(
-            (queue: TaQueue) => queue._id === res.data.queueId,
+            (queue: TaQueue) => queue._id === res.data.queueId
           );
           // console.log("new ta hjerere bro");
           // These errors should never happen
@@ -191,7 +218,7 @@ export const useListenMainPage = () => {
 
           // Find the queue that the new ticket needs to be pushed to
           const targetQueue = allTaQueues.find(
-            (queue: TaQueue) => queue._id === res.data.taQueue,
+            (queue: TaQueue) => queue._id === res.data.taQueue
           );
 
           // These errors should never happen
@@ -200,20 +227,43 @@ export const useListenMainPage = () => {
           // console.log("new ticket here");
           // update the current store
           // targetQueue.tickets.push(newTicketID);
-            if (!allTaQueues) return;
-
-          setAllTaQueues((prevQueues: TaQueue[]) => {
-              return prevQueues?.map((queue) => {
-                  if (queue._id === res.data.taQueue) {
-                      return {
-                          ...queue,
-                          tickets: [...queue.tickets, newTicketID],
-                      };
-                  }
-                  return queue;
-              });
+          if (!allTaQueues) return;
+          const updatedTaQueues = allTaQueues.map((queue: TaQueue) => {
+            if (queue._id === res.data.taQueue) {
+              return {
+                ...queue,
+                tickets: [...(queue.tickets || []), newTicketID],
+              };
+            }
+            return queue;
           });
+          setAllTaQueues(updatedTaQueues);
+
+          //           setAllTaQueues((prevQueues: TaQueue[]) => {
+          //               return prevQueues?.map((queue) => {
+          //                   if (queue._id === res.data.taQueue) {
+          //                       return {
+          //                           ...queue,
+          //                           tickets: [...queue.tickets, newTicketID],
+          //                       };
+          //                   }
+          //                   return queue;
+          //               });
+          //           });
           triggerRerender();
+        }
+        if (newMessage.type === THREAD_EVENTS.USER_CHANGE_DESCRIPTION_EVENT) {
+          // const res = newMessage as MessageEvent;
+          // console.log("new message", res);
+            const res = newMessage.data as UserChageDescriptionEventPayload;
+            addUserToCache(res.updatedUser);
+            setAllTaQueues([...(allTaQueues || [])]);
+        }
+        if (newMessage.type === THREAD_EVENTS.USER_ROLE_CHANGE_EVENT) {
+          const res = newMessage.data as UserRoleChangeEventPayload;
+          const curUser = {...userItems, roles : res.newRole}
+            console.log("BAHHH", curUser)
+          localStorage.setItem(TokenConfig.UserItemsToken, JSON.stringify(curUser));
         }
       } catch (error) {
         console.error(error);

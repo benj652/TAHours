@@ -1,19 +1,66 @@
+import useGetClassQueues from "@/hooks/taQueue/useGetClassQueues";
 import { analyticsPageStore } from "@/store";
-import { formatDateRange } from "@/utils";
+import { TaQueue } from "@/types";
+import { formatDateRange, getDateRangeBounds } from "@/utils";
+import { useEffect, useState } from "react";
 
 /**
- * This componenet will talk about some analytics of past
- * TA HOUR sessions
- *
- * RN it is a major work in progress
+ * This component shows analytics of past TA HOUR sessions
  */
+
 export const TextAnalytics = () => {
-  const { selectedClass, selectedDates, selectedTickets, renderedTickets } =
+  const { selectedClass, selectedDates, renderedTickets } =
     analyticsPageStore();
+
+  const [curTaQueues, setCurTaQueues] = useState<TaQueue[]>([]);
   const individualAttenders = analyticsPageStore((s) => s.individualAttenders);
-    const taAttenders = analyticsPageStore((s) => s.taAttenders);
+  const taAttenders = analyticsPageStore((s) => s.taAttenders);
+  const dateRangeBounds = getDateRangeBounds(selectedDates || "0");
+
   const NO_CLASS_SELECTED = "No Class Selected";
-console.log(selectedDates);
+
+  // const ticketDate = new Date(ticket?.date || 0);
+  // const isValid = ticketDate?.getTime() > dateRangeBounds?.startDate.getTime();
+
+  const sessionCount =
+    curTaQueues && curTaQueues.length > 0
+      ? curTaQueues.filter(
+          (taQueue) =>
+            new Date(taQueue.date || 0).getDate() > dateRangeBounds.startDate.getTime(),
+        ).length
+      : 0;
+  // console.log("Session Count: ", sessionCount);
+  const totalAttendees = individualAttenders?.size ?? 0;
+  const totalTAs = taAttenders?.size ?? 0;
+
+  const avgAttendees =
+    sessionCount && sessionCount > 0
+      ? (totalAttendees / sessionCount).toFixed(2)
+      : "0";
+
+  const avgTickets =
+    sessionCount && sessionCount > 0
+      ? (renderedTickets / sessionCount).toFixed(2)
+      : "0";
+
+  const avgTAs =
+    sessionCount && sessionCount > 0
+      ? (totalTAs / sessionCount).toFixed(2)
+      : "0";
+  const { getClassQueues } = useGetClassQueues();
+
+  useEffect(() => {
+    const fetchClassQueues = async () => {
+      if (!selectedClass) return;
+      if (!selectedClass._id) return;
+      const res = await getClassQueues(selectedClass._id);
+      if (!res) return;
+
+      setCurTaQueues(res);
+    };
+    fetchClassQueues();
+  }, [selectedClass]);
+
   return (
     <div className="bg-gray-300 p-4 rounded-md space-y-4">
       <p>
@@ -21,28 +68,14 @@ console.log(selectedDates);
         {selectedDates ? formatDateRange(selectedDates) : NO_CLASS_SELECTED}
       </p>
       <p>
-        Number of Sessions:{" "}
-        {selectedClass ? selectedClass.queues?.length : NO_CLASS_SELECTED}
+        Number of Sessions: {selectedClass ? sessionCount : NO_CLASS_SELECTED}
       </p>
-      <p>Total Number Of Attendees: {individualAttenders.size}</p>
-      <p>
-        Average Number Of Attendees:{" "}
-        {selectedClass?.queues?.length
-          ? (individualAttenders.size / selectedClass.queues.length + 1).toFixed(2)
-          : 0}
-      </p>
+      <p>Total Number of Attendees: {totalAttendees}</p>
+      <p>Average Number of Attendees per Session: {avgAttendees}</p>
       <p>Total Tickets: {renderedTickets}</p>
-      <p>
-        Average Number of Tickets Per Session:{" "}
-        {selectedTickets && selectedClass && selectedClass.queues?.length
-          ? (renderedTickets / selectedClass.queues.length + 1).toFixed(2)
-          : 0}
-      </p>
-            <p>
-TAs per session:{" "}
- {taAttenders.size - 1}           </p>
-            <p>Average number of TAs per session: {" "}
-             {(taAttenders.size - 1) }</p>
+      <p>Average Number of Tickets per Session: {avgTickets}</p>
+      <p>Total Unique TAs: {totalTAs}</p>
+      <p>Average Number of TAs per Session: {avgTAs}</p>
     </div>
   );
 };

@@ -1,21 +1,27 @@
 import { MainPageStore } from "@/types";
 import { create } from "zustand";
 
-export const createMainPageStore = () =>
-  create<MainPageStore>((set) => ({
-    curTickets: [],
-    setCurTickets: (tickets) => set({ curTickets: tickets }),
-    isExpanded: false,
-    setIsExpanded: (isExpanded) => set({ isExpanded }),
-    taQueueId: undefined,
-    setTaQueueId: (taQueueId) => set({ taQueueId }),
-    classId: null,
-    setClassId: (classId) => set({ classId }),
-    curPopUpType: undefined,
-    setCurrentPopUpType: (popUpType) => set({ curPopUpType: popUpType }),
+export const mainPageStore = create<MainPageStore>((set) => ({
     curTicket: undefined,
     setCurTicket: (ticket) => set({ curTicket: ticket }),
-  }));
+    curPopUpType: undefined,
+    setCurrentPopUpType: (popUpType) => set({ curPopUpType: popUpType }),
+}))
+// export const createMainPageStore = () =>
+//   create<MainPageStore>((set) => ({
+//     curTickets: [],
+//     setCurTickets: (tickets) => set({ curTickets: tickets }),
+//     isExpanded: false,
+//     setIsExpanded: (isExpanded) => set({ isExpanded }),
+//     taQueueId: undefined,
+//     setTaQueueId: (taQueueId) => set({ taQueueId }),
+//     classId: null,
+//     setClassId: (classId) => set({ classId }),
+//     curPopUpType: undefined,
+//     setCurrentPopUpType: (popUpType) => set({ curPopUpType: popUpType }),
+//     curTicket: undefined,
+//     setCurTicket: (ticket) => set({ curTicket: ticket }),
+//   }));
 
 // {curTaQueues && curTaQueues.length > 0 ? (
 //     curTaQueues.map((curTaQueue, index) => (

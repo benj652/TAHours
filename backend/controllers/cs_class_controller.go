@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
@@ -106,6 +107,7 @@ func CreateCSClass(c *fiber.Ctx) error {
 // queue's _id, or a 500 error if there was a problem creating the queue.
 func CreateTAQueue(c *fiber.Ctx) error {
 	taQueue := new(models.TAQueue)
+	taQueue.Date = primitive.DateTime(time.Now().UnixMilli())
 	collection := db.GetCollection(taQueue.TableName())
 	if err := c.BodyParser(&taQueue); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

@@ -2,7 +2,7 @@ import { TicketPopupAnal } from "@/components/analytics/middleCol/ticketpopupana
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { analyticsPageStore } from "@/store";
-import { DateRangeBounds, Ticket, TicketPieType } from "@/types";
+import { DateRangeBounds, NIL_OBJECT_ID, Ticket, TicketPieType } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 
@@ -55,7 +55,11 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({
 
     analyticsPageStore.getState().setTaAttenders((prev) => {
       const newSet = new Set(prev);
-      newSet.add(ticket.taId);
+      // console.log("Ticket TA ID: ", ticket?.taId.toString() !== NIL_OBJECT_ID);
+      if (ticket?.taId && ticket?.taId !== NIL_OBJECT_ID) {
+        newSet.add(ticket.taId);
+      }
+      // newSet.add(ticket.taId);
       return newSet;
     });
 
@@ -66,8 +70,8 @@ export const TicketDisplay: React.FC<TicketDisplayProps> = ({
       prevTypes.map((type) =>
         type.name === ticket.problemtype
           ? { ...type, value: type.value + 1 }
-          : type
-      )
+          : type,
+      ),
     );
 
     analyticsPageStore.getState().setRenderedTickets((prev) => prev + 1);

@@ -2,45 +2,49 @@ import { QueuePopup, Tickets } from "./queueCard";
 import CuteStar from "../../assets/star.svg";
 import { cn } from "@/utils";
 import { ActiveTas } from "./taCard";
-import { useEffect, useRef } from "react";
-import { TaQueue as TaQueueType } from "@/types";
-import { createMainPageStore, csClassStore } from "@/store";
+// import { useEffect, useRef } from "react";
+// import { TaQueue as TaQueueType } from "@/types";
+import { csClassStore, taQueueStore } from "@/store";
+import { ObjectId } from "mongodb";
 
 // create local shared store amoung these components
 // this did not work as expected as it made the store global
 // const useMainPageStore = createMainPageStore();
 
-type TaQueueProps = TaQueueType & {
-    curTaQueues: TaQueueType[] | null;
-    setTaQueues: (taQueues: TaQueueType[]) => void;
-};
+// type TaQueueProps = TaQueueType & {
+//     curTaQueues: TaQueueType[] | null;
+//     setTaQueues: (taQueues: TaQueueType[]) => void;
+// };
+
+
+type TaQueueProps = {
+    _id: ObjectId
+}
+
 export const TaQueue: React.FC<TaQueueProps> = ({
     _id,
-    directions,
-    TAs,
-    class: classId,
-    tickets,
-    curTaQueues,
-    setTaQueues,
 }) => {
     // initialize a local store with userRef
-    const storeRef = useRef(createMainPageStore());
-    const { setCurTickets, setClassId, setTaQueueId } = storeRef.current();
-    useEffect(() => {
-        setCurTickets(tickets);
-        setClassId(classId);
-        setTaQueueId(_id);
-    }, []);
+    // const storeRef = useRef(createMainPageStore());
+    // const { setCurTickets, setClassId, setTaQueueId } = storeRef.current();
+    // useEffect(() => {
+    //     setCurTickets(tickets);
+    //     setClassId(classId);
+    //     setTaQueueId(_id);
+    // }, []);
+    const { allTaQueues: curTaQueues } = taQueueStore();
+    const curTaQueue = curTaQueues?.find((taQueue) => taQueue._id === _id);
 
     // console.log(getActiveCSClassesData);
     // console.log(tas);
     const { getActiveCSClassesData } = csClassStore();
     const curCsClassName = getActiveCSClassesData?.find(
-        (csClass) => csClass._id === classId,
+        (csClass) => csClass._id === curTaQueue?.class,
     )?.name;
 
     // If there are no active TAs, the queue is inactive and should not be displayed
-    if (!TAs || TAs.length < 1) return null;
+    if (!curTaQueue) return null;
+    if (!curTaQueue.TAs || curTaQueue.TAs.length < 1) return null;
     return (
         <li>
             <div className={cn("collapse bg-gray-300 border border-base-300")}>
@@ -53,22 +57,19 @@ export const TaQueue: React.FC<TaQueueProps> = ({
                         <div className="font-semibold flex-1 text-left">
                             {curCsClassName}
                         </div>
-                        <div className="text-xs font-normal opacity-60">{directions}</div>
+                        <div className="text-xs font-normal opacity-60">{curTaQueue.directions}</div>
                     </button>
                 </div>
                 <div className="collapse-content bg-gray-300">
                     <div className="flex w-full gap-4">
                         {/* Active TAs Card */}
                         <ActiveTas
-                            tas={TAs}
-                            queueId={_id}
-                            classId={classId}
-                            curTaQueues={curTaQueues}
-                            setTaQueues={setTaQueues}
+                            queueId={curTaQueue._id}
+                            classId={curTaQueue.class}
                         />
                         {/* Current Queue */}
-                        <Tickets curStore={storeRef.current} />
-                        <QueuePopup curStore={storeRef.current} />
+                        <Tickets queueId={curTaQueue._id} curTickets={curTaQueue.tickets}/>
+                        <QueuePopup curTaQueue={curTaQueue}  />
                     </div>
                 </div>
             </div>

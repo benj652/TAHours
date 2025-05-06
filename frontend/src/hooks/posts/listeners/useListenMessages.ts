@@ -38,10 +38,14 @@ const useListenMessages = () => {
         const newMessage = JSON.parse(event.data);
         console.log("newMessage", newMessage);
         if (newMessage.type === THREAD_EVENTS.NEW_MESSAGE) {
+          // Prevents multiple renders of the same message
+          const targetName = newMessage.data.user.replace(/------.*$/, "");
+          if (targetName === userItems.firstName + " " + userItems.lastName)
+            return;
           setMessages([...(messages || []), newMessage.data]);
         } else if (newMessage.type === THREAD_EVENTS.DELETE_MESSAGE) {
           const newMessages = messages.filter(
-            (message) => message._id !== newMessage.data,
+            (message) => message._id !== newMessage.data
           );
           setMessages(newMessages);
         } else if (newMessage.type === THREAD_EVENTS.NEW_COMMENT) {
@@ -49,7 +53,11 @@ const useListenMessages = () => {
           const targetId = newMessage.data.postId;
 
           // Prevents multiple renders of the same comment
-          if(newMessage.data.user === userItems.firstName + " " + userItems.lastName) return;
+          if (
+            newMessage.data.user ===
+            userItems.firstName + " " + userItems.lastName
+          )
+            return;
           console.log(newMessage.data.comment);
           // const targetMessage = messages.find(
           const targetMessage = messages.find((post) => post._id === targetId);

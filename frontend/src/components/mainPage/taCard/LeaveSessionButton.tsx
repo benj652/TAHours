@@ -3,24 +3,28 @@ import { authStore, forceUpdateStore, taQueueStore } from "@/store";
 import { SessionButtonProps, TaQueue } from "@/types";
 import { ObjectId } from "mongodb";
 
-type ExtendedSessionButtonProps = SessionButtonProps & {
-  classId: ObjectId | undefined;
-  curTaQueues: TaQueue[] | null;
-  setTaQueues: (taQueues: TaQueue[]) => void;
-};
+// type ExtendedSessionButtonProps = SessionButtonProps & {
+//   classId: ObjectId | undefined;
+//   // curTaQueues: TaQueue[] | null;
+//   // setTaQueues: (taQueues: TaQueue[]) => void;
+// };
+
+type LeaveSessionButtonProps = {
+    classId: ObjectId | undefined;
+    taQueueId: ObjectId | undefined;
+}
 
 /**
  * This quite possibly is hte most trash file and componenet
  * in the entire project by a long shot but it is working for now
  */
-export const LeaveSessionButton: React.FC<ExtendedSessionButtonProps> = ({
+export const LeaveSessionButton: React.FC<LeaveSessionButtonProps> = ({
   classId,
   taQueueId,
-  curTaQueues,
-  setTaQueues,
 }) => {
   const { leaveTaQueue, loading } = useLeaveTaQueue();
   const { triggerRerender } = forceUpdateStore();
+    const { allTaQueues: curTaQueues, setAllTaQueues: setTaQueues } = taQueueStore();
   const { userItems } = authStore();
   const { allTaQueues } = taQueueStore();
   const handleLeaveSession = async () => {

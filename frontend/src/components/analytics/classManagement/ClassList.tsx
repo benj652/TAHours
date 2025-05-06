@@ -33,8 +33,18 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
-    setRenderedTickets(0);
-    setSelectedDates("0");
+
+        setRenderedTickets(0);
+    // setSelectedDates("0");
+        analyticsPageStore.getState().setIndividualAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
+        analyticsPageStore.getState().setTaAttenders((prev) => {
+          const newSet = new Set();
+          return newSet;
+        });
+
 
     if (csClass._id === selectedClass?._id) {
       setSelectedClass(null);

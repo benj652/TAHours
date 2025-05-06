@@ -1,7 +1,7 @@
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
-import { authStore } from "@/store";
-import { MainPageStoreProps, Modals, PopUpTypes, Role } from "@/types";
+import { authStore, mainPageStore } from "@/store";
+import {  Modals, PopUpTypes, Role } from "@/types";
 import { NIL_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
@@ -11,15 +11,19 @@ import { useEffect } from "react";
 //     setTicketOpen: React.Dispatch<React.SetStateAction<boolean>>;
 //     setPopupType: React.Dispatch<React.SetStateAction<string>>;
 // };
-type TicketProps = MainPageStoreProps & {
-  ticketId: ObjectId;
-  // inactiveTicekts: number;
-  // setInactiveTickets: React.Dispatch<React.SetStateAction<number>>;
-};
+// type TicketProps = MainPageStoreProps & {
+//   ticketId: ObjectId;
+//   // inactiveTicekts: number;
+//   // setInactiveTickets: React.Dispatch<React.SetStateAction<number>>;
+// };
+type TicketProps = {
+    ticketId: ObjectId;
+    taQueueId: ObjectId;
+}
 
 export const Ticket: React.FC<TicketProps> = ({
   ticketId,
-  curStore,
+    taQueueId,
   // inactiveTicekts,
   // setInactiveTickets,
 }) => {
@@ -28,29 +32,33 @@ export const Ticket: React.FC<TicketProps> = ({
   const { ticket, getTicket, loading: ticketLoading } = useGetTicket();
   const { user, loading: userLoading, getUser } = useGetUser();
   const { userItems } = authStore();
-  const rolePerm =
+  const unauthorized =
     userItems.roles !== Role.Ta &&
     userItems.roles !== Role.Admin &&
     userItems.roles !== Role.Professor;
-  const {
-    taQueueId,
-    setCurTicket,
-    setIsExpanded: setTicketOpen,
-    setCurrentPopUpType: setPopupType,
-    curTicket,
-  } = curStore();
+  // const {
+  //   taQueueId,
+  //   setCurTicket,
+  //   setIsExpanded: setTicketOpen,
+  //   setCurrentPopUpType: setPopupType,
+  //   curTicket,
+  // } = curStore();
 
+  
+
+    const { setCurTicket, setCurrentPopUpType: setPopupType } = mainPageStore();
   //function to handle the click of the resolve button
   //this function will set the ticket open to true and the popup type to resolve ticket
   //this will open the resolve ticket popup
   const handleClick = async () => {
-    if (rolePerm) {
+    if (unauthorized && ticket?.studentId !== userItems._id) {
       //toast.error("You do not have permission to view this ticket");
       return;
     }
-    setTicketOpen(true);
+    // setTicketOpen(true);
     setCurTicket(ticket);
     setPopupType(PopUpTypes.ResolveTicket);
+
     document.getElementById(`${Modals.QueuePopup}${taQueueId}`).showModal();
     // <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}>open modal</button>
   };
@@ -92,11 +100,12 @@ export const Ticket: React.FC<TicketProps> = ({
     return null;
   }
   // if the ticket is loading, return a loading div otherwise, this is the ticket component
-  if (ticketLoading) return <div>Loading...</div>;
+  if (ticketLoading || userLoading) return <div>Loading...</div>;
   return (
     <li
       className={`p-4 flex items-center gap-4 bg-gray-300 rounded-lg mb-2 ${
-        !rolePerm && "hover:cursor-pointer hover:bg-gray-200"
+        (!unauthorized || ticket?.studentId == userItems._id) &&
+        "hover:cursor-pointer hover:bg-gray-200"
       }`}
       onClick={handleClick}
     >
