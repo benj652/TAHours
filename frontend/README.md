@@ -15,11 +15,11 @@
 ## General Workflow
 
 - The Frontend makes API requests to the backend. It than caches the response in a store.
-- On WebSocket events (most on the main page are handled in `frontend/src/hooks/general/useListenMainPage.ts`, the app updates these caches directly.
+- On websocket events (most on the main page are handled in `frontend/src/hooks/general/useListenMainPage.ts`, the app updates these caches directly.
 
 ## Running
 
-Node and [npm](https://www.npmjs.com/) are required to run this micro service.
+Node and [npm](https://www.npmjs.com/) are required to run this microservice.
 
 - To run in development mode:
 
@@ -38,9 +38,10 @@ npm run preview
 
 Although for production, the `.env` variables are **entirely handled in secrets**, they are listed as:
 
--
--
--
+- `VITE_OAUTH_CLIENT` which is the OUTH client URI provided by google.
+- `VITE_RUN_MODE` which can be set to either `"production"` or `"development"`.
+
+Note that there should be more `.env` variables like for the DNS the project is running on, but at this moment we are at the end of the semester so those values are just hardcoded.
 
 ## File Structure
 
