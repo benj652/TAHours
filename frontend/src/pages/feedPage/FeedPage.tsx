@@ -1,3 +1,25 @@
+/*
+ * FeedPage.tsx
+ *
+ * This file is just for the thread.
+ */
+
+// .------\ /------.
+// |       -       |
+// |               |
+// |               |
+// |               |
+// _______________________
+// ===========.===========
+// / ~~~~~     ~~~~~ \
+// /|     |     |\
+// W   ---  / \  ---   W
+// \.      |o o|      ./
+// |                 |
+// \    #########    /
+// \  ## ----- ##  /
+//  \##         ##/
+//   \_____v_____/
 import { Posts, WritePost } from "@/components";
 import { useGetAllPosts } from "@/hooks/posts/useGetAllPosts";
 import { useEffect } from "react";
