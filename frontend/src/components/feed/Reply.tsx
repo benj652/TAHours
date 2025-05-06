@@ -1,13 +1,11 @@
+//reply.tsx component representing a single reply
+
 import { Comment, ReplyProps } from "@/types";
 
 type ExtendedReplyProps = ReplyProps & {
   reply: Comment;
 };
-export const Reply: React.FC<ExtendedReplyProps> = ({
-  reply,
-  comments,
-  setComments,
-}) => {
+export const Reply: React.FC<ExtendedReplyProps> = ({ reply }) => {
   return (
     <div className="chat chat-end">
       <div className="chat-image avatar">

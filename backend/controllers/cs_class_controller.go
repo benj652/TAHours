@@ -271,6 +271,40 @@ func SetActive(c *fiber.Ctx) error {
 	})
 }
 
+// DeactivateClass sets the "isactive" field of a class to false.
+// It expects the class ID as a URL parameter. Returns 200 on success,
+// 400 if the ID is invalid or not found, and 500 if there's an update error.
+func DeactivateClass(c *fiber.Ctx) error {
+	id := c.Params("id")
+	classId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID: " + err.Error(),
+		})
+	}
+
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	filter := bson.M{"_id": classId}
+	update := bson.M{"$set": bson.M{"isactive": false}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to deactivate class: " + err.Error(),
+		})
+	}
+
+	if result.MatchedCount == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Class not found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Class deactivated",
+	})
+}
+
 // GetActiveClasses retrieves all active classes from the database and returns them
 // as a JSON response. An active class is a class that has at least one TA queue
 // marked as active. If there are no active classes, the function returns an

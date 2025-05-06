@@ -1,9 +1,11 @@
+
 /*
  * AddClassForm.tsx
  * Form to add a new class
  * First you enter fields and then click create class
  * Then you get a popup confirming the information and you can create or close
  */
+
 
 import { useCreateCSClass } from "@/hooks";
 import { Modals, SEMESTER_NAMES } from "@/types";
@@ -45,7 +47,7 @@ export const AddClassForm = () => {
     <>
       {/* Add class form */}
       <form
-        onSubmit={handleCreate}
+        onSubmit={handleCreate} //creates the class on submit
         className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md"
       >
         {/* Form title */}
@@ -55,7 +57,7 @@ export const AddClassForm = () => {
           type="text"
           placeholder="Class Name"
           className="w-full p-2 mb-2 border-base-200 rounded-md bg-base-200"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)} // automatically changes the class name when form is clicked off of
         />
         {/* Semester and year selection */}
         <div className="flex gap-2">

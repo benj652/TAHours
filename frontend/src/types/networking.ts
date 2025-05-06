@@ -39,6 +39,7 @@ export enum CsClassRoutes {
   CreateTaQueue = `${csClassBase}/create-ta-queue`,
   SetActiveClass = `${csClassBase}/set-active/`,
   GetCsClass = `${csClassBase}/one/`,
+  DeactivateClass = `${csClassBase}/deactivate/`,
 }
 
 export enum TaQueueRoutes {
