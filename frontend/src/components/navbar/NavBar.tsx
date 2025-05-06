@@ -1,3 +1,8 @@
+/*
+ * NavBar.tsx
+ * This file contains the navbar component
+ * It is a navigation bar that allows the user to navigate between pages
+ */
 import { useLogout } from "@/hooks";
 import { authStore } from "@/store";
 import { RolesConfig, Routes } from "@/types";
@@ -7,6 +12,14 @@ import ColbySeal from "../../assets/colbyseal.svg";
 import ColbyText from "../../assets/colbytext.svg";
 import NavBarButton from "./NavBarButton";
 
+/**
+ * NavBar component provides a navigation bar for the application.
+ * It displays different navigation options based on the user's role.
+ * The navigation options include links to Main, Profile, Feed, and Analytics pages.
+ * The component also includes a logout button to allow users to log out.
+ * The navigation options are conditionally rendered based on the user's role.
+ */
+
 export const NavBar = () => {
   const location = useLocation();
   const { logout } = useLogout();
@@ -14,6 +27,12 @@ export const NavBar = () => {
   const { userItems } = authStore();
   const userRole = userItems?.roles;
 
+  /**
+   * Helper function to conditionally render a navbar button based on the user's role
+   * @param role - the role of the user
+   * @param allowedRoles - an array of allowed roles
+   * @returns true if the button should be rendered, false otherwise
+   */
   const renderButton = (role: string, allowedRoles: string[]): boolean => {
     return allowedRoles.includes(role);
   };
