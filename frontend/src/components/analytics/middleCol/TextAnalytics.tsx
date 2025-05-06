@@ -1,17 +1,21 @@
+/*
+ * TextAnalytics.tsx
+ * This file contains the text analytics component
+ * It shows analytics of past TA HOUR sessions
+ */
+
 import useGetClassQueues from "@/hooks/taQueue/useGetClassQueues";
 import { analyticsPageStore } from "@/store";
 import { TaQueue } from "@/types";
 import { formatDateRange, getDateRangeBounds } from "@/utils";
 import { useEffect, useState } from "react";
 
-/**
- * This component shows analytics of past TA HOUR sessions
- */
-
 export const TextAnalytics = () => {
+  // access analytics page store
   const { selectedClass, selectedDates, renderedTickets } =
     analyticsPageStore();
 
+  // get analytics
   const [curTaQueues, setCurTaQueues] = useState<TaQueue[]>([]);
   const individualAttenders = analyticsPageStore((s) => s.individualAttenders);
   const taAttenders = analyticsPageStore((s) => s.taAttenders);
@@ -26,7 +30,8 @@ export const TextAnalytics = () => {
     curTaQueues && curTaQueues.length > 0
       ? curTaQueues.filter(
           (taQueue) =>
-            new Date(taQueue.date || 0).getDate() > dateRangeBounds.startDate.getTime(),
+            new Date(taQueue.date || 0).getDate() >
+            dateRangeBounds.startDate.getTime()
         ).length
       : 0;
   // console.log("Session Count: ", sessionCount);
@@ -62,6 +67,7 @@ export const TextAnalytics = () => {
   }, [selectedClass]);
 
   return (
+    // Display analytics
     <div className="bg-gray-300 p-4 rounded-md space-y-4">
       <p>
         Dates:{" "}

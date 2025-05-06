@@ -1,3 +1,8 @@
+/* TicketQueue.tsx
+ * This file contains the ticket queue component
+ * It shows the tickets from the selected class
+ * It is a list of tickets from TicketDisplay
+ */
 import { analyticsPageStore } from "@/store";
 import { getDateRangeBounds } from "@/utils";
 import TicketDisplay from "./TicketDisplay";
@@ -10,6 +15,7 @@ export const TicketQueue = () => {
 
   // console.log(tickets);
   return (
+    // displays the ticket queue
     <div className="bg-gray-300 rounded-lg p-4 shadow-lg">
       <ul className="list-none w-full space-y-2">
         {tickets && tickets.length > 0 ? (

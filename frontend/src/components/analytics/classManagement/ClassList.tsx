@@ -1,3 +1,11 @@
+/*
+ * ClassList.tsx
+ * Lists classes currently in the database
+ * User can click on a class to see its queues
+ * Information on the selected class is displayed in the middle column
+ * User can add a new class, using AddClassForm
+ * Class deletion is not yet implemented
+ */
 import { useGetActiveClasses } from "@/hooks";
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass, PROBLEM_TYPES } from "@/types";
@@ -19,13 +27,14 @@ export const ClassList = () => {
   //   }
   // }, []);
 
+  // access analytics page store
   const {
     selectedClass,
     setSelectedClass,
     setSelectedClassQueues,
     setTicketTypes,
-        setSelectedDates,
-        setRenderedTickets,
+    setSelectedDates,
+    setRenderedTickets,
   } = analyticsPageStore();
 
   // const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
@@ -40,17 +49,16 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
-        setRenderedTickets(0);
+    setRenderedTickets(0);
     // setSelectedDates("0");
-        analyticsPageStore.getState().setIndividualAttenders((prev) => {
-          const newSet = new Set();
-          return newSet;
-        });
-        analyticsPageStore.getState().setTaAttenders((prev) => {
-          const newSet = new Set();
-          return newSet;
-        });
-
+    analyticsPageStore.getState().setIndividualAttenders((prev) => {
+      const newSet = new Set();
+      return newSet;
+    });
+    analyticsPageStore.getState().setTaAttenders((prev) => {
+      const newSet = new Set();
+      return newSet;
+    });
 
     if (csClass._id === selectedClass?._id) {
       // setAnimatingClass(csClass);

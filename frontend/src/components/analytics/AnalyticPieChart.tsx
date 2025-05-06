@@ -1,6 +1,12 @@
+/*
+ * AnalyticPieChart.tsx
+ * This file contains the analytic pie chart component
+ * It shows a pie chart of the common problem types
+ */
 import { analyticsPageStore } from "@/store";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
+// defines the colors for the pie chart these are colorblind friendly
 const COLORS = [
   "#ff7300",
   "#387908",
@@ -11,12 +17,14 @@ const COLORS = [
   "#FF8042",
 ];
 
+// defines the AnalyticPieChart component
 export const AnalyticPieChart = () => {
   const { ticketTypes = [] } = analyticsPageStore();
 
   const hasData = Array.isArray(ticketTypes) && ticketTypes.length > 0;
 
   return (
+    // html for the analytic pie chart
     <div className="w-full max-w-md mx-auto">
       <h2 className="text-center text-lg font-semibold mb-4">
         Common Problem Types
