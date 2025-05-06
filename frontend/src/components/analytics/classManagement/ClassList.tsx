@@ -1,3 +1,4 @@
+// ClassList.tsx A list of Active CS classes
 import { useDeactivateClass, useGetActiveClasses } from "@/hooks";
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass, PROBLEM_TYPES } from "@/types";
@@ -8,7 +9,7 @@ import { AddClassForm } from "./AddClassForm";
 export const ClassList = () => {
   const { getActiveClasses } = useGetActiveClasses();
   const { getActiveCSClassesData } = csClassStore();
-  const { deactivateClass } = useDeactivateClass(); // <- new hook usage
+  const { deactivateClass } = useDeactivateClass(); // function to remove class from the Class List
 
   useEffect(() => {
     getActiveClasses();
@@ -51,7 +52,7 @@ export const ClassList = () => {
   const handleDeactivate = (csClass: CSClass) => {
     if (confirm(`Are you sure you want to deactivate ${csClass.name}?`)) {
       deactivateClass(csClass._id);
-    }
+    } // dectivated classes will be stored in the database and can be queried directly
   };
 
   return (
