@@ -1,31 +1,35 @@
-import { authStore, forceUpdateStore } from "@/store";
-import { TaQueue } from "@/types";
+import { authStore, taQueueStore } from "@/store";
+// import { TaQueue } from "@/types";
 import { ObjectId } from "mongodb";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { ActiveTa } from "./ActiveTa";
 import { JoinSessionButton } from "./JoinSessionButton";
 import { LeaveSessionButton } from "./LeaveSessionButton";
 
 type ActiveTasProps = {
-    tas: ObjectId[];
+    // tas: ObjectId[];
     queueId: ObjectId | undefined;
     classId: ObjectId | undefined;
-    curTaQueues: TaQueue[] | null;
-    setTaQueues: (taQueues: TaQueue[]) => void;
+    // curTaQueues: TaQueue[] | null;
+    // setTaQueues: (taQueues: TaQueue[]) => void;
 };
 
 
 export const ActiveTas: React.FC<ActiveTasProps> = ({
-    tas,
+    // tas,
     queueId,
     classId,
-    curTaQueues,
-    setTaQueues,
+    // curTaQueues,
+    // setTaQueues,
 }) => {
     const { userItems } = authStore();
+    const { allTaQueues } = taQueueStore();
+    const curTaQueue = allTaQueues?.find((taQueue) => taQueue._id === queueId);
+    const tas = curTaQueue?.TAs;
 
-    const userInSession = tas.filter((taId) => taId === userItems?._id);
-
+    const userInSession = tas?.filter((taId) => taId === userItems?._id);
+    if (!curTaQueue) return null;
+    if (!tas || tas.length < 1) return null;
     return (
         <div className="bg-base-100 rounded-lg shadow-lg p-4 w-1/4 min-w-[100px] self-start">
             <h1 className="text-lg font-bold">Active TAs</h1>
@@ -36,18 +40,14 @@ export const ActiveTas: React.FC<ActiveTasProps> = ({
                     <p>No Active TAs</p>
                 )}
             </ul>
-            {userInSession.length > 0 ? (
+            {userInSession && userInSession.length > 0 ? (
                 <LeaveSessionButton
                     taQueueId={queueId}
                     classId={classId}
-                    setTaQueues={setTaQueues}
-                    curTaQueues={curTaQueues}
                 />
             ) : (
                 <JoinSessionButton
                     taQueueId={queueId}
-                    curTaQueues={curTaQueues}
-                    setTaQueues={setTaQueues}
                 />
             )}
         </div>

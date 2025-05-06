@@ -123,7 +123,7 @@ func BroadcastJSONToAll(messageType string, data interface{}) {
 }
 
 // Send JSON message to a specific user
-func BroadcastJSONToUser(userId string, data interface{}) {
+func BroadcastJSONToUser(userId string, messageType string, data interface{}) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -133,8 +133,13 @@ func BroadcastJSONToUser(userId string, data interface{}) {
 		return
 	}
 
+	payload := map[string]interface{}{
+		"type": messageType,
+		"data": data,
+	}
+
 	for _, conn := range connections {
-		if err := conn.WriteJSON(data); err != nil {
+		if err := conn.WriteJSON(payload); err != nil {
 			log.Println("Error broadcasting JSON to user:", err)
 		}
 	}

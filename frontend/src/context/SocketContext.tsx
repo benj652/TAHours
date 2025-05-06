@@ -41,7 +41,7 @@ export const SocketContextProvider = ({
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const { userItems: authUser } = authStore();
 
-  const MODE = import.meta.env.RUN_MODE || "production";
+  const MODE = import.meta.env.VITE_RUN_MODE || "production";
   useEffect(() => {
     if (authUser) {
       const canSeeThread =

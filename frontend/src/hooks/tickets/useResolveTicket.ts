@@ -1,5 +1,5 @@
 import { authStore, ticketStore } from "@/store";
-import { Role, Roles, TicketRoutes } from "@/types";
+import { Role, TicketRoutes } from "@/types";
 import { RANDOM_OBJECT_ID } from "@/types/misc";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
@@ -26,7 +26,7 @@ export const useResolveTicket = () => {
       if (!problemType) throw new Error("Problem type is required");
       const role = userItems.roles;
       if (role !== Role.Ta && role !== Role.Professor && role !== Role.Admin) {
-         throw new Error("You do not have permission to resolve tickets");
+        throw new Error("You do not have permission to resolve tickets");
       }
 
       // Send a request to the server

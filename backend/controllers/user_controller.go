@@ -6,10 +6,12 @@ import (
 
 	"github.com/benj-652/TAHours/db"
 	"github.com/benj-652/TAHours/models"
+	"github.com/benj-652/TAHours/socket"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var roles = models.RolesConfig()
@@ -216,14 +218,26 @@ func ChangeDescription(c *fiber.Ctx) error {
 	// Prepare the update operation
 	update := bson.M{"$set": bson.M{"description": description.Description}}
 
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	var updatedUser models.User
+
 	// Update the user in the database
-	_, err = collection.UpdateOne(context.Background(), filter, update)
+	// _, err = collection.UpdateOne(context.Background(), filter, update)
+	err = collection.FindOneAndUpdate(context.Background(), filter, update, opts).Decode(&updatedUser)
+	// fmt.Println(updatedUser)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update user description",
 		})
 	}
 
+
+	payload := map[string]interface{}{
+		"updatedUser": updatedUser,
+	}
+
+	socket.BroadcastJSONToAll(models.USER_CHANGE_DESCRIPTION_EVENT ,payload)
 	// Return a success response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User description updated successfully",
@@ -344,6 +358,14 @@ func UpdateRoleTA(c *fiber.Ctx) error {
 			"message": "Failed to update user" + err.Error(),
 		})
 	}
+
+
+	payload := map[string]interface{}{
+		"newRole": roles.Ta,
+	}
+
+	socket.BroadcastJSONToUser(id, models.USER_ROLE_CHANGE_EVENT,payload)
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})
@@ -408,6 +430,13 @@ func UpdateRoleStudent(c *fiber.Ctx) error {
 			"message": "Failed to update user" + err.Error(),
 		})
 	}
+
+
+	payload := map[string]interface{}{
+		"newRole": roles.Student,
+	}
+
+	socket.BroadcastJSONToUser(id, models.USER_ROLE_CHANGE_EVENT,payload)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})
@@ -470,6 +499,14 @@ func UpdateRoleProfessor(c *fiber.Ctx) error {
 			"message": "Failed to update user",
 		})
 	}
+
+
+	payload := map[string]interface{}{
+		"newRole": roles.Professor,
+	}
+
+	socket.BroadcastJSONToUser(id, models.USER_ROLE_CHANGE_EVENT,payload)
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User updated successfully",
 	})

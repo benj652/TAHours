@@ -1,20 +1,31 @@
-import { MainPageStoreProps, Modals, PopUpTypes } from "@/types";
+import { mainPageStore } from "@/store";
+import {  Modals, PopUpTypes } from "@/types";
+import { ObjectId } from "mongodb";
 
 // type ExpandQueueProps = QueueProps & {
 //     setPopupType: React.Dispatch<React.SetStateAction<string>>;
 // }
-export const AddTicketButton: React.FC<MainPageStoreProps> = ({ curStore }) => {
-    const {
-        taQueueId,
-        setIsExpanded,
-        setCurrentPopUpType: setPopupType,
-    } = curStore();
+
+type AddTicketButtonProps = {
+    taQueueId: ObjectId | undefined;
+}
+export const AddTicketButton: React.FC<AddTicketButtonProps>= ({
+    taQueueId,
+}) => {
+    // const {
+    //     taQueueId,
+    //     setIsExpanded,
+    //     setCurrentPopUpType: setPopupType,
+    // } = curStore();
+    const {setCurrentPopUpType: setPopupType} = mainPageStore();
     const handleClick = async () => {
-        setIsExpanded(true);
+        // setIsExpanded(true);
+        // console.log(taQueueId);
         setPopupType(PopUpTypes.AddTicket);
         document.getElementById(`${Modals.QueuePopup}${taQueueId}`).showModal();
     };
 
+    if(!taQueueId) return null;
     return (
         <button
             onClick={handleClick}
