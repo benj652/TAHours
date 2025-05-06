@@ -1,3 +1,4 @@
+//writereply.tsx input box to write replies under a post
 import { useCreateComment } from "@/hooks/posts/useCreateComment";
 import { threadStore } from "@/store";
 import { ReplyProps } from "@/types";

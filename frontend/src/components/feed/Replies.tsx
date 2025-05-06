@@ -1,7 +1,16 @@
+//replies.tsx component representing all replies under a post
 import { Reply, WriteReply } from "@/components";
 import { ReplyProps } from "@/types";
 import { cn } from "@/utils";
 import { ObjectId } from "mongodb";
+
+/**
+ * A component that represents all replies under a post
+ * @param id the id of the post being replied to
+ * @param comments all existing replies under the post
+ * @param setComments a function to update the replies
+ * @returns A complete set of replies under a post w/ a form to write a new reply
+ */
 
 type ExtendedReplyProps = ReplyProps & {
   id: ObjectId | undefined;

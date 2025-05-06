@@ -12,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-
 // GetCSClass retrieves a CS class from the database using the class ID provided
 // as a URL parameter. The function expects the :id parameter to be a valid MongoDB
 // ObjectID. Returns a JSON response with the CS class if found, or an error
@@ -239,6 +238,40 @@ func SetActive(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Set active",
+	})
+}
+
+// DeactivateClass sets the "isactive" field of a class to false.
+// It expects the class ID as a URL parameter. Returns 200 on success,
+// 400 if the ID is invalid or not found, and 500 if there's an update error.
+func DeactivateClass(c *fiber.Ctx) error {
+	id := c.Params("id")
+	classId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid class ID: " + err.Error(),
+		})
+	}
+
+	collection := db.GetCollection((&models.CSClass{}).TableName())
+	filter := bson.M{"_id": classId}
+	update := bson.M{"$set": bson.M{"isactive": false}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to deactivate class: " + err.Error(),
+		})
+	}
+
+	if result.MatchedCount == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Class not found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Class deactivated",
 	})
 }
 

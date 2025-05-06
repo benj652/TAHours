@@ -1,12 +1,18 @@
+//writepost.tsx input box to write posts
 import { useCreatePost } from "@/hooks/posts/useCreatePost";
 import { threadStore } from "@/store";
 import { Send } from "lucide-react";
 import { useState } from "react";
 
-// type WritePostProps = {
-//     posts: Post[] | null;
-//     setPosts: React.Dispatch<React.SetStateAction<Post[] | null>>;
-// };
+/**
+ * A component for writing a post
+ * @param comments The current comments on the post
+ * @param setPostBody A function to set the text of the post
+ * @param createPost A function to send post to backend
+ * @param setPosts A function to update thread
+ * @returns A form component for writing a post
+ */
+
 export const WritePost: React.FC = () => {
   const { data: posts, setData: setPosts } = threadStore();
   const [postBody, setPostBody] = useState<string>("");
@@ -20,7 +26,7 @@ export const WritePost: React.FC = () => {
       setPosts([newPost]);
       return;
     }
-    setPosts([...posts, newPost]);
+    setPosts([...posts, newPost]); //adds post to thread
     setData([...(data || []), newPost]);
     setPostBody("");
   };
