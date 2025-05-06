@@ -1,3 +1,8 @@
+/*
+ * TicketPopup.tsx
+ * This file contains the ticket popup component
+ * It shows the ticket details
+ */
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { Modals, Ticket } from "@/types";
 import { X } from "lucide-react";
@@ -9,6 +14,12 @@ interface TicketPopupProps {
   onClose: () => void;
 }
 
+/**
+ * TicketPopup component
+ * Shows the ticket details
+ * @param {TicketPopupProps} props - The props for the TicketPopup component
+ * @returns {JSX.Element} - The TicketPopup component
+ */
 export const TicketPopup: React.FC<TicketPopupProps> = ({
   ticket,
   isOpen,

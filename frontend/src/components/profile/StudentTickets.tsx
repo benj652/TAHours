@@ -1,3 +1,9 @@
+/*
+ * StudentTickets.tsx
+ * This file contains the student tickets component
+ * It shows the tickets the user has created
+ * It is a list of tickets which can be accessed with TicketPopup
+ */
 import { authStore } from "@/store";
 import { Ticket } from "@/types";
 import { useState } from "react";
@@ -7,14 +13,30 @@ interface StudentTicketsProps {
   tickets: Ticket[];
 }
 
+/**
+ * StudentTickets component
+ * Shows the tickets the user has created
+ * It is a list of tickets which can be accessed with TicketPopup
+ * @param {StudentTicketsProps} props
+ * @returns {JSX.Element}
+ */
 export const StudentTickets: React.FC<StudentTicketsProps> = ({ tickets }) => {
   const { userItems } = authStore();
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
+  /**
+   * Handles opening the ticket popup when a ticket is clicked
+   * Sets selected ticket to the clicked ticket
+   * @param {Ticket} ticket - The ticket that was clicked
+   */
   const handleOpenPopup = (ticket: Ticket) => {
     setSelectedTicket(ticket); // Sets selected ticket on click
   };
 
+  /**
+   * Handles closing the ticket popup
+   * Resets selected ticket to null
+   */
   const handleClosePopup = () => {
     setSelectedTicket(null); // Close popup when onClose is triggered
   };
