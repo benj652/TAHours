@@ -1,10 +1,16 @@
+/*
+ * RoleChangePopup.tsx
+ * This file contains the role change popup component
+ * It is a popup that allows the user to change the role of a user
+ */
 import { useUpdateRoleTA } from "@/hooks";
 import { useUpdateRoleProfessor } from "@/hooks/user/updateRoleHooks/useUpdateRoleProfessor";
 import { useUpdateRoleStudent } from "@/hooks/user/updateRoleHooks/useUpdateRoleStudent";
 import { authStore } from "@/store";
-import {  Modals, RolesConfig, User } from "@/types";
+import { Modals, RolesConfig, User } from "@/types";
 import { useEffect, useState } from "react";
 
+// defines the props for the RoleChangePopup component
 type RoleChangePopupProps = {
   selected: User;
 };

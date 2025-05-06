@@ -1,14 +1,21 @@
+/*
+ * TicketPopup.tsx
+ * This file contains the ticket popup component for the analytics page
+ * It shows the ticket details
+ */
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { Modals, Ticket } from "@/types";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+// defines the props for the TicketPopup component
 interface TicketPopupProps {
   ticket: Ticket;
   isOpen: boolean;
   onClose: () => void;
 }
 
+// defines the TicketPopup component
 export const TicketPopupAnal: React.FC<TicketPopupProps> = ({
   ticket,
   isOpen,
@@ -36,6 +43,7 @@ export const TicketPopupAnal: React.FC<TicketPopupProps> = ({
   }, [ticket?.taId, ticket?.studentId, getUser]);
 
   return (
+    // displays the ticket popup
     <dialog
       id={`${Modals}${ticket._id}`}
       className={`modal ${isOpen ? "modal-open" : ""}`}

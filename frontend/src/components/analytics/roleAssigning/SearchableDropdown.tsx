@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+/*
+ * SearchableDropdown.tsx
+ * This file contains the searchable dropdown component
+ * It is a dropdown that allows the user to search for a user
+ */
 import { useGetAllUsers } from "@/hooks";
 import { Modals, PLACEHOLER_USER, User } from "@/types";
+import { useEffect, useState } from "react";
 import { RoleChangePopup } from "./RoleChangePopup";
 
+// defines the props for the SearchableDropdown component
 interface SearchableDropdownProps {
   // onSelect: (option: string) => void;
   placeholder?: string;
 }
 
+// The SearchableDropdown component
 export const SearchableDropdown = ({
   placeholder = "Search...",
 }: SearchableDropdownProps) => {
@@ -29,12 +36,12 @@ export const SearchableDropdown = ({
         option.firstName.toLowerCase() +
         " " +
         option.lastName.toLowerCase()
-      ).includes(search.toLowerCase()),
+      ).includes(search.toLowerCase())
   );
 
   const handleClick = async (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    option: User,
+    option: User
   ) => {
     e.preventDefault();
     setSelected(option);
@@ -47,6 +54,7 @@ export const SearchableDropdown = ({
     return <div>Loading...</div>;
   }
   return (
+    // html
     <div className="relative w-64">
       <input
         type="text"

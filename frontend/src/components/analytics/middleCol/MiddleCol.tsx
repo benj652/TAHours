@@ -1,11 +1,18 @@
+/*
+ * middleCol.tsx
+ * This file contains the middle column of the analytics page
+ * The middle column contains all of the analytics components
+ * It has a search filter (time), text analytics (stats and stuff), and shows detailed tickets from the selected class
+ */
+
+import { useGetAllTaQueues } from "@/hooks";
 import { analyticsPageStore, taQueueStore } from "@/store";
+import { PROBLEM_TYPES } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
 import { SearchFilter } from "./SearchFilter";
 import { TextAnalytics } from "./TextAnalytics";
 import { TicketQueue } from "./TicketQueue";
-import { PROBLEM_TYPES } from "@/types";
-import { useGetAllTaQueues } from "@/hooks";
 
 export const MiddleCol: React.FC = () => {
   const {
@@ -55,7 +62,7 @@ export const MiddleCol: React.FC = () => {
     }
 
     const selectedTaQueues = allTaQueues?.filter(
-      (taQueue) => taQueue.class === selectedClass._id,
+      (taQueue) => taQueue.class === selectedClass._id
     );
     if (!selectedTaQueues) return;
 

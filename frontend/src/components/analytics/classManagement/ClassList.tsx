@@ -1,5 +1,16 @@
-// ClassList.tsx A list of Active CS classes
+
+
 import { useDeactivateClass, useGetActiveClasses } from "@/hooks";
+
+/*
+ * ClassList.tsx
+ * Lists classes currently in the database
+ * User can click on a class to see its queues
+ * Information on the selected class is displayed in the middle column
+ * User can add a new class, using AddClassForm
+ * Class deletion is not yet implemented
+ */
+
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass, PROBLEM_TYPES } from "@/types";
 import { useEffect } from "react";
@@ -14,6 +25,7 @@ export const ClassList = () => {
   useEffect(() => {
     getActiveClasses();
   }, []);
+
 
   const {
     selectedClass,
@@ -34,6 +46,7 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
+
 
     setRenderedTickets(0);
     // setSelectedDates("0");
