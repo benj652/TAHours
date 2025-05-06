@@ -1,3 +1,26 @@
+/*
+* AnalyticsPage.tsx
+* 
+* This file contains the AnalyticsPage component which is the main page for analytics.
+* very cool I know.
+*
+*    .------\ /------.
+*  |       -       |
+*   |               |
+*   |               |
+*   |               |
+* _______________________
+* ===========.===========
+*  / ~~~~~     ~~~~~ \
+*  /|     |     |\
+*  W   ---  / \  ---   W
+*  \.      |o o|      ./
+*  |                 |
+*   \    #########    /
+*  \  ## ----- ##  /
+*   \##         ##/
+*     \_____v_____/
+ */
 import { AnalyticPieChart, ClassList, SearchableDropdown } from "@/components";
 import { MiddleCol } from "@/components/analytics/middleCol";
 

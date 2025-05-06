@@ -1,8 +1,15 @@
+/*
+ * ProfilePage.tsx
+ *
+ * Profile page for the TA Queue application.
+ */
 import { StudentTickets } from "@/components";
 import { useUpdateUserDesc, useUserTickets } from "@/hooks";
 import { authStore } from "@/store";
 import { useEffect, useState } from "react";
 
+// Some random mock data used for testing. Now we use this as data in case there is
+// missing data, such as a profile pic.
 const bruh = {
   userName: "glasses emoji",
   userEmail: "glassesemoji@gmail.com",
@@ -18,24 +25,41 @@ const bruh = {
   ],
 };
 
+/*
+ * ProfilePage component
+ * This component displays the user's profile information and their tickets.
+ * It includes a profile card with the user's name, email, role, and outfit,
+ * as well as a list of tickets.
+ */
 export const ProfilePage: React.FC = () => {
-  const { userItems } = authStore();
-  const { loading: descLoading, error, updateUserDesc } = useUpdateUserDesc();
-  const { userTickets, tickets, loading: ticketsLoading } = useUserTickets();
-  const [outfit, setOutfit] = useState(userItems.description);
+  const { userItems } = authStore(); // Get the user items from the auth store
+  const { loading: descLoading, error, updateUserDesc } = useUpdateUserDesc(); // unpack the update user desc hook
+  const { userTickets, tickets, loading: ticketsLoading } = useUserTickets(); //  unpack the user tickets hook
+  const [outfit, setOutfit] = useState(userItems.description); // State to track the user's outfit
 
+  // Effect to set the initial outfit state when userItems changes
   useEffect(() => {
     if (userItems?._id) {
       userTickets(userItems._id);
     }
   }, [userItems?._id]);
 
+  /*
+   * Function to handle changes to the outfit input field.
+   *
+   * When the user types in the input field, this function updates the outfit state.
+   */
   const handleOutfitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOutfit(e.target.value);
   };
 
+  /*
+   * Function to handle when the outfit input field loses focus.
+   *
+   * So when the user clicks off the outfit thing, this happens
+   */
   const handleOutfitBlur = async () => {
-    if (userItems?._id) {
+    if (userItems?._id && outfit) {
       await updateUserDesc(userItems._id, outfit);
     }
     userItems.description = outfit;

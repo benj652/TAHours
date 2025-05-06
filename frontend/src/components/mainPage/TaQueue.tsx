@@ -18,7 +18,7 @@ import { ObjectId } from "mongodb";
 
 
 type TaQueueProps = {
-    _id: ObjectId
+    _id: ObjectId | undefined;
 }
 
 export const TaQueue: React.FC<TaQueueProps> = ({
@@ -43,6 +43,7 @@ export const TaQueue: React.FC<TaQueueProps> = ({
     )?.name;
 
     // If there are no active TAs, the queue is inactive and should not be displayed
+    if (!_id) return null;
     if (!curTaQueue) return null;
     if (!curTaQueue.TAs || curTaQueue.TAs.length < 1) return null;
     return (
