@@ -4,10 +4,34 @@ import { ObjectId } from "mongodb";
 import { useState } from "react";
 import { toast } from "sonner";
 
+/**
+ * A hook to get all TA queues for a given class ID
+ *
+ * @returns An object containing a function to get the TA queues, a boolean indicating if the request is loading, and a string indicating the error message
+ *
+ * @example
+ * const { getClassQueues, loading, error } = useGetClassQueues();
+ * useEffect(() => {
+ *   getClassQueues("classId123");
+ * }, []);
+ */
 const useGetClassQueues = () => {
   const [loading, setLoading] = useState<boolean>(true); // loading state
   const [error, setError] = useState<string | null>(null); // error state
 
+  /**
+   * A function to get all TA queues for a given class ID
+   *
+   * @param classId - The ID of the class to get the TA queues for
+   * @throws {Error} - Throws an error if there is an issue fetching the queues
+   * @returns An array of TaQueue objects
+   *
+   * @example
+   * const { getClassQueues } = useGetClassQueues();
+   * useEffect(() => {
+   *   getClassQueues("classId123").then((queues) => console.log(queues));
+   * }, []);
+   */
   const getClassQueues = async (classId: ObjectId) => {
     setLoading(true);
     try {
@@ -18,7 +42,7 @@ const useGetClassQueues = () => {
         throw new Error("Class ID is invalid");
       }
       const res = await httpClient<GetClassQueuesResponse>(
-        `${TaQueueRoutes.GetClassQueues}${classId}`,
+        `${TaQueueRoutes.GetClassQueues}${classId}`
       );
       const data = res.data;
       if (!data) {
