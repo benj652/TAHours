@@ -26,11 +26,12 @@ export const TextAnalytics = () => {
   // const ticketDate = new Date(ticket?.date || 0);
   // const isValid = ticketDate?.getTime() > dateRangeBounds?.startDate.getTime();
 
+    // console.log("oofa",curTaQueues);
   const sessionCount =
     curTaQueues && curTaQueues.length > 0
       ? curTaQueues.filter(
           (taQueue) =>
-            new Date(taQueue.date || 0).getDate() >
+            new Date(taQueue.date || 0).getTime() >
             dateRangeBounds.startDate.getTime()
         ).length
       : 0;
