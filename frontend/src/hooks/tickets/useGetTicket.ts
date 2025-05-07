@@ -5,6 +5,17 @@ import { ObjectId } from "mongodb";
 import { useState } from "react";
 import { toast } from "sonner";
 
+/**
+ * useGetTicket is a hook that returns a function to get a ticket by its id
+ * The function sets the loading state to true, and tries to get the ticket from the cache
+ * if the ticket is in the cache, it sets the ticket state to the cached ticket and returns it
+ * if the ticket is not in the cache, it sends an API request to get the ticket
+ * if the request is successful, it sets the ticket state to the ticket data and caches the ticket
+ * if the request fails, it sets the error state to the error message
+ * finally, it sets the loading state to false
+ * the function returns the ticket object
+ * @returns {{getTicket: function, loading: boolean, error: string | null, ticket: Ticket | undefined}}
+ */
 export const useGetTicket = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

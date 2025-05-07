@@ -1,6 +1,11 @@
+/*
+ * users.ts
+ * defines the types for users
+ */
 import { ObjectId } from "mongodb";
 import { NIL_OBJECT_ID } from "./misc";
 
+// User type
 export interface User {
   _id?: ObjectId; // Optional because of `omitempty`
   accessToken: string;
@@ -20,6 +25,7 @@ export enum Role {
   Student = "student",
 }
 
+// Config for roles
 export const RolesConfig = {
   Professor: Role.Professor,
   Ta: Role.Ta,
@@ -27,8 +33,9 @@ export const RolesConfig = {
   Student: Role.Student,
 } as const;
 
+// Placeholder user
 export const PLACEHOLER_USER: User = {
-  //@ts-ignore
+  //@ts-expect-error noitems
   _id: NIL_OBJECT_ID as ObjectId,
   accessToken: "",
   firstName: "",
@@ -40,9 +47,9 @@ export const PLACEHOLER_USER: User = {
 };
 
 export type UserChageDescriptionEventPayload = {
-    updatedUser: User;
-}
+  updatedUser: User;
+};
 
 export type UserRoleChangeEventPayload = {
-    newRole: string;
-}
+  newRole: string;
+};

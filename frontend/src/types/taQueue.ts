@@ -1,7 +1,12 @@
+/*
+ * taQueue.ts
+ * defines the types for taQueue
+ */
 import { ObjectId } from "mongodb";
 import { StoreApi, UseBoundStore } from "zustand";
 import { Ticket } from "./tickets";
 
+// TaQueue type
 export interface TaQueue {
   _id?: ObjectId;
   TAs: ObjectId[];
@@ -12,6 +17,7 @@ export interface TaQueue {
   date: Date;
 }
 
+// TaQueue props
 export type QueueProps = {
   isExpanded: boolean;
   setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,11 +25,13 @@ export type QueueProps = {
 
 export type PopUpType = string;
 
+// PopUp types
 export const PopUpTypes = {
   AddTicket: "AddTicket" as PopUpType,
   ResolveTicket: "ResolveTicket" as PopUpType,
 };
 
+// AddPopUp props
 export type AddPopUpProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,6 +41,7 @@ export type TaQueueCreateResponse = {
   taQueue: TaQueue;
 };
 
+// Main page store
 export type MainPageStore = {
   // curTickets: ObjectId[] | null;
   // setCurTickets: (tickets: ObjectId[] | null) => void;
@@ -52,6 +61,7 @@ export type MainPageStoreProps = {
   curStore: UseBoundStore<StoreApi<MainPageStore>>;
 };
 
+// SessionButton props
 export type SessionButtonProps = {
   curTas: ObjectId[];
   setCurTas: React.Dispatch<React.SetStateAction<ObjectId[]>>;
@@ -88,5 +98,5 @@ export type TaQueueLeaveEvent = {
 };
 
 export type GetClassQueuesResponse = {
-    queues: TaQueue[];
-}
+  queues: TaQueue[];
+};
