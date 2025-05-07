@@ -54,6 +54,6 @@ func CSClassRoutes(app *fiber.App) {
 	 *
 	* Make sure to protext so that only professors, tas and admins can use it
 	*/
-	app.Post(base+"/deactivate/:id", controllers.SetActive)
+	classGroup.Post(base+"/deactivate/:id", userMiddleware, controllers.SetActive)
 
 }

@@ -275,6 +275,11 @@ func SetActive(c *fiber.Ctx) error {
 // It expects the class ID as a URL parameter. Returns 200 on success,
 // 400 if the ID is invalid or not found, and 500 if there's an update error.
 func DeactivateClass(c *fiber.Ctx) error {
+	if c.Locals(models.USER_ROLE_PARAM) != rOLES.Admin && c.Locals(models.USER_ROLE_PARAM) != rOLES.Professor {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized to deactivate class",
+		})
+	}
 	id := c.Params("id")
 	classId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
