@@ -1,3 +1,8 @@
+/*
+ * JoinSessionButton.tsx
+ * This file contains the join session button component
+ * It is a button that allows the user to join a ta queue
+ */
 import { useJoinTaQueue } from "@/hooks";
 import { authStore, taQueueStore } from "@/store";
 import { Role } from "@/types";
@@ -8,6 +13,12 @@ type JoinSessionButtonProps = {
   taQueueId: ObjectId | undefined;
   // setTaQueues: (taQueues: TaQueue[]) => void;
 };
+/**
+ * A button that allows a user to join a TA queue.
+ * @param {ObjectId | undefined} taQueueId The id of the TA queue to join.
+ * @param {(taQueues: TaQueue[]) => void} setTaQueues A function to update the TA queues in the store.
+ * @returns {React.ReactElement | null} The button component.
+ */
 export const JoinSessionButton: React.FC<JoinSessionButtonProps> = ({
   taQueueId,
   // setTaQueues,
