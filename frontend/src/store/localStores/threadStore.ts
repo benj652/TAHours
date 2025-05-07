@@ -1,3 +1,7 @@
+// idk what this is bro
+//
+//
+//
 // import { ThreadStoreTypes } from "@/types";
 // import { create } from "zustand";
 
