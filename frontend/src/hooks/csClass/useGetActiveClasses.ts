@@ -1,13 +1,17 @@
+/**
+ * useGetActiveClasses.ts
+ * Hook to get all classes marked as Active
+ *
+ * @ returns - loading, error, data, getActiveClasses
+ *
+ * Uses the httpClient to make a get request to get all active cs classes
+ */
 import { csClassStore } from "@/store";
 import { CSClass, CsClassRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";
 import { toast } from "sonner";
 
-/**
- * hook to get all active classes
- * does not require any parameters
- */
 export const useGetActiveClasses = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<CSClass[] | null>(null);

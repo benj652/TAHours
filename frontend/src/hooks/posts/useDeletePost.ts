@@ -1,3 +1,11 @@
+/**
+ * useDeletePost.ts
+ * Hook to delete a Post
+ *
+ * @ returns - loading, error, deletePost
+ *
+ * Uses the httpClient to make a post request to the server to delete a new Post
+ */
 import { DeletePostResponse, PostRoutes } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";

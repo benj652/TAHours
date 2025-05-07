@@ -1,3 +1,11 @@
+/**
+ * useCreateComments.ts
+ * Hook to create comments
+ *
+ * @ returns - loading, error, data, createComment
+ *
+ * Uses the httpClient to make a post request to the server to create a new Comment
+ */
 import { authStore } from "@/store";
 import { Comment, PostRoutes } from "@/types";
 import { httpClient } from "@/utils";

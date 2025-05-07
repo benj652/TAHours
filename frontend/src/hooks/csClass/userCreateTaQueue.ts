@@ -1,3 +1,11 @@
+/**
+ * useCreateTaQueue.ts
+ * Hook to create a TA Queue
+ *
+ * @ returns - loading, error, data, createTaQueue
+ *
+ * Uses the httpClient to make a post request to the server to create a new TaQueue
+ */
 import { CreateTaQueueResponse, CsClassRoutes, TaQueue } from "@/types";
 import { httpClient } from "@/utils";
 import { ObjectId } from "mongodb";
@@ -12,6 +20,7 @@ import { toast } from "sonner";
  *  Big slump gorb moment
  *
  * Hey thats not a great comment -Zach
+ * I disagree!! -Anya
  */
 export const useCreateTaQueue = () => {
   // State variables
