@@ -57,7 +57,7 @@ export const TaQueue: React.FC<TaQueueProps> = ({ _id }) => {
     if (!_id) return null;
     if (!curTaQueue) return null;
     if (!curTaQueue.TAs || curTaQueue.TAs.length < 1) return null;
-    return (
+return (
         <li>
             <div className={cn("collapse bg-gray-300 border border-base-300")}>
                 <input type="checkbox" className="peer" />
@@ -85,18 +85,6 @@ export const TaQueue: React.FC<TaQueueProps> = ({ _id }) => {
                     </div>
                 </div>
             </div>
-          </button>
-        </div>
-        <div className="collapse-content bg-gray-300">
-          <div className="flex w-full gap-4">
-            {/* Active TAs Card */}
-            <ActiveTas queueId={curTaQueue._id} classId={curTaQueue.class} />
-            {/* Current Queue */}
-            <Tickets queueId={curTaQueue._id} curTickets={curTaQueue.tickets} />
-            <QueuePopup curTaQueue={curTaQueue} />
-          </div>
-        </div>
-      </div>
-    </li>
-  );
+        </li>
+    );
 };
