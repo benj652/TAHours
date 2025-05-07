@@ -25,3 +25,7 @@ export type DateRangeBounds = {
     startDate: Date | null;
     endDate: Date;
 };
+
+
+// Link for the tutorial video.
+export const TUTORIAL_VIDEO_LINK = "https://m.youtube.com/watch?v=WM2OGtY4S-w";
