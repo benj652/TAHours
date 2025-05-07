@@ -8,6 +8,7 @@ import { cn } from "@/utils";
 import { useEffect, useState } from "react";
 import { useGetAllTaQueues } from "@/hooks";
 import { taQueueStore } from "@/store";
+import { TUTORIAL_VIDEO_LINK } from "@/types";
 
 export const MainPage = () => {
   const [addPopupOpen, setAddPopupOpen] = useState<boolean>(false); // Reactive state for popup
@@ -42,6 +43,17 @@ export const MainPage = () => {
         setTaQueues={setAllTaQueues}
       />
       <AddTaQueueButton isOpen={addPopupOpen} setIsOpen={setAddPopupOpen} />
+      <footer className="mt-8 text-sm text-gray-500">
+        Need Help?{" "}
+        <a
+          href={TUTORIAL_VIDEO_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline hover:text-blue-800"
+        >
+         Tutorial Video 
+        </a>
+      </footer>
     </div>
   );
 };
