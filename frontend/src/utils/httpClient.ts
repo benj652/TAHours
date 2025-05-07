@@ -1,3 +1,8 @@
+/*
+ * httpClient.ts
+ * This file contains the http client for making requests to the backend
+ * It is used in the frontend
+ */
 import { TokenConfig } from "@/types";
 import { googleLogout } from "@react-oauth/google";
 import axios from "axios";
@@ -21,7 +26,7 @@ httpClient.interceptors.request.use(
   (error) => {
     // Handle request error
     return Promise.reject(error);
-  },
+  }
 );
 
 httpClient.interceptors.response.use(
@@ -47,5 +52,5 @@ httpClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );
