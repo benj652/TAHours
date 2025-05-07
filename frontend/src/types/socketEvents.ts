@@ -1,3 +1,10 @@
+/*
+* socketEvents.ts
+*
+* This is for all websocket things
+ */
+
+// This hsould be used to use env stuff
 export enum SOCKET_URI_CONSTS {
   prod_socket_uri = "ws://137.146.29.181:8000/ws",
   SOCKET_URI = "ws://localhost:8000/ws",

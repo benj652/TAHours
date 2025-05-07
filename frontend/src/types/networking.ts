@@ -1,10 +1,17 @@
+/*
+ * networking.ts
+ *
+ * this stores API routes and routes for the frotnend
+ *
+ * Also just general stuff we need for the app
+ */
 // Define routes as an enum
 export enum Routes {
-  Feed = "/feed",
-  Profile = "/profile",
-  Login = "/login",
-  Analytics = "/analytics",
-  Main = "/main",
+    Feed = "/feed",
+    Profile = "/profile",
+    Login = "/login",
+    Analytics = "/analytics",
+    Main = "/main",
 }
 
 /**
@@ -16,55 +23,60 @@ const postBase = "/api/posts";
 const taQueueBase = "/api/ta-queue";
 const ticketBase = "/api/ticket";
 
+// These are the routes for the user
 export enum UserRoutes {
-  GetOrCreateUser = `${userBase}/get-or-create`,
-  GetOneUser = `${userBase}/one/`,
-  GetAllUsers = `${userBase}/all`,
-  UpdateRoleTA = `${userBase}/update-role-ta/`,
-  UpdateRoleProfessor = `${userBase}/update-role-professor/`,
-  UpdateRoleStudent = `${userBase}/update-role-student/`,
-  UpdateUserDesc = `${userBase}/update-desc/`,
+    GetOrCreateUser = `${userBase}/get-or-create`,
+    GetOneUser = `${userBase}/one/`,
+    GetAllUsers = `${userBase}/all`,
+    UpdateRoleTA = `${userBase}/update-role-ta/`,
+    UpdateRoleProfessor = `${userBase}/update-role-professor/`,
+    UpdateRoleStudent = `${userBase}/update-role-student/`,
+    UpdateUserDesc = `${userBase}/update-desc/`,
 }
 
+// Routes for posts
 export enum PostRoutes {
-  CreatePost = `${postBase}/create`,
-  GetAllPosts = `${postBase}/all`,
-  CreateComment = `${postBase}/comment/`,
-  DeletePost = `${postBase}/`,
+    CreatePost = `${postBase}/create`,
+    GetAllPosts = `${postBase}/all`,
+    CreateComment = `${postBase}/comment/`,
+    DeletePost = `${postBase}/`,
 }
 
+// Routes for CSClasses
 export enum CsClassRoutes {
-  GetActiveClasses = `${csClassBase}/active-classes`,
-  CreateCsClass = `${csClassBase}/create`,
-  CreateTaQueue = `${csClassBase}/create-ta-queue`,
-  SetActiveClass = `${csClassBase}/set-active/`,
-  GetCsClass = `${csClassBase}/one/`,
-  DeactivateClass = `${csClassBase}/deactivate/`,
+    GetActiveClasses = `${csClassBase}/active-classes`,
+    CreateCsClass = `${csClassBase}/create`,
+    CreateTaQueue = `${csClassBase}/create-ta-queue`,
+    SetActiveClass = `${csClassBase}/set-active/`,
+    GetCsClass = `${csClassBase}/one/`,
+    DeactivateClass = `${csClassBase}/deactivate/`,
 }
 
+// Routes for TA Queue
 export enum TaQueueRoutes {
-  GetAll = `${taQueueBase}/all`,
-  AddTa = `${taQueueBase}/add-ta/`,
-  RemoveTa = `${taQueueBase}/remove-ta/`,
-  GetActiveTickets = `${taQueueBase}/active-tickets`,
-  GetClassQueues = `${taQueueBase}/class-queues/`,
+    GetAll = `${taQueueBase}/all`,
+    AddTa = `${taQueueBase}/add-ta/`,
+    RemoveTa = `${taQueueBase}/remove-ta/`,
+    GetActiveTickets = `${taQueueBase}/active-tickets`,
+    GetClassQueues = `${taQueueBase}/class-queues/`,
 }
 
+// Routes for the tickets
 export enum TicketRoutes {
-  GetTicket = `${ticketBase}/one/`,
-  CreateTicket = `${ticketBase}/create/`,
-  ResolveTicket = `${ticketBase}/resolve/`,
-  DeleteTicket = `${ticketBase}/`,
-  UserTickets = `${ticketBase}/user-tickets/`,
+    GetTicket = `${ticketBase}/one/`,
+    CreateTicket = `${ticketBase}/create/`,
+    ResolveTicket = `${ticketBase}/resolve/`,
+    DeleteTicket = `${ticketBase}/`,
+    UserTickets = `${ticketBase}/user-tickets/`,
 }
 
 /**
  * Config for the tokens in the application
  */
 export enum TokenConfig {
-  UserTimeoutToken = "token",
-  UserJWTResponseToken = "JWTR",
-  UserItemsToken = "user",
+    UserTimeoutToken = "token",
+    UserJWTResponseToken = "JWTR",
+    UserItemsToken = "user",
 }
 
 /**
@@ -75,15 +87,15 @@ export enum TokenConfig {
  * any page. In the future, these roles might also dictate if you can view another user's profile.
  */
 export enum Roles {
-  Student = "student",
-  TA = "ta",
-  Professor = "professor",
-  Admin = "admin",
+    Student = "student",
+    TA = "ta",
+    Professor = "professor",
+    Admin = "admin",
 }
 
 // Popup Modals
 export enum Modals {
-  RoleChange = "model_1",
-  CreateClass = "model_2",
-  QueuePopup = "model_3",
+    RoleChange = "model_1",
+    CreateClass = "model_2",
+    QueuePopup = "model_3",
 }
