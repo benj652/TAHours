@@ -6,12 +6,29 @@ import { ObjectId } from "mongodb";
 import { useState } from "react";
 import { toast } from "sonner";
 
+/**
+ * A hook to resolve a ticket.
+ *
+ * @returns An object with a function to resolve a ticket, a boolean indicating if the function is loading, and a string with an error message if there was an error.
+ */
 export const useResolveTicket = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { userItems } = authStore();
 
   const { getTicketFromCache, addTicketToCache } = ticketStore();
+  /**
+   * Resolve a ticket.
+   *
+   * This function sends a request to the server to update the ticket with the given TA note and problem type.
+   * If the request is successful, the ticket is updated in the cache and a success message is displayed.
+   * If the request fails, an error message is displayed.
+   *
+   * @param {ObjectId} ticketId - The ID of the ticket to resolve
+   * @param {string} taNote - The note written by the TA
+   * @param {string} problemType - The type of the problem
+   * @returns {Promise<string | null>} A promise that resolves to a success message if the ticket is resolved successfully, or a null if there is an error
+   */
   const resolveTicket = async (
     ticketId: ObjectId,
     taNote: string,
