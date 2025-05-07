@@ -1,12 +1,34 @@
+/*
+ * mainPageStore.ts
+ *
+ * This keeps track of the current ticket and the current popup type
+ *
+ * so like if we are resolving or creating a ticket
+ */
 import { MainPageStore } from "@/types";
 import { create } from "zustand";
 
+/*
+* @param set - function to update the state
+* @returns {MainPageStore} - the store with the current ticket and popup type
+ */
 export const mainPageStore = create<MainPageStore>((set) => ({
-    curTicket: undefined,
-    setCurTicket: (ticket) => set({ curTicket: ticket }),
-    curPopUpType: undefined,
-    setCurrentPopUpType: (popUpType) => set({ curPopUpType: popUpType }),
-}))
+    curTicket: undefined, // the current ticket we are looking at
+    setCurTicket: (ticket) => set({ curTicket: ticket }), // sets the current ticket
+    curPopUpType: undefined, // the current popup type, so weather we are resolving or creating a ticket
+    setCurrentPopUpType: (popUpType) => set({ curPopUpType: popUpType }), // sets the current popup type
+}));
+
+
+/*
+ * --------------------------------------------
+*  Below you can find the old code that was 
+*  when this was set up dumb to look cool
+*  now it looks epic though so we keep it
+*  for the memories
+ *  -------------------------------------------
+ * /
+
 // export const createMainPageStore = () =>
 //   create<MainPageStore>((set) => ({
 //     curTickets: [],
