@@ -1,20 +1,22 @@
+//posts.tsx component representing all posts within the thread
 import { threadStore } from "@/store";
 import { useEffect, useRef } from "react";
 import { Post as PostComponent } from "./Post";
 
-// type PostsProps = {
-//     posts: PostType[] | null;
-//     setPosts: React.Dispatch<React.SetStateAction<PostType[] | null>>;
-// };
+/**
+ * A component that represents all posts within the thread
+ * @param posts all posts within the thread
+ * @returns A complete set of posts
+ */
 
 export const Posts: React.FC = () => {
   const postRef = useRef<HTMLDivElement>(null);
 
-  const { data: posts, setData: setPosts } = threadStore();
+  const { data: posts, setData: setPosts } = threadStore(); //get the posts from the thread store
 
   useEffect(() => {
     postRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [posts]);
+  }, [posts]); // creates the scroll
 
   return (
     <div>

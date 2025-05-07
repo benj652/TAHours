@@ -1,3 +1,4 @@
+//post.tsx component representing a single post
 import { useDeletePost } from "@/hooks/posts/useDeletePost";
 import { authStore } from "@/store";
 import { Post as PostType, RolesConfig } from "@/types";
@@ -5,6 +6,12 @@ import { cn } from "@/utils/classNames";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Replies } from "./Replies";
+
+/**
+ * A component that represents a single post
+ * @param handleDeleteSelf fuction to delete post, locked behind admin
+ * @returns A single post with the option to delete
+ */
 
 type PostProps = {
   post: PostType;
@@ -18,7 +25,7 @@ export const Post: React.FC<PostProps> = ({
   setPosts,
   post: { _id, user, title, body, comments },
 }) => {
-  const { userItems } = authStore();
+  const { userItems } = authStore(); //locking delete post behind professor and admin roles
   const isAdmin =
     userItems.roles === RolesConfig.Professor ||
     userItems.roles === RolesConfig.Admin;
@@ -76,6 +83,7 @@ export const Post: React.FC<PostProps> = ({
         </div>
       </div>
       {isAdmin && (
+        // delete button only shows if role permissions match
         <button
           className={cn(
             "btn w-20 h-10 mt-6 text-l btn-rectangle bg-accent text-base-100"
@@ -89,4 +97,3 @@ export const Post: React.FC<PostProps> = ({
     </div>
   );
 };
-// <div className={cn("chat-footer p-1 text-xs whitespace-nowrap")}> Sent at: 5:57 </div>

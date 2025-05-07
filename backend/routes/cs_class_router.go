@@ -46,5 +46,14 @@ func CSClassRoutes(app *fiber.App) {
 	/**
 	 * Gets all active classes
 	 */
-	classGroup.Get("/active-classes", controllers.GetActiveClasses)
+
+	app.Get(base+"/active-classes", controllers.GetActiveClasses)
+	/**
+	 * Sets the active TA to !Active.
+	 * Requires the ID of the class in the URL.
+	 *
+	* Make sure to protext so that only professors, tas and admins can use it
+	*/
+	classGroup.Post(base+"/deactivate/:id", userMiddleware, controllers.SetActive)
+
 }

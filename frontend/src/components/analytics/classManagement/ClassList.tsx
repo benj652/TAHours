@@ -1,3 +1,7 @@
+
+
+import { useDeactivateClass, useGetActiveClasses } from "@/hooks";
+
 /*
  * ClassList.tsx
  * Lists classes currently in the database
@@ -6,7 +10,7 @@
  * User can add a new class, using AddClassForm
  * Class deletion is not yet implemented
  */
-import { useGetActiveClasses } from "@/hooks";
+
 import { analyticsPageStore, csClassStore } from "@/store";
 import { CSClass, PROBLEM_TYPES } from "@/types";
 import { useEffect } from "react";
@@ -16,18 +20,13 @@ import { AddClassForm } from "./AddClassForm";
 export const ClassList = () => {
   const { getActiveClasses } = useGetActiveClasses();
   const { getActiveCSClassesData } = csClassStore();
+  const { deactivateClass } = useDeactivateClass(); // function to remove class from the Class List
+
   useEffect(() => {
     getActiveClasses();
   }, []);
 
-  // const { getClassQueues } = useGetClassQueues();
-  // useEffect(() => {
-  //   if (selectedClass) {
-  //     getClassQueues(selectedClass._id);
-  //   }
-  // }, []);
 
-  // access analytics page store
   const {
     selectedClass,
     setSelectedClass,
@@ -36,8 +35,6 @@ export const ClassList = () => {
     setSelectedDates,
     setRenderedTickets,
   } = analyticsPageStore();
-
-  // const [animatingClass, setAnimatingClass] = useState<CSClass | null>(null);
 
   const handleSelect = (csClass: CSClass) => {
     // If clicking the same class, it should collapse, else it opens
@@ -49,6 +46,8 @@ export const ClassList = () => {
       { name: PROBLEM_TYPES.INSTALLATION, value: 0 },
       { name: PROBLEM_TYPES.OTHER, value: 0 },
     ]);
+
+
     setRenderedTickets(0);
     // setSelectedDates("0");
     analyticsPageStore.getState().setIndividualAttenders((prev) => {
@@ -61,7 +60,6 @@ export const ClassList = () => {
     });
 
     if (csClass._id === selectedClass?._id) {
-      // setAnimatingClass(csClass);
       setSelectedClass(null);
       setSelectedClassQueues(null);
     } else {
@@ -70,10 +68,13 @@ export const ClassList = () => {
         setSelectedClass(csClass);
         setSelectedClassQueues(null);
       }, 0);
-      // setAnimatingClass(csClass);
-      // setSelectedClass(csClass);
-      // setSelectedClassQueues(null);
     }
+  };
+
+  const handleDeactivate = (csClass: CSClass) => {
+    if (confirm(`Are you sure you want to deactivate ${csClass.name}?`)) {
+      deactivateClass(csClass._id);
+    } // dectivated classes will be stored in the database and can be queried directly
   };
 
   return (
@@ -129,7 +130,8 @@ export const ClassList = () => {
                     <div className="flex justify-center mt-auto">
                       <button
                         type="button"
-                        className="btn btn-primary bg-accent border-accent hover:rbg-red hover:border-red transition-colors duration-300 cursor-pointer"
+                        className="btn btn-primary bg-accent border-accent hover:bg-red-600 hover:border-red-600 transition-colors duration-300 cursor-pointer"
+                        onClick={() => handleDeactivate(csClass)} // Handle deactivation
                       >
                         deactivate
                       </button>
