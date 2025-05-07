@@ -1,33 +1,22 @@
+/*
+ * AddTicketButton.tsx
+ * This file contains the ticket object to be displayed within the queue
+ */
 import { useGetTicket } from "@/hooks/tickets/useGetTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { authStore, mainPageStore } from "@/store";
-import {  Modals, PopUpTypes, Role } from "@/types";
+
+import { Modals, PopUpTypes, Role } from "@/types";
 import { NIL_OBJECT_ID } from "@/types/misc";
 import { ObjectId } from "mongodb";
 import { useEffect } from "react";
 
-// type TicketProps = {
-//     ticketId: ObjectId;
-//     setTicketOpen: React.Dispatch<React.SetStateAction<boolean>>;
-//     setPopupType: React.Dispatch<React.SetStateAction<string>>;
-// };
-// type TicketProps = MainPageStoreProps & {
-//   ticketId: ObjectId;
-//   // inactiveTicekts: number;
-//   // setInactiveTickets: React.Dispatch<React.SetStateAction<number>>;
-// };
 type TicketProps = {
-    ticketId: ObjectId;
-    taQueueId: ObjectId;
-}
+  ticketId: ObjectId;
+  taQueueId: ObjectId;
+};
 
-export const Ticket: React.FC<TicketProps> = ({
-  ticketId,
-    taQueueId,
-  // inactiveTicekts,
-  // setInactiveTickets,
-}) => {
-  // console.log("Yppppppppppppp", ticketId);
+export const Ticket: React.FC<TicketProps> = ({ ticketId, taQueueId }) => {
   // unpack the ticket and the getTicket function from the useGetTicket hook
   const { ticket, getTicket, loading: ticketLoading } = useGetTicket();
   const { user, loading: userLoading, getUser } = useGetUser();
@@ -44,9 +33,7 @@ export const Ticket: React.FC<TicketProps> = ({
   //   curTicket,
   // } = curStore();
 
-  
-
-    const { setCurTicket, setCurrentPopUpType: setPopupType } = mainPageStore();
+  const { setCurTicket, setCurrentPopUpType: setPopupType } = mainPageStore();
   //function to handle the click of the resolve button
   //this function will set the ticket open to true and the popup type to resolve ticket
   //this will open the resolve ticket popup

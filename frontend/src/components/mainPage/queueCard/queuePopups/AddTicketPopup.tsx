@@ -1,3 +1,7 @@
+/*
+ * AddTicketPopup.tsx
+ * This file contains the popup used to input a new ticket
+ */
 import { useCreateTicket } from "@/hooks";
 import { taQueueStore, ticketStore } from "@/store";
 import { Modals, PROBLEM_TYPES, Ticket } from "@/types";
@@ -12,23 +16,14 @@ import { useState } from "react";
 // };
 
 type AddTicketPopupProps = {
-    classId: ObjectId | undefined;
-    taQueueId: ObjectId | undefined;
-}
+  classId: ObjectId | undefined;
+  taQueueId: ObjectId | undefined;
+};
 
-/**
- * This is the popup used when you want to add a ticket
- * It looks ugly atm and will need to be looking bussin
- */
-export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueueId }) => {
-  // const {
-  //   classId,
-  //   taQueueId,
-  //   setCurTickets: setTickets,
-  //   curTickets: tickets,
-  //   setIsExpanded,
-  // } = curStore();
-
+export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({
+  classId,
+  taQueueId,
+}) => {
   // We unpack a bunch of caching stuff so no reloads are needed
   const { loading, createTicket, error } = useCreateTicket();
   const { addTicketToCache } = ticketStore();
@@ -65,16 +60,15 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
     // It is saying that tickets needs some object tytpe iterator or whatever but I always just ignore that error and it all works out
     // setTickets([...tickets || [], res._id]);
     const updatedTaQueues = allTaQueues.map((queue) => {
-       if (queue._id === taQueueId) {
-            return {
-                ...queue,
-                    tickets: [...queue.tickets || [], res._id],
-            }
-       } 
-            return queue;
+      if (queue._id === taQueueId) {
+        return {
+          ...queue,
+          tickets: [...(queue.tickets || []), res._id],
+        };
+      }
+      return queue;
     });
     setAllTaQueues(updatedTaQueues);
-
 
     // Updates the cached queue to have the new id
     const targetQueue = allTaQueues.find((queue) => queue._id === taQueueId);
@@ -130,6 +124,7 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
     setFileError(false);
   };
 
+  //function to handle deleting an attachment
   const handleDeleteAttachment = async (index: number) => {
     const newAttachments = curAttachments.filter((_, i) => i !== index);
     console.log(newAttachments.length);
@@ -139,8 +134,9 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
   return (
     <form
       className="rounded-field bg-base-100 px-4 py-4 mb-4 flex flex-col gap-4"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit} //popup will close on submit
     >
+      {/* input to describe problem */}
       <label> Problem </label>
       <input
         type="text"
@@ -149,6 +145,7 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
         className="w-full p-2 border rounded-md"
       />
 
+      {/* input to describe description */}
       <label> Description </label>
       <textarea
         value={curDescription}
@@ -156,6 +153,7 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
         className="w-full p-2 border rounded-md"
       />
 
+      {/* drop down list of problem type options */}
       <label>Problem Type</label>
       <select
         onChange={(e) => setCureType(e.target.value)}
@@ -169,6 +167,7 @@ export const AddTicketPopup: React.FC<AddTicketPopupProps> = ({ classId, taQueue
         <option value={PROBLEM_TYPES.OTHER}>Other</option>
       </select>
 
+      {/* place to upload attachments */}
       <label> Attachments </label>
       <div>
         {curAttachments.map((attachment, index) => (
