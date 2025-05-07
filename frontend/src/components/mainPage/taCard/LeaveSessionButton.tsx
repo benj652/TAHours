@@ -1,6 +1,10 @@
+/*
+ * LeaveSessionButton.tsx
+ * This file contains the leave session button component
+ * It is a button that allows the user to leave a ta queue
+ */
 import { useLeaveTaQueue } from "@/hooks/taQueue/useLeaveTaQueue";
 import { authStore, forceUpdateStore, taQueueStore } from "@/store";
-import { SessionButtonProps, TaQueue } from "@/types";
 import { ObjectId } from "mongodb";
 
 // type ExtendedSessionButtonProps = SessionButtonProps & {
@@ -10,9 +14,9 @@ import { ObjectId } from "mongodb";
 // };
 
 type LeaveSessionButtonProps = {
-    classId: ObjectId | undefined;
-    taQueueId: ObjectId | undefined;
-}
+  classId: ObjectId | undefined;
+  taQueueId: ObjectId | undefined;
+};
 
 /**
  * This quite possibly is hte most trash file and componenet
@@ -24,7 +28,8 @@ export const LeaveSessionButton: React.FC<LeaveSessionButtonProps> = ({
 }) => {
   const { leaveTaQueue, loading } = useLeaveTaQueue();
   const { triggerRerender } = forceUpdateStore();
-    const { allTaQueues: curTaQueues, setAllTaQueues: setTaQueues } = taQueueStore();
+  const { allTaQueues: curTaQueues, setAllTaQueues: setTaQueues } =
+    taQueueStore();
   const { userItems } = authStore();
   const { allTaQueues } = taQueueStore();
   const handleLeaveSession = async () => {
@@ -58,18 +63,18 @@ export const LeaveSessionButton: React.FC<LeaveSessionButtonProps> = ({
       // curTaQueue[0].TAs = curTaQueue[0].TAs.filter(
       //   (taId) => taId !== userItems._id
       // );
-     const updatedQueues = curTaQueues.map((queue) => {
-    if (queue._id === taQueueId) {
-      return {
-        ...queue,
-        TAs: queue.TAs.filter((taId) => taId !== userItems._id),
-      };
-    }
-    return queue;
-  });
-  setTaQueues(updatedQueues);
-        // console.log("updatedQueues", updatedQueues);
-    triggerRerender();
+      const updatedQueues = curTaQueues.map((queue) => {
+        if (queue._id === taQueueId) {
+          return {
+            ...queue,
+            TAs: queue.TAs.filter((taId) => taId !== userItems._id),
+          };
+        }
+        return queue;
+      });
+      setTaQueues(updatedQueues);
+      // console.log("updatedQueues", updatedQueues);
+      triggerRerender();
     }
   };
   return (

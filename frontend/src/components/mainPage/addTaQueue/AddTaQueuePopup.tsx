@@ -1,13 +1,29 @@
+/*
+ * AddTaQueuePopup.tsx
+ * This file contains the add ta queue popup component
+ * It is a popup that allows the user to add a ta queue
+ */
+
 import { useCreateTaQueue, useGetActiveClasses } from "@/hooks";
 import { authStore } from "@/store";
 import { AddPopUpProps, TaQueue, TaQueueCreateResponse } from "@/types";
 import { ObjectId } from "mongodb";
 import { useEffect, useState } from "react";
 
+// Props for the AddTaQueuePopup component
 type AddTaQueuePopupProps = AddPopUpProps & {
   curTaQueues: TaQueue[] | null;
   setTaQueues: (taQueues: TaQueue[]) => void;
 };
+/**
+ * A popup that allows the user to add a ta queue
+ *
+ * @param isOpen boolean indicating if the popup is open or not
+ * @param setIsOpen function to set the isOpen state
+ * @param curTaQueues current ta queues
+ * @param setTaQueues function to set the ta queues
+ * @returns a popup component
+ */
 export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
   isOpen,
   setIsOpen,
@@ -59,7 +75,7 @@ export const AddTaQueuePopup: React.FC<AddTaQueuePopupProps> = ({
       directions
     )) as TaQueueCreateResponse;
     //@ts-expect-error setqueues
-    setTaQueues([...curTaQueues || [], res.taQueue]);
+    setTaQueues([...(curTaQueues || []), res.taQueue]);
     // setTaQueues([...(taQueues || []), res.taQueue]);
     // console.log("new quesues", taQueues);
     console.log(res.taQueue);
