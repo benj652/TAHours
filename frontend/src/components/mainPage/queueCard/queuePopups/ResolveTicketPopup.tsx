@@ -1,30 +1,19 @@
+/*
+ * ResolveTicketPopup.tsx
+ * This file contains the popup used to resolve a ticket
+ */
 import { useResolveTicket } from "@/hooks/tickets/useResolveTicket";
 import { useGetUser } from "@/hooks/user/useGetUser";
 import { mainPageStore, taQueueStore } from "@/store";
 import { Modals, PROBLEM_TYPES } from "@/types";
 import { useEffect, useState } from "react";
 
-// type ResolveTicketPopupProps = {
-//     ticket: ObjectId | undefined;
-// };
-//
-
-/**
- * Popup to resolve tickets
- *
- * Triggered when the TA presses reesovle on a ticket
- * might want to add some checks to make sure normie users
- * can not see this by mistake
- */
-export const ResolveTicketPopup = ({taQueueId}) => {
-  // Gets the currently selected ticket from the local store
-  // const { curTicket, setIsExpanded, taQueueId } = curStore();
-
+export const ResolveTicketPopup = ({ taQueueId }) => {
   // Unpacks the getUser hook as we would like to display information
   // about the sender of the ticket
   const { getUser, user } = useGetUser();
   const { curTicket } = mainPageStore();
-    const { setAllTaQueues, allTaQueues } = taQueueStore();
+  const { setAllTaQueues, allTaQueues } = taQueueStore();
 
   // Use the hook to get the user info
   useEffect(() => {
@@ -63,10 +52,10 @@ export const ResolveTicketPopup = ({taQueueId}) => {
     console.log(res);
     // setIsExpanded(false);
     document.getElementById(`${Modals.QueuePopup}${taQueueId}`)?.close();
-        setAllTaQueues([...allTaQueues]);
+    setAllTaQueues([...allTaQueues]);
 
     // reset fields
-    
+
     setTaMessage("");
   };
 
@@ -81,7 +70,7 @@ export const ResolveTicketPopup = ({taQueueId}) => {
   }, [curTicket]);
 
   // Returns a loading message if the ticket is still loading
-  if (!curTicket) return <div>WAIIIIITTTTT</div>;
+  if (!curTicket) return <div>loading...</div>;
 
   return (
     <div className="bg-base-100 rounded-field px-2 py-2">
