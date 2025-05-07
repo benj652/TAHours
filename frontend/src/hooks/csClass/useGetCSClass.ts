@@ -1,3 +1,11 @@
+/**
+ * useGetCSClassts
+ * Hook to get a single class
+ *
+ * @ returns - loading, error, data, getCSClass
+ *
+ * Uses the httpClient to make a get request to return a single class
+ */
 import { CSClass } from "@/types";
 import { httpClient } from "@/utils";
 import { useState } from "react";

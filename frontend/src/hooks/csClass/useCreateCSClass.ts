@@ -1,16 +1,17 @@
-import { csClassStore } from "@/store";
-import { CreateCSClassParams, CSClass, CsClassRoutes } from "@/types";
-import { httpClient } from "@/utils";
-import { useState } from "react";
-import { toast } from "sonner";
-
 /**
+ * useCreateCSClass.ts
  * Hook to create a CS class
  *
  * @ returns - loading, error, data, createCSClass
  *
  * Uses the httpClient to make a post request to the server to create a new CS class
  */
+import { csClassStore } from "@/store";
+import { CreateCSClassParams, CSClass, CsClassRoutes } from "@/types";
+import { httpClient } from "@/utils";
+import { useState } from "react";
+import { toast } from "sonner";
+
 export const useCreateCSClass = () => {
   const [loading, setLoading] = useState<boolean>(false); // Set loading state
   const [error, setError] = useState<string | null>(null); // Set error state
@@ -59,7 +60,10 @@ export const useCreateCSClass = () => {
       setData(response.data);
 
       // Cache the response data
-      setGetActiveCSClassesData([...getActiveCSClassesData || [], response.data]);
+      setGetActiveCSClassesData([
+        ...(getActiveCSClassesData || []),
+        response.data,
+      ]);
       toast.success("Class created successfully");
       return response.data; // return the response data
     } catch (error) {

@@ -1,10 +1,5 @@
-import { threadStore } from "@/store";
-import { Post, PostRoutes } from "@/types";
-import { httpClient } from "@/utils";
-import { useState } from "react";
-import { toast } from "sonner";
-
 /**
+ * useGetAllPosts.ts
  *  Hook to get all posts
  *  @returns loading - A boolean indicating if the request is still loading
  *  @returns error - A string indicating the error message
@@ -15,6 +10,12 @@ import { toast } from "sonner";
  *  I kinda changed how it works a bit but its still chillen at the moment of this comment
  *  lowkey bussin frfr
  */
+import { threadStore } from "@/store";
+import { Post, PostRoutes } from "@/types";
+import { httpClient } from "@/utils";
+import { useState } from "react";
+import { toast } from "sonner";
+
 export const useGetAllPosts = () => {
   // Reactive State
   const [loading, setLoading] = useState<boolean>(false); // Set the loading state to false

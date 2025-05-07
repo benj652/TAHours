@@ -1,3 +1,11 @@
+/**
+ * useCreatePost.ts
+ * Hook to create a Post
+ *
+ * @ returns - loading, error, data, createPost
+ *
+ * Uses the httpClient to make a post request to the server to create a new Post
+ */
 import { authStore } from "@/store";
 import { Post, PostRoutes } from "@/types";
 import { httpClient } from "@/utils";

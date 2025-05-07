@@ -1,3 +1,11 @@
+/**
+ * useGetAllTaQueues.ts
+ * Hook to create comments
+ *
+ * @ returns - loading, error, data, getAllTaQueues, setTaQueues
+ *
+ * Uses the httpClient to make a get request to the server to get all TA queues
+ */
 import { taQueueStore } from "@/store";
 import { TaQueue, TaQueueRoutes } from "@/types";
 import { httpClient } from "@/utils";
